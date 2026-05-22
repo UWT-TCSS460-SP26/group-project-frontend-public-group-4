@@ -1,0 +1,56 @@
+const BASE_URL = "https://group-project-backend-group-3-1.onrender.com";
+
+export interface RatingRecord {
+  ratingId: number;
+  userId: number;
+  isMovie: boolean;
+  rating: number;
+  tmdbIdentifier: number;
+  author: {
+    subjectId: string;
+    displayName: string;
+  };
+}
+
+export interface ReviewRecord {
+  reviewId: number;
+  userId: number;
+  isMovie: boolean;
+  dateOfReview: string;
+  reviewContent: string;
+  tmdbIdentifier: number;
+}
+
+async function fetchApi<T>(
+  path: string,
+  accessToken: string,
+): Promise<T> {
+  const res = await fetch(`${BASE_URL}${path}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+  if (!res.ok) throw new Error(`API ${path} returned ${res.status}`);
+  return res.json();
+}
+
+export async function getRatings(
+  accessToken: string,
+): Promise<RatingRecord[]> {
+  try {
+    return await fetchApi<RatingRecord[]>("/ratings/me", accessToken);
+  } catch {
+    return [];
+  }
+}
+
+export async function getReviews(
+  accessToken: string,
+): Promise<ReviewRecord[]> {
+  try {
+    return await fetchApi<ReviewRecord[]>("/reviews/me", accessToken);
+  } catch {
+    return [];
+  }
+}
