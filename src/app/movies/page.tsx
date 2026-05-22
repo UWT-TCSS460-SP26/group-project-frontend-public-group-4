@@ -1,9 +1,12 @@
 import MediaGrid from "@/components/MediaGrid";
+import { MovieCard } from "@/components/result-cards";
 import type { MediaItem } from "@/types/media";
-import { apiGet } from "@/lib/api";
+import { apiGet, searchMovies } from "@/lib/api";
 import { normalizeMovie } from "@/lib/normalize";
+import styles from "./page.module.css";
+import type { MovieSearchResult } from "@/lib/api";
 
-/** Shape the backend returns for both /movies/popular and /community/discovery?type=movie */
+/** Shape returned by /movies/popular and /community/discovery?type=movie */
 interface MovieResult {
   id: number;
   title: string;
@@ -18,7 +21,40 @@ interface MovieListResponse {
   results: MovieResult[];
 }
 
-export default async function MoviesPage() {
+export default async function MoviesPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ title?: string }>;
+}) {
+  const resolvedParams = await searchParams;
+  const title = (resolvedParams?.title ?? "").trim();
+
+  // ── Search mode ──────────────────────────────────────────────
+  if (title) {
+    const results: MovieSearchResult[] = await searchMovies(title);
+
+    return (
+      <main className={styles.container}>
+        <h1 className={styles.title}>
+          Search results for &ldquo;{title}&rdquo;
+        </h1>
+
+        {results.length === 0 ? (
+          <p className={styles.emptyText}>
+            No movies found for &ldquo;{title}&rdquo;.
+          </p>
+        ) : (
+          <div className={styles.grid}>
+            {results.map((m) => (
+              <MovieCard key={m.id} movie={m} />
+            ))}
+          </div>
+        )}
+      </main>
+    );
+  }
+
+  // ── Browse mode ──────────────────────────────────────────────
   let popularMovies: MediaItem[] = [];
   let topRatedMovies: MediaItem[] = [];
 

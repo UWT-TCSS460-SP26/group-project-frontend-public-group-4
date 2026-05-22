@@ -21,6 +21,49 @@ export interface ReviewRecord {
   tmdbIdentifier: number;
 }
 
+export interface MovieSearchResult {
+  title: string;
+  poster: string | null;
+  releaseDate: string;
+  id: number;
+  description: string;
+}
+
+export interface ShowSearchResult {
+  title: string;
+  posterImage: string | null;
+  releaseDate: string;
+  id: number;
+  shortDescription: string;
+  genreIds: number[];
+}
+
+export async function searchMovies(
+  title: string,
+): Promise<MovieSearchResult[]> {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/movies?title=${encodeURIComponent(title)}`,
+    );
+    if (!res.ok) throw new Error(`movies search returned ${res.status}`);
+    return (await res.json()) as MovieSearchResult[];
+  } catch (e) {
+    return [];
+  }
+}
+
+export async function searchShows(title: string): Promise<ShowSearchResult[]> {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/shows?title=${encodeURIComponent(title)}`,
+    );
+    if (!res.ok) throw new Error(`shows search returned ${res.status}`);
+    return (await res.json()) as ShowSearchResult[];
+  } catch (e) {
+    return [];
+  }
+}
+
 async function fetchApi<T>(path: string, accessToken: string): Promise<T> {
   const res = await fetch(`${BASE_URL}${path}`, {
     headers: {
