@@ -1,0 +1,214 @@
+openapi: 3.0.3
+info:
+  title: TCSS 460 — Group 3 API
+  description: |
+    **Team:** Group 3
+
+    Backend API for the TCSS 460 group project. Use **GET /heartbeat** to confirm the service is reachable (no auth, no database).
+
+    **Live deployment:** See the Production entry under `servers`. If your host differs, update that URL in this file so `/api-docs` stays accurate.
+  version: 0.1.0
+
+servers:
+  - url: https://group-project-backend-group-3-1.onrender.com
+    description: Deployed server on Render
+  - url: http://localhost:3000
+    description: Local development
+
+tags:
+  - name: Heartbeat
+    description: HTTP request to verify server is alive
+  - name: Movies
+    description: Movie endpoints
+  - name: Shows
+    description: TV show endpoints
+  - name: Reviews
+    description: Review endpoints
+  - name: Ratings
+    description: Rating endpoints
+  - name: Community
+    description: Community endpoints
+  - name: Issues
+    description: Bug reporting endpoints
+
+paths:
+
+/movies/popular:
+  get:
+    tags: [Movies]
+    summary: Get popular movies
+    description: Returns top 10 popular movies in English from a transformed backend schema.
+    responses:
+      "200":
+        description: Popular movie list.
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [count, results]
+              properties:
+                count:
+                  type: integer
+                  example: 10
+                results:
+                  type: array
+                  items:
+                    type: object
+                    required: [id, title, releaseDate, description, genreIds]
+                    properties:
+                      id:
+                        type: integer
+                        example: 603
+                      title:
+                        type: string
+                        example: Fight Club
+                      poster:
+                        type: string
+                        nullable: true
+                        example: /f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg
+                      releaseDate:
+                        type: string
+                        example: "1999-10-15"
+                      description:
+                        type: string
+                      genreIds:
+                        type: array
+                        items:
+                          type: integer
+                        example: [18, 53]
+      "500":
+        description: Missing TMDB token configuration.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: TMDB token is not configured
+      "502":
+        description: Upstream TMDB call failed.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: Failed to reach TMDB service
+/shows/popular:
+  get:
+    tags: [Shows]
+    summary: Get popular TV shows
+    description: Returns top 10 popular TV shows in English from a transformed backend schema.
+    responses:
+      "200":
+        description: Popular show list.
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [count, results]
+              properties:
+                count:
+                  type: integer
+                  example: 10
+                results:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      [id, title, releaseDate, shortDescription, genreIds]
+                    properties:
+                      id:
+                        type: integer
+                        example: 1399
+                      title:
+                        type: string
+                        example: Game of Thrones
+                      posterImage:
+                        type: string
+                        nullable: true
+                        example: https://image.tmdb.org/t/p/w500/1.png
+                      releaseDate:
+                        type: string
+                        example: "2011-04-17"
+                      shortDescription:
+                        type: string
+                      genreIds:
+                        type: array
+                        items:
+                          type: integer
+                        example: [10765, 18, 10759]
+      "500":
+        description: Missing TMDB token configuration.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: TMDB token is not configured
+      "502":
+        description: Upstream TMDB call failed.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: Failed to reach TMDB service
+/community/discovery:
+  get:
+    tags: [Community]
+    summary: Get top-rated or most-reviewed movies or shows
+    description: |
+      Returns a list of top-rated or most-reviewed movies or shows.
+    parameters:
+      - name: type
+        in: query
+        required: true
+        description: Whether to list movies or TV shows.
+        schema:
+          type: string
+          enum: [movie, show]
+          default: movie
+      - name: sort
+        in: query
+        required: true
+        description: Order results by average rating or by number of reviews.
+        schema:
+          type: string
+          enum: [top-rated, most-reviewed]
+          default: top-rated
+    responses:
+      "200":
+        description: List of top-rated or most-reviewed movies or shows.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CommunityDiscoveryResponse"
+      "400":
+        description: Invalid route parameter.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ErrorMessage"
+            examples:
+              invalidType:
+                value:
+                  error: Parameter "type" must be "movie" or "show"
+      "500":
+        description: TMDB token missing.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ErrorMessage"
+      "502":
+        description: Failed to reach TMDB service.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ErrorMessage"
