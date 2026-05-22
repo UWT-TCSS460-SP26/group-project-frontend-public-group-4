@@ -14,6 +14,12 @@
   transform: translateY(-2px);
 }
 
+.cardLink {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
 .posterContainer {
   position: relative;
   width: 100%;

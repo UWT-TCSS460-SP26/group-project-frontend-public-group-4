@@ -5,6 +5,7 @@
 import Image from "next/image";
 import React from "react";
 import styles from "./result-cards.module.css";
+import Link from "next/link";
 
 export interface MovieSearchResult {
   id: number;
@@ -67,34 +68,36 @@ export function MovieCard({ movie }: { movie: MovieSearchResult }) {
   const year = movie.releaseDate ? new Date(movie.releaseDate).getFullYear() : "";
 
   return (
-    <article className={styles.card} aria-labelledby={`movie-${movie.id}-title`}>
-      <div className={styles.posterContainer}>
-        {posterUrl ? (
-          <Image
-            src={posterUrl}
-            alt={`${movie.title} poster`}
-            fill
-            style={{ objectFit: "cover" }}
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          />
-        ) : (
-          <PosterFallback title={movie.title} />
-        )}
-      </div>
-
-      <div className={styles.content}>
-        <div className={styles.headline}>
-          <h3 id={`movie-${movie.id}-title`} className={styles.title}>{movie.title}</h3>
-          {year && <Badge>{year}</Badge>}
+    <Link href={`/movie/${movie.id}`} className={styles.cardLink}>
+        <article className={styles.card} aria-labelledby={`movie-${movie.id}-title`}>
+        <div className={styles.posterContainer}>
+            {posterUrl ? (
+            <Image
+                src={posterUrl}
+                alt={`${movie.title} poster`}
+                fill
+                style={{ objectFit: "cover" }}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            />
+            ) : (
+            <PosterFallback title={movie.title} />
+            )}
         </div>
 
-        <p className={styles.description}>{movie.description || "No description available."}</p>
+        <div className={styles.content}>
+            <div className={styles.headline}>
+            <h3 id={`movie-${movie.id}-title`} className={styles.title}>{movie.title}</h3>
+            {year && <Badge>{year}</Badge>}
+            </div>
 
-        <div className={styles.meta}>
-          <Badge muted>TMDB #{movie.id}</Badge>
+            <p className={styles.description}>{movie.description || "No description available."}</p>
+
+            <div className={styles.meta}>
+            <Badge muted>TMDB #{movie.id}</Badge>
+            </div>
         </div>
-      </div>
-    </article>
+        </article>
+    </Link>
   );
 }
 
@@ -103,41 +106,43 @@ export function ShowCard({ show }: { show: ShowSearchResult }) {
   const year = show.releaseDate ? new Date(show.releaseDate).getFullYear() : "";
 
   return (
-    <article className={styles.card} aria-labelledby={`show-${show.id}-title`}>
-      <div className={styles.posterContainer}>
-        {posterUrl ? (
-          <Image
-            src={posterUrl}
-            alt={`${show.title} poster`}
-            fill
-            style={{ objectFit: "cover" }}
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          />
-        ) : (
-          <PosterFallback title={show.title} />
-        )}
-      </div>
-
-      <div className={styles.content}>
-        <div className={styles.headline}>
-          <h3 id={`show-${show.id}-title`} className={styles.title}>{show.title}</h3>
-          {year && <Badge>{year}</Badge>}
+    <Link href={`/tv/${show.id}`} className={styles.cardLink}>
+        <article className={styles.card} aria-labelledby={`show-${show.id}-title`}>
+        <div className={styles.posterContainer}>
+            {posterUrl ? (
+            <Image
+                src={posterUrl}
+                alt={`${show.title} poster`}
+                fill
+                style={{ objectFit: "cover" }}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            />
+            ) : (
+            <PosterFallback title={show.title} />
+            )}
         </div>
 
-        <p className={styles.description}>{show.shortDescription || "No description available."}</p>
+        <div className={styles.content}>
+            <div className={styles.headline}>
+            <h3 id={`show-${show.id}-title`} className={styles.title}>{show.title}</h3>
+            {year && <Badge>{year}</Badge>}
+            </div>
 
-        <div className={styles.genres}>
-          {show.genreIds?.slice(0, 4).map((g) => (
-            <span key={g} className={styles.genreTag}>
-              {GENRE_NAMES[g] ?? `#${g}`}
-            </span>
-          ))}
-        </div>
+            <p className={styles.description}>{show.shortDescription || "No description available."}</p>
 
-        <div className={styles.meta}>
-          <Badge muted>TMDB #{show.id}</Badge>
+            <div className={styles.genres}>
+            {show.genreIds?.slice(0, 4).map((g) => (
+                <span key={g} className={styles.genreTag}>
+                {GENRE_NAMES[g] ?? `#${g}`}
+                </span>
+            ))}
+            </div>
+
+            <div className={styles.meta}>
+            <Badge muted>TMDB #{show.id}</Badge>
+            </div>
         </div>
-      </div>
-    </article>
+        </article>
+    </Link>
   );
 }
