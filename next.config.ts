@@ -4,6 +4,9 @@ const nextConfig: NextConfig = {
   experimental: {
     authInterrupts: true,
   },
+  images: {
+    domains: ["image.tmdb.org"],
+  },
 };
 
 export default nextConfig;
