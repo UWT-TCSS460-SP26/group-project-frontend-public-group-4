@@ -73,12 +73,6 @@ export default async function MovieDetailPage({
 
   const { metadata, community } = movie;
 
-  // Debugging: Print the raw community object directly to the terminal
-  console.log(
-    "RAW COMMUNITY DATA FROM BACKEND:",
-    JSON.stringify(community, null, 2),
-  );
-
   let releaseYear = "";
   let formattedReleaseDate = "";
   if (metadata.release_date) {
