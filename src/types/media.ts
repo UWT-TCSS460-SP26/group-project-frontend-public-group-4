@@ -32,3 +32,20 @@ export interface MovieResult {
   description: string;
   genreIds: number[];
 }
+
+/** Shape of a single item inside GET /community/discovery results */
+export interface DiscoveryResult {
+  tmdbId: number;
+  title: string | null;
+  posterPath: string | null;
+  overview: string | null;
+  releaseDate: string | null;
+  averageRating: number | null;
+  reviewCount: number;
+}
+
+export interface DiscoveryResponse {
+  type: "movie" | "show";
+  sort: "top-rated" | "most-reviewed";
+  results: DiscoveryResult[];
+}

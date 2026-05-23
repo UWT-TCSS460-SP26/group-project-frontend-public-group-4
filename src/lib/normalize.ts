@@ -1,4 +1,5 @@
 import type { MediaItem } from "@/types/media";
+import type { DiscoveryResult } from "@/types/media";
 
 /**
  * Map the partner API's movie shape into our internal MediaItem type.
@@ -22,6 +23,24 @@ export function normalizeMovie(m: {
     genreIds: m.genreIds,
     ...(m.averageRating != null && { rating: m.averageRating }),
     ...(m.reviewCount != null && { reviewCount: m.reviewCount }),
+  };
+}
+
+/**
+ * Map a /community/discovery result into our internal MediaItem type.
+ * Discovery items use tmdbId, posterPath, overview — different keys
+ * than /movies/popular or /shows/popular.
+ */
+export function normalizeDiscovery(d: DiscoveryResult): MediaItem {
+  return {
+    id: d.tmdbId,
+    title: d.title ?? "Untitled",
+    posterPath: d.posterPath,
+    releaseDate: d.releaseDate ?? "",
+    description: d.overview ?? "",
+    genreIds: [], // discovery endpoint does not return genre IDs
+    ...(d.averageRating != null && { rating: d.averageRating }),
+    ...(d.reviewCount != null && { reviewCount: d.reviewCount }),
   };
 }
 

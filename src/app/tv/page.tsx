@@ -1,7 +1,11 @@
 import { apiGet, searchShows, getCommunityStats } from "@/lib/api";
-import { normalizeShow } from "@/lib/normalize";
+import { normalizeShow, normalizeDiscovery } from "@/lib/normalize";
 import styles from "./page.module.css";
-import type { ListResponse, ShowResult } from "@/types/media";
+import type {
+  ListResponse,
+  ShowResult,
+  DiscoveryResponse,
+} from "@/types/media";
 import MediaGrid from "@/components/MediaGrid";
 import { ShowCard } from "@/components/result-cards";
 
@@ -39,20 +43,26 @@ export default async function TVPage({
   }
 
   // ── Browse mode ──────────────────────────────────────────────
-  const [popularData, topRatedData] = await Promise.all([
+  const [popularData, topRatedData, mostReviewedData] = await Promise.all([
     apiGet<ListResponse<ShowResult>>("/shows/popular"),
-    apiGet<ListResponse<ShowResult>>(
+    apiGet<DiscoveryResponse>(
       "/community/discovery?type=show&sort=top-rated",
+    ),
+    apiGet<DiscoveryResponse>(
+      "/community/discovery?type=show&sort=most-reviewed",
     ),
   ]);
 
   const rawPopular = popularData.results ?? [];
   const rawTopRated = topRatedData?.results ?? [];
+  const rawMostReviewed = mostReviewedData?.results ?? [];
 
-  // Batch-fetch community stats for all unique IDs
-  const allIds = [...new Set([...rawPopular, ...rawTopRated].map((s) => s.id))];
+  // Batch-fetch community stats for popular shows only
+  const popularIds = [...new Set(rawPopular.map((s) => s.id))];
   const statsMap =
-    allIds.length > 0 ? await getCommunityStats(allIds, "show") : new Map();
+    popularIds.length > 0
+      ? await getCommunityStats(popularIds, "show")
+      : new Map();
 
   function withStats(items: ShowResult[]) {
     return items.map((item) => {
@@ -68,7 +78,8 @@ export default async function TVPage({
   }
 
   const popularShows = withStats(rawPopular);
-  const topRatedShows = withStats(rawTopRated);
+  const topRatedShows = rawTopRated.map(normalizeDiscovery);
+  const mostReviewedShows = rawMostReviewed.map(normalizeDiscovery);
 
   return (
     <div className="pt-16 px-2 sm:px-4 lg:px-6 pb-16">
@@ -79,6 +90,18 @@ export default async function TVPage({
           </h2>
           <MediaGrid
             items={topRatedShows}
+            getItemHref={(item) => `/tv/${item.id}`}
+          />
+        </section>
+      )}
+
+      {mostReviewedShows.length > 0 && (
+        <section className="mb-12">
+          <h2 className="text-3xl font-bold text-white mb-6">
+            Most Reviewed TV Shows
+          </h2>
+          <MediaGrid
+            items={mostReviewedShows}
             getItemHref={(item) => `/tv/${item.id}`}
           />
         </section>

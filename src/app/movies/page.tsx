@@ -1,7 +1,11 @@
 import { apiGet, searchMovies, getCommunityStats } from "@/lib/api";
-import { normalizeMovie } from "@/lib/normalize";
+import { normalizeMovie, normalizeDiscovery } from "@/lib/normalize";
 import styles from "./page.module.css";
-import type { ListResponse, MovieResult } from "@/types/media";
+import type {
+  ListResponse,
+  MovieResult,
+  DiscoveryResponse,
+} from "@/types/media";
 import MediaGrid from "@/components/MediaGrid";
 import { MovieCard } from "@/components/result-cards";
 
@@ -39,20 +43,37 @@ export default async function MoviesPage({
   }
 
   // ── Browse mode ──────────────────────────────────────────────
-  const [popularData, topRatedData] = await Promise.all([
+  async function safeDiscovery(sort: string): Promise<DiscoveryResponse> {
+    try {
+      return await apiGet<DiscoveryResponse>(
+        `/community/discovery?type=movie&sort=${sort}`,
+      );
+    } catch {
+      return {
+        type: "movie",
+        sort: sort as DiscoveryResponse["sort"],
+        results: [],
+      };
+    }
+  }
+
+  const [popularData, topRatedData, mostReviewedData] = await Promise.all([
     apiGet<ListResponse<MovieResult>>("/movies/popular"),
-    apiGet<ListResponse<MovieResult>>(
-      "/community/discovery?type=movie&sort=top-rated",
-    ),
+    safeDiscovery("top-rated"),
+    safeDiscovery("most-reviewed"),
   ]);
 
   const rawPopular = popularData.results ?? [];
   const rawTopRated = topRatedData?.results ?? [];
+  const rawMostReviewed = mostReviewedData?.results ?? [];
 
-  // Batch-fetch community stats for all unique IDs
-  const allIds = [...new Set([...rawPopular, ...rawTopRated].map((m) => m.id))];
+  // Batch-fetch community stats for popular movies only
+  // Discovery results already include averageRating + reviewCount
+  const popularIds = [...new Set(rawPopular.map((m) => m.id))];
   const statsMap =
-    allIds.length > 0 ? await getCommunityStats(allIds, "movie") : new Map();
+    popularIds.length > 0
+      ? await getCommunityStats(popularIds, "movie")
+      : new Map();
 
   function withStats(items: MovieResult[]) {
     return items.map((item) => {
@@ -68,7 +89,8 @@ export default async function MoviesPage({
   }
 
   const popularMovies = withStats(rawPopular);
-  const topRatedMovies = withStats(rawTopRated);
+  const topRatedMovies = rawTopRated.map(normalizeDiscovery);
+  const mostReviewedMovies = rawMostReviewed.map(normalizeDiscovery);
 
   return (
     <div className="pt-16 px-2 sm:px-4 lg:px-6 pb-16">
@@ -79,6 +101,18 @@ export default async function MoviesPage({
           </h2>
           <MediaGrid
             items={topRatedMovies}
+            getItemHref={(item) => `/movies/${item.id}`}
+          />
+        </section>
+      )}
+
+      {mostReviewedMovies.length > 0 && (
+        <section className="mb-12">
+          <h2 className="text-3xl font-bold text-white mb-6">
+            Most Reviewed Movies
+          </h2>
+          <MediaGrid
+            items={mostReviewedMovies}
             getItemHref={(item) => `/movies/${item.id}`}
           />
         </section>
