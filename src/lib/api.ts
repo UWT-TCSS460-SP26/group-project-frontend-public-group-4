@@ -1,64 +1,27 @@
 const BASE_URL = "https://group-project-backend-group-3-1.onrender.com";
 
-export interface RatingRecord {
-  ratingId: number;
-  userId: number;
-  isMovie: boolean;
-  rating: number;
-  tmdbIdentifier: number;
-  author: {
-    subjectId: string;
-    displayName: string;
-  };
-}
+import type { MovieResult, ShowResult } from "@/types/media";
+import type { RatingRecord, ReviewRecord } from "@/types/review";
 
-export interface ReviewRecord {
-  reviewId: number;
-  userId: number;
-  isMovie: boolean;
-  dateOfReview: string;
-  reviewContent: string;
-  tmdbIdentifier: number;
-}
-
-export interface MovieSearchResult {
-  title: string;
-  poster: string | null;
-  releaseDate: string;
-  id: number;
-  description: string;
-}
-
-export interface ShowSearchResult {
-  title: string;
-  posterImage: string | null;
-  releaseDate: string;
-  id: number;
-  shortDescription: string;
-  genreIds: number[];
-}
-
-export async function searchMovies(
-  title: string,
-): Promise<MovieSearchResult[]> {
+export async function searchMovies(title: string): Promise<MovieResult[]> {
   try {
     const res = await fetch(
       `${BASE_URL}/movies?title=${encodeURIComponent(title)}`,
     );
     if (!res.ok) throw new Error(`movies search returned ${res.status}`);
-    return (await res.json()) as MovieSearchResult[];
+    return (await res.json()) as MovieResult[];
   } catch (e) {
     return [];
   }
 }
 
-export async function searchShows(title: string): Promise<ShowSearchResult[]> {
+export async function searchShows(title: string): Promise<ShowResult[]> {
   try {
     const res = await fetch(
       `${BASE_URL}/shows?title=${encodeURIComponent(title)}`,
     );
     if (!res.ok) throw new Error(`shows search returned ${res.status}`);
-    return (await res.json()) as ShowSearchResult[];
+    return (await res.json()) as ShowResult[];
   } catch (e) {
     return [];
   }

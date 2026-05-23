@@ -1,46 +1,19 @@
 import MediaGrid from "@/components/MediaGrid";
-import type { MediaItem } from "@/types/media";
+import type { ListResponse, MovieResult, ShowResult } from "@/types/media";
 import { apiGet } from "@/lib/api";
 import { normalizeMovie, normalizeShow } from "@/lib/normalize";
 
 export default async function Home() {
-  let movies: MediaItem[] = [];
-  let shows: MediaItem[] = [];
+  const [movieData, showData] = await Promise.all([
+    apiGet<ListResponse<MovieResult>>("/movies/popular"),
+    apiGet<ListResponse<ShowResult>>("/shows/popular"),
+  ]);
 
-  try {
-    const [movieData, showData] = await Promise.all([
-      apiGet<{
-        count: number;
-        results: {
-          id: number;
-          title: string;
-          poster: string | null;
-          releaseDate: string;
-          description: string;
-          genreIds: number[];
-        }[];
-      }>("/movies/popular"),
-      apiGet<{
-        count: number;
-        results: {
-          id: number;
-          title: string;
-          posterImage: string | null;
-          releaseDate: string;
-          shortDescription: string;
-          genreIds: number[];
-        }[];
-      }>("/shows/popular"),
-    ]);
-
-    movies = (movieData.results ?? []).map(normalizeMovie);
-    shows = (showData.results ?? []).map(normalizeShow);
-  } catch {
-    // API unreachable — show empty states
-  }
+  const movies = (movieData.results ?? []).map(normalizeMovie);
+  const shows = (showData.results ?? []).map(normalizeShow);
 
   return (
-    <div className="pt-16 px-4 sm:px-8 pb-16 max-w-7xl mx-auto">
+    <div className="pt-16 px-2 sm:px-4 lg:px-6 pb-16">
       <section className="mb-12">
         <h2 className="text-3xl font-bold text-white mb-6">Popular Movies</h2>
         <MediaGrid

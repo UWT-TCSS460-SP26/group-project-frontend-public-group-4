@@ -17,7 +17,7 @@ export default function MediaGrid({ items, getItemHref }: MediaGridProps) {
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+    <div className="grid grid-cols-[repeat(auto-fill,minmax(min(220px,100%),1fr))] gap-4">
       {items.map((item) => (
         <MediaCard key={item.id} item={item} href={getItemHref?.(item)} />
       ))}

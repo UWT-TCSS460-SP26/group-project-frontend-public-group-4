@@ -1,16 +1,9 @@
-import MediaGrid from "@/components/MediaGrid";
-import { ShowCard } from "@/components/result-cards";
-import type { MediaItem } from "@/types/media";
 import { apiGet, searchShows } from "@/lib/api";
 import { normalizeShow } from "@/lib/normalize";
 import styles from "./page.module.css";
-import type { ShowSearchResult } from "@/lib/api";
-
-/** Shape returned by /shows/popular and /community/discovery?type=show */
-interface ShowListResponse {
-  count: number;
-  results: ShowSearchResult[];
-}
+import type { ListResponse, ShowResult } from "@/types/media";
+import MediaGrid from "@/components/MediaGrid";
+import { ShowCard } from "@/components/result-cards";
 
 export default async function TVPage({
   searchParams,
@@ -22,7 +15,7 @@ export default async function TVPage({
 
   // ── Search mode ──────────────────────────────────────────────
   if (title) {
-    const results: ShowSearchResult[] = await searchShows(title);
+    const results: ShowResult[] = await searchShows(title);
 
     return (
       <main className={styles.container}>
@@ -46,25 +39,20 @@ export default async function TVPage({
   }
 
   // ── Browse mode ──────────────────────────────────────────────
-  let popularShows: MediaItem[] = [];
-  let topRatedShows: MediaItem[] = [];
+  const [popularData, topRatedData] = await Promise.all([
+    apiGet<ListResponse<ShowResult>>("/shows/popular"),
+    apiGet<ListResponse<ShowResult>>(
+      "/community/discovery?type=show&sort=top-rated",
+    ),
+  ]);
 
-  try {
-    const [popularData, topRatedData] = await Promise.all([
-      apiGet<ShowListResponse>("/shows/popular"),
-      apiGet<ShowListResponse>("/community/discovery?type=show&sort=top-rated"),
-    ]);
-
-    popularShows = (popularData.results ?? []).map(normalizeShow);
-    if (topRatedData) {
-      topRatedShows = (topRatedData.results ?? []).map(normalizeShow);
-    }
-  } catch {
-    // API unreachable — show empty states
-  }
+  const popularShows = (popularData.results ?? []).map(normalizeShow);
+  const topRatedShows = topRatedData
+    ? (topRatedData.results ?? []).map(normalizeShow)
+    : [];
 
   return (
-    <div className="pt-16 px-4 sm:px-8 pb-16 max-w-7xl mx-auto">
+    <div className="pt-16 px-2 sm:px-4 lg:px-6 pb-16">
       {topRatedShows.length > 0 && (
         <section className="mb-12">
           <h2 className="text-3xl font-bold text-white mb-6">

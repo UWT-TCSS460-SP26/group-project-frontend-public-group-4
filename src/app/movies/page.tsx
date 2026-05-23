@@ -1,25 +1,9 @@
-import MediaGrid from "@/components/MediaGrid";
-import { MovieCard } from "@/components/result-cards";
-import type { MediaItem } from "@/types/media";
 import { apiGet, searchMovies } from "@/lib/api";
 import { normalizeMovie } from "@/lib/normalize";
 import styles from "./page.module.css";
-import type { MovieSearchResult } from "@/lib/api";
-
-/** Shape returned by /movies/popular and /community/discovery?type=movie */
-interface MovieResult {
-  id: number;
-  title: string;
-  poster: string | null;
-  releaseDate: string;
-  description: string;
-  genreIds: number[];
-}
-
-interface MovieListResponse {
-  count: number;
-  results: MovieResult[];
-}
+import type { ListResponse, MovieResult } from "@/types/media";
+import MediaGrid from "@/components/MediaGrid";
+import { MovieCard } from "@/components/result-cards";
 
 export default async function MoviesPage({
   searchParams,
@@ -31,7 +15,7 @@ export default async function MoviesPage({
 
   // ── Search mode ──────────────────────────────────────────────
   if (title) {
-    const results: MovieSearchResult[] = await searchMovies(title);
+    const results: MovieResult[] = await searchMovies(title);
 
     return (
       <main className={styles.container}>
@@ -55,27 +39,20 @@ export default async function MoviesPage({
   }
 
   // ── Browse mode ──────────────────────────────────────────────
-  let popularMovies: MediaItem[] = [];
-  let topRatedMovies: MediaItem[] = [];
+  const [popularData, topRatedData] = await Promise.all([
+    apiGet<ListResponse<MovieResult>>("/movies/popular"),
+    apiGet<ListResponse<MovieResult>>(
+      "/community/discovery?type=movie&sort=top-rated",
+    ),
+  ]);
 
-  try {
-    const [popularData, topRatedData] = await Promise.all([
-      apiGet<MovieListResponse>("/movies/popular"),
-      apiGet<MovieListResponse>(
-        "/community/discovery?type=movie&sort=top-rated",
-      ),
-    ]);
-
-    popularMovies = (popularData.results ?? []).map(normalizeMovie);
-    if (topRatedData) {
-      topRatedMovies = (topRatedData.results ?? []).map(normalizeMovie);
-    }
-  } catch {
-    // API unreachable — show empty states
-  }
+  const popularMovies = (popularData.results ?? []).map(normalizeMovie);
+  const topRatedMovies = topRatedData
+    ? (topRatedData.results ?? []).map(normalizeMovie)
+    : [];
 
   return (
-    <div className="pt-16 px-4 sm:px-8 pb-16 max-w-7xl mx-auto">
+    <div className="pt-16 px-2 sm:px-4 lg:px-6 pb-16">
       {topRatedMovies.length > 0 && (
         <section className="mb-12">
           <h2 className="text-3xl font-bold text-white mb-6">
