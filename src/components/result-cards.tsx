@@ -76,7 +76,7 @@ export function MovieCard({ movie }: { movie: MovieResult }) {
     : "";
 
   return (
-    <Link href={`/movie/${movie.id}`} className={styles.cardLink}>
+    <Link href={`/movies/${movie.id}`} className={styles.cardLink}>
       <article
         className={styles.card}
         aria-labelledby={`movie-${movie.id}-title`}
