@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { apiGet } from "@/lib/api";
+import { auth } from "@/auth";
 import BlurredBackground from "@/components/BlurredBackground";
 import MediaActionButtons from "@/components/MediaActionButtons";
 import CommunityStats from "@/components/CommunityStats";
@@ -63,6 +64,8 @@ export default async function TVDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const session = await auth();
+  const isLoggedIn = !!session?.user;
   let show: ShowDetail | null = null;
   let error = false;
 
@@ -258,7 +261,7 @@ export default async function TVDetailPage({
         <div className="mt-16 flex flex-col md:flex-row gap-8">
           {/* Left Column: Actions align with poster */}
           <div className="flex-shrink-0 w-full md:w-80 flex flex-col gap-4">
-            <MediaActionButtons />
+            <MediaActionButtons isLoggedIn={isLoggedIn} />
             <CommunityStats community={community} />
           </div>
 
