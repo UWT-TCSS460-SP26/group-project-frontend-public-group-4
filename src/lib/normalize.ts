@@ -1,4 +1,5 @@
 import type { MediaItem } from "@/types/media";
+import type { DiscoveryResult } from "@/types/media";
 
 /**
  * Map the partner API's movie shape into our internal MediaItem type.
@@ -10,6 +11,8 @@ export function normalizeMovie(m: {
   releaseDate: string;
   description: string;
   genreIds: number[];
+  averageRating?: number | null;
+  reviewCount?: number;
 }): MediaItem {
   return {
     id: m.id,
@@ -18,6 +21,26 @@ export function normalizeMovie(m: {
     releaseDate: m.releaseDate,
     description: m.description,
     genreIds: m.genreIds,
+    ...(m.averageRating != null && { rating: m.averageRating }),
+    ...(m.reviewCount != null && { reviewCount: m.reviewCount }),
+  };
+}
+
+/**
+ * Map a /community/discovery result into our internal MediaItem type.
+ * Discovery items use tmdbId, posterPath, overview — different keys
+ * than /movies/popular or /shows/popular.
+ */
+export function normalizeDiscovery(d: DiscoveryResult): MediaItem {
+  return {
+    id: d.tmdbId,
+    title: d.title ?? "Untitled",
+    posterPath: d.posterPath,
+    releaseDate: d.releaseDate ?? "",
+    description: d.overview ?? "",
+    genreIds: [], // discovery endpoint does not return genre IDs
+    ...(d.averageRating != null && { rating: d.averageRating }),
+    ...(d.reviewCount != null && { reviewCount: d.reviewCount }),
   };
 }
 
@@ -31,6 +54,8 @@ export function normalizeShow(s: {
   releaseDate: string;
   shortDescription: string;
   genreIds: number[];
+  averageRating?: number | null;
+  reviewCount?: number;
 }): MediaItem {
   return {
     id: s.id,
@@ -39,5 +64,7 @@ export function normalizeShow(s: {
     releaseDate: s.releaseDate,
     description: s.shortDescription,
     genreIds: s.genreIds,
+    ...(s.averageRating != null && { rating: s.averageRating }),
+    ...(s.reviewCount != null && { reviewCount: s.reviewCount }),
   };
 }

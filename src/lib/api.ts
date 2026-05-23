@@ -1,64 +1,27 @@
 const BASE_URL = "https://group-project-backend-group-3-1.onrender.com";
 
-export interface RatingRecord {
-  ratingId: number;
-  userId: number;
-  isMovie: boolean;
-  rating: number;
-  tmdbIdentifier: number;
-  author: {
-    subjectId: string;
-    displayName: string;
-  };
-}
+import type { MovieResult, ShowResult } from "@/types/media";
+import type { RatingRecord, ReviewRecord } from "@/types/community";
 
-export interface ReviewRecord {
-  reviewId: number;
-  userId: number;
-  isMovie: boolean;
-  dateOfReview: string;
-  reviewContent: string;
-  tmdbIdentifier: number;
-}
-
-export interface MovieSearchResult {
-  title: string;
-  poster: string | null;
-  releaseDate: string;
-  id: number;
-  description: string;
-}
-
-export interface ShowSearchResult {
-  title: string;
-  posterImage: string | null;
-  releaseDate: string;
-  id: number;
-  shortDescription: string;
-  genreIds: number[];
-}
-
-export async function searchMovies(
-  title: string,
-): Promise<MovieSearchResult[]> {
+export async function searchMovies(title: string): Promise<MovieResult[]> {
   try {
     const res = await fetch(
       `${BASE_URL}/movies?title=${encodeURIComponent(title)}`,
     );
     if (!res.ok) throw new Error(`movies search returned ${res.status}`);
-    return (await res.json()) as MovieSearchResult[];
+    return (await res.json()) as MovieResult[];
   } catch (e) {
     return [];
   }
 }
 
-export async function searchShows(title: string): Promise<ShowSearchResult[]> {
+export async function searchShows(title: string): Promise<ShowResult[]> {
   try {
     const res = await fetch(
       `${BASE_URL}/shows?title=${encodeURIComponent(title)}`,
     );
     if (!res.ok) throw new Error(`shows search returned ${res.status}`);
-    return (await res.json()) as ShowSearchResult[];
+    return (await res.json()) as ShowResult[];
   } catch (e) {
     return [];
   }
@@ -122,4 +85,38 @@ export async function apiGet<T = unknown>(path: string): Promise<T> {
     );
   }
   return response.json() as Promise<T>;
+}
+
+/**
+ * Fetches community stats (avg rating + review count) for a batch of
+ * movie or show IDs. Returns a Map of tmdbId → stats.
+ */
+export async function getCommunityStats(
+  ids: number[],
+  type: "movie" | "show",
+): Promise<Map<number, { rating: number | null; reviewCount: number }>> {
+  const endpoint = type === "movie" ? "/movies/details" : "/shows/details";
+  const results = await Promise.allSettled(
+    ids.map(async (id) => {
+      const res = await fetch(`${BASE_URL}${endpoint}/${id}`, {
+        cache: "no-store",
+      });
+      if (!res.ok) throw new Error(`details ${id} returned ${res.status}`);
+      const data = (await res.json()) as {
+        community: { averageRating: number | null; reviewCount: number };
+      };
+      return { id, community: data.community };
+    }),
+  );
+
+  const map = new Map<number, { rating: number | null; reviewCount: number }>();
+  for (const r of results) {
+    if (r.status === "fulfilled") {
+      map.set(r.value.id, {
+        rating: r.value.community.averageRating,
+        reviewCount: r.value.community.reviewCount,
+      });
+    }
+  }
+  return map;
 }

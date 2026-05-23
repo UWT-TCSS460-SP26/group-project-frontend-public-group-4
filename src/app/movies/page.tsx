@@ -1,7 +1,13 @@
-import React from "react";
-import { searchMovies } from "@/lib/api";
-import { MovieCard } from "@/components/result-cards";
+import { apiGet, searchMovies, getCommunityStats } from "@/lib/api";
+import { normalizeMovie, normalizeDiscovery } from "@/lib/normalize";
 import styles from "./page.module.css";
+import type {
+  ListResponse,
+  MovieResult,
+  DiscoveryResponse,
+} from "@/types/media";
+import MediaGrid from "@/components/MediaGrid";
+import { MovieCard } from "@/components/result-cards";
 
 export default async function MoviesPage({
   searchParams,
@@ -11,32 +17,114 @@ export default async function MoviesPage({
   const resolvedParams = await searchParams;
   const title = (resolvedParams?.title ?? "").trim();
 
-  if (!title) {
+  // ── Search mode ──────────────────────────────────────────────
+  if (title) {
+    const results: MovieResult[] = await searchMovies(title);
+
     return (
       <main className={styles.container}>
-        <h1 className={styles.title}>Search movies</h1>
-        <p className={styles.emptyText}>
-          Enter a title in the search box to find movies.
-        </p>
+        <h1 className={styles.title}>
+          Search results for &ldquo;{title}&rdquo;
+        </h1>
+
+        {results.length === 0 ? (
+          <p className={styles.emptyText}>
+            No movies found for &ldquo;{title}&rdquo;.
+          </p>
+        ) : (
+          <div className={styles.grid}>
+            {results.map((m) => (
+              <MovieCard key={m.id} movie={m} />
+            ))}
+          </div>
+        )}
       </main>
     );
   }
 
-  const results = await searchMovies(title);
+  // ── Browse mode ──────────────────────────────────────────────
+  async function safeDiscovery(sort: string): Promise<DiscoveryResponse> {
+    try {
+      return await apiGet<DiscoveryResponse>(
+        `/community/discovery?type=movie&sort=${sort}`,
+      );
+    } catch {
+      return {
+        type: "movie",
+        sort: sort as DiscoveryResponse["sort"],
+        results: [],
+      };
+    }
+  }
+
+  const [popularData, topRatedData, mostReviewedData] = await Promise.all([
+    apiGet<ListResponse<MovieResult>>("/movies/popular"),
+    safeDiscovery("top-rated"),
+    safeDiscovery("most-reviewed"),
+  ]);
+
+  const rawPopular = popularData.results ?? [];
+  const rawTopRated = topRatedData?.results ?? [];
+  const rawMostReviewed = mostReviewedData?.results ?? [];
+
+  // Batch-fetch community stats for popular movies only
+  // Discovery results already include averageRating + reviewCount
+  const popularIds = [...new Set(rawPopular.map((m) => m.id))];
+  const statsMap =
+    popularIds.length > 0
+      ? await getCommunityStats(popularIds, "movie")
+      : new Map();
+
+  function withStats(items: MovieResult[]) {
+    return items.map((item) => {
+      const stats = statsMap.get(item.id);
+      return normalizeMovie({
+        ...item,
+        ...(stats && {
+          averageRating: stats.rating,
+          reviewCount: stats.reviewCount,
+        }),
+      });
+    });
+  }
+
+  const popularMovies = withStats(rawPopular);
+  const topRatedMovies = rawTopRated.map(normalizeDiscovery);
+  const mostReviewedMovies = rawMostReviewed.map(normalizeDiscovery);
 
   return (
-    <main className={styles.container}>
-      <h1 className={styles.title}>Search results for "{title}"</h1>
-
-      {results.length === 0 ? (
-        <p className={styles.emptyText}>No movies found for "{title}".</p>
-      ) : (
-        <div className={styles.grid}>
-          {results.map((m) => (
-            <MovieCard key={m.id} movie={m} />
-          ))}
-        </div>
+    <div className="pt-16 px-2 sm:px-4 lg:px-6 pb-16">
+      {topRatedMovies.length > 0 && (
+        <section className="mb-12">
+          <h2 className="text-3xl font-bold text-white mb-6">
+            Top Rated Movies
+          </h2>
+          <MediaGrid
+            items={topRatedMovies}
+            getItemHref={(item) => `/movies/${item.id}`}
+          />
+        </section>
       )}
-    </main>
+
+      {mostReviewedMovies.length > 0 && (
+        <section className="mb-12">
+          <h2 className="text-3xl font-bold text-white mb-6">
+            Most Reviewed Movies
+          </h2>
+          <MediaGrid
+            items={mostReviewedMovies}
+            getItemHref={(item) => `/movies/${item.id}`}
+          />
+        </section>
+      )}
+
+      <section>
+        <h2 className="text-3xl font-bold text-white mb-6">Popular Movies</h2>
+        <MediaGrid
+          items={popularMovies}
+          getItemHref={(item) => `/movies/${item.id}`}
+        />
+      </section>
+    </div>
   );
 }
