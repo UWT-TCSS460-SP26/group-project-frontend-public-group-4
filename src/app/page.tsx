@@ -1,6 +1,6 @@
 import MediaGrid from "@/components/MediaGrid";
 import type { ListResponse, MovieResult, ShowResult } from "@/types/media";
-import { apiGet } from "@/lib/api";
+import { apiGet, getCommunityStats } from "@/lib/api";
 import { normalizeMovie, normalizeShow } from "@/lib/normalize";
 
 export default async function Home() {
@@ -9,8 +9,37 @@ export default async function Home() {
     apiGet<ListResponse<ShowResult>>("/shows/popular"),
   ]);
 
-  const movies = (movieData.results ?? []).map(normalizeMovie);
-  const shows = (showData.results ?? []).map(normalizeShow);
+  const rawMovies = movieData.results ?? [];
+  const rawShows = showData.results ?? [];
+
+  // Batch-fetch community stats
+  const movieIds = [...new Set(rawMovies.map((m) => m.id))];
+  const showIds = [...new Set(rawShows.map((s) => s.id))];
+  const [movieStats, showStats] = await Promise.all([
+    movieIds.length > 0 ? getCommunityStats(movieIds, "movie") : new Map(),
+    showIds.length > 0 ? getCommunityStats(showIds, "show") : new Map(),
+  ]);
+
+  const movies = rawMovies.map((item) => {
+    const stats = movieStats.get(item.id);
+    return normalizeMovie({
+      ...item,
+      ...(stats && {
+        averageRating: stats.rating,
+        reviewCount: stats.reviewCount,
+      }),
+    });
+  });
+  const shows = rawShows.map((item) => {
+    const stats = showStats.get(item.id);
+    return normalizeShow({
+      ...item,
+      ...(stats && {
+        averageRating: stats.rating,
+        reviewCount: stats.reviewCount,
+      }),
+    });
+  });
 
   return (
     <div className="pt-16 px-2 sm:px-4 lg:px-6 pb-16">

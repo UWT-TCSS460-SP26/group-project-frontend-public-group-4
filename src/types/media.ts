@@ -7,6 +7,7 @@ export interface MediaItem {
   description: string;
   genreIds: number[];
   rating?: number;
+  reviewCount?: number;
 }
 
 export interface ShowResult {

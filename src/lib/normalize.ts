@@ -10,6 +10,8 @@ export function normalizeMovie(m: {
   releaseDate: string;
   description: string;
   genreIds: number[];
+  averageRating?: number | null;
+  reviewCount?: number;
 }): MediaItem {
   return {
     id: m.id,
@@ -18,6 +20,8 @@ export function normalizeMovie(m: {
     releaseDate: m.releaseDate,
     description: m.description,
     genreIds: m.genreIds,
+    ...(m.averageRating != null && { rating: m.averageRating }),
+    ...(m.reviewCount != null && { reviewCount: m.reviewCount }),
   };
 }
 
@@ -31,6 +35,8 @@ export function normalizeShow(s: {
   releaseDate: string;
   shortDescription: string;
   genreIds: number[];
+  averageRating?: number | null;
+  reviewCount?: number;
 }): MediaItem {
   return {
     id: s.id,
@@ -39,5 +45,7 @@ export function normalizeShow(s: {
     releaseDate: s.releaseDate,
     description: s.shortDescription,
     genreIds: s.genreIds,
+    ...(s.averageRating != null && { rating: s.averageRating }),
+    ...(s.reviewCount != null && { reviewCount: s.reviewCount }),
   };
 }

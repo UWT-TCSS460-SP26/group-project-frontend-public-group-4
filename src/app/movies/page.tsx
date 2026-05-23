@@ -1,4 +1,4 @@
-import { apiGet, searchMovies } from "@/lib/api";
+import { apiGet, searchMovies, getCommunityStats } from "@/lib/api";
 import { normalizeMovie } from "@/lib/normalize";
 import styles from "./page.module.css";
 import type { ListResponse, MovieResult } from "@/types/media";
@@ -46,10 +46,29 @@ export default async function MoviesPage({
     ),
   ]);
 
-  const popularMovies = (popularData.results ?? []).map(normalizeMovie);
-  const topRatedMovies = topRatedData
-    ? (topRatedData.results ?? []).map(normalizeMovie)
-    : [];
+  const rawPopular = popularData.results ?? [];
+  const rawTopRated = topRatedData?.results ?? [];
+
+  // Batch-fetch community stats for all unique IDs
+  const allIds = [...new Set([...rawPopular, ...rawTopRated].map((m) => m.id))];
+  const statsMap =
+    allIds.length > 0 ? await getCommunityStats(allIds, "movie") : new Map();
+
+  function withStats(items: MovieResult[]) {
+    return items.map((item) => {
+      const stats = statsMap.get(item.id);
+      return normalizeMovie({
+        ...item,
+        ...(stats && {
+          averageRating: stats.rating,
+          reviewCount: stats.reviewCount,
+        }),
+      });
+    });
+  }
+
+  const popularMovies = withStats(rawPopular);
+  const topRatedMovies = withStats(rawTopRated);
 
   return (
     <div className="pt-16 px-2 sm:px-4 lg:px-6 pb-16">

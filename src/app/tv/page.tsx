@@ -1,4 +1,4 @@
-import { apiGet, searchShows } from "@/lib/api";
+import { apiGet, searchShows, getCommunityStats } from "@/lib/api";
 import { normalizeShow } from "@/lib/normalize";
 import styles from "./page.module.css";
 import type { ListResponse, ShowResult } from "@/types/media";
@@ -46,10 +46,29 @@ export default async function TVPage({
     ),
   ]);
 
-  const popularShows = (popularData.results ?? []).map(normalizeShow);
-  const topRatedShows = topRatedData
-    ? (topRatedData.results ?? []).map(normalizeShow)
-    : [];
+  const rawPopular = popularData.results ?? [];
+  const rawTopRated = topRatedData?.results ?? [];
+
+  // Batch-fetch community stats for all unique IDs
+  const allIds = [...new Set([...rawPopular, ...rawTopRated].map((s) => s.id))];
+  const statsMap =
+    allIds.length > 0 ? await getCommunityStats(allIds, "show") : new Map();
+
+  function withStats(items: ShowResult[]) {
+    return items.map((item) => {
+      const stats = statsMap.get(item.id);
+      return normalizeShow({
+        ...item,
+        ...(stats && {
+          averageRating: stats.rating,
+          reviewCount: stats.reviewCount,
+        }),
+      });
+    });
+  }
+
+  const popularShows = withStats(rawPopular);
+  const topRatedShows = withStats(rawTopRated);
 
   return (
     <div className="pt-16 px-2 sm:px-4 lg:px-6 pb-16">
