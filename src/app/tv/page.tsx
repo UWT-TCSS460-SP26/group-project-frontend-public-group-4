@@ -1,58 +1,42 @@
-import MediaGrid from "@/components/MediaGrid";
-import type { MediaItem } from "@/types/media";
-import { apiGet } from "@/lib/api";
-import { normalizeShow } from "@/lib/normalize";
+import React from "react";
+import { searchShows } from "@/lib/api";
+import { ShowCard } from "@/components/result-cards";
+import styles from "./page.module.css";
 
-/** Shape the backend returns for /shows/popular */
-interface ShowResult {
-  id: number;
-  title: string;
-  posterImage: string | null;
-  releaseDate: string;
-  shortDescription: string;
-  genreIds: number[];
-}
+export default async function TvPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ title?: string }>;
+}) {
+  const resolvedParams = await searchParams;
+  const title = (resolvedParams?.title ?? "").trim();
 
-interface ShowListResponse {
-  count: number;
-  results: ShowResult[];
-}
-
-export default async function TVPage() {
-  let popularShows: MediaItem[] = [];
-  let topRatedShows: MediaItem[] = [];
-
-  try {
-    const [popularData, topRatedData] = await Promise.all([
-      apiGet<ShowListResponse>("/shows/popular"),
-      apiGet<ShowListResponse>(
-        "/community/discovery?type=show&sort=top-rated",
-      ),
-    ]);
-
-    popularShows = (popularData.results ?? []).map(normalizeShow);
-    if (topRatedData) {
-      topRatedShows = (topRatedData.results ?? []).map(normalizeShow);
-    }
-  } catch {
-    // API unreachable — show empty states
+  if (!title) {
+    return (
+      <main className={styles.container}>
+        <h1 className={styles.title}>Search TV shows</h1>
+        <p className={styles.emptyText}>
+          Enter a title in the search box to find TV shows.
+        </p>
+      </main>
+    );
   }
 
-  return (
-    <div className="pt-16 px-4 sm:px-8 pb-16 max-w-7xl mx-auto">
-      {topRatedShows.length > 0 && (
-        <section className="mb-12">
-          <h2 className="text-3xl font-bold text-white mb-6">
-            Top Rated TV Shows
-          </h2>
-          <MediaGrid items={topRatedShows} getItemHref={(item) => `/tv/${item.id}`} />
-        </section>
-      )}
+  const results = await searchShows(title);
 
-      <section>
-        <h2 className="text-3xl font-bold text-white mb-6">Popular TV Shows</h2>
-        <MediaGrid items={popularShows} getItemHref={(item) => `/tv/${item.id}`} />
-      </section>
-    </div>
+  return (
+    <main className={styles.container}>
+      <h1 className={styles.title}>Search results for "{title}"</h1>
+
+      {results.length === 0 ? (
+        <p className={styles.emptyText}>No shows found for "{title}".</p>
+      ) : (
+        <div className={styles.grid}>
+          {results.map((s, idx) => (
+            <ShowCard key={s.title + idx} show={s} />
+          ))}
+        </div>
+      )}
+    </main>
   );
 }

@@ -1,64 +1,42 @@
-import MediaGrid from "@/components/MediaGrid";
-import type { MediaItem } from "@/types/media";
-import { apiGet } from "@/lib/api";
-import { normalizeMovie } from "@/lib/normalize";
+import React from "react";
+import { searchMovies } from "@/lib/api";
+import { MovieCard } from "@/components/result-cards";
+import styles from "./page.module.css";
 
-/** Shape the backend returns for both /movies/popular and /community/discovery?type=movie */
-interface MovieResult {
-  id: number;
-  title: string;
-  poster: string | null;
-  releaseDate: string;
-  description: string;
-  genreIds: number[];
-}
+export default async function MoviesPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ title?: string }>;
+}) {
+  const resolvedParams = await searchParams;
+  const title = (resolvedParams?.title ?? "").trim();
 
-interface MovieListResponse {
-  count: number;
-  results: MovieResult[];
-}
-
-export default async function MoviesPage() {
-  let popularMovies: MediaItem[] = [];
-  let topRatedMovies: MediaItem[] = [];
-
-  try {
-    const [popularData, topRatedData] = await Promise.all([
-      apiGet<MovieListResponse>("/movies/popular"),
-      apiGet<MovieListResponse>(
-        "/community/discovery?type=movie&sort=top-rated",
-      ),
-    ]);
-
-    popularMovies = (popularData.results ?? []).map(normalizeMovie);
-    if (topRatedData) {
-      topRatedMovies = (topRatedData.results ?? []).map(normalizeMovie);
-    }
-  } catch {
-    // API unreachable — show empty states
+  if (!title) {
+    return (
+      <main className={styles.container}>
+        <h1 className={styles.title}>Search movies</h1>
+        <p className={styles.emptyText}>
+          Enter a title in the search box to find movies.
+        </p>
+      </main>
+    );
   }
 
-  return (
-    <div className="pt-16 px-4 sm:px-8 pb-16 max-w-7xl mx-auto">
-      {topRatedMovies.length > 0 && (
-        <section className="mb-12">
-          <h2 className="text-3xl font-bold text-white mb-6">
-            Top Rated Movies
-          </h2>
-          <MediaGrid
-            items={topRatedMovies}
-            getItemHref={(item) => `/movies/${item.id}`}
-          />
-        </section>
-      )}
+  const results = await searchMovies(title);
 
-      <section>
-        <h2 className="text-3xl font-bold text-white mb-6">Popular Movies</h2>
-        <MediaGrid
-          items={popularMovies}
-          getItemHref={(item) => `/movies/${item.id}`}
-        />
-      </section>
-    </div>
+  return (
+    <main className={styles.container}>
+      <h1 className={styles.title}>Search results for "{title}"</h1>
+
+      {results.length === 0 ? (
+        <p className={styles.emptyText}>No movies found for "{title}".</p>
+      ) : (
+        <div className={styles.grid}>
+          {results.map((m) => (
+            <MovieCard key={m.id} movie={m} />
+          ))}
+        </div>
+      )}
+    </main>
   );
 }
