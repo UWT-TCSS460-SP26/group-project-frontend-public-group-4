@@ -15,7 +15,9 @@ export default async function MoviesPage({
     return (
       <main className={styles.container}>
         <h1 className={styles.title}>Search movies</h1>
-        <p className={styles.emptyText}>Enter a title in the search box to find movies.</p>
+        <p className={styles.emptyText}>
+          Enter a title in the search box to find movies.
+        </p>
       </main>
     );
   }
