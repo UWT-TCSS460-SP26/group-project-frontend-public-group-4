@@ -48,7 +48,7 @@ function ReviewCard({ review, idx }: { review: Review; idx: number }) {
         </span>
       </div>
       <div className="bg-neutral-900/60 p-5">
-        <p className="text-neutral-300 text-sm leading-relaxed whitespace-pre-wrap break-words">
+        <p className="text-neutral-300 text-sm leading-relaxed whitespace-pre-wrap wrap-break-word">
           {displayContent}
         </p>
         {isLong && (

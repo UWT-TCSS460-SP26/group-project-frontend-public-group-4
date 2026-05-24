@@ -45,9 +45,7 @@ export default async function TVPage({
   // ── Browse mode ──────────────────────────────────────────────
   const [popularData, topRatedData, mostReviewedData] = await Promise.all([
     apiGet<ListResponse<ShowResult>>("/shows/popular"),
-    apiGet<DiscoveryResponse>(
-      "/community/discovery?type=show&sort=top-rated",
-    ),
+    apiGet<DiscoveryResponse>("/community/discovery?type=show&sort=top-rated"),
     apiGet<DiscoveryResponse>(
       "/community/discovery?type=show&sort=most-reviewed",
     ),

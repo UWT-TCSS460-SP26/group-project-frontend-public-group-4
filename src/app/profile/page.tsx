@@ -4,17 +4,14 @@ import { useEffect, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { Star, RateReview, Movie, Tv } from "@mui/icons-material";
-import { getRatings, getReviews, type RatingRecord, type ReviewRecord } from "@/lib/api";
+import { getRatings, getReviews } from "@/lib/api";
+import { RatingRecord, ReviewRecord } from "@/types/community";
 
 type Tab = "ratings" | "reviews";
 
 function ScoreBadge({ score }: { score: number }) {
   const color =
-    score >= 8
-      ? "bg-green-600"
-      : score >= 6
-        ? "bg-amber-500"
-        : "bg-red-500";
+    score >= 8 ? "bg-green-600" : score >= 6 ? "bg-amber-500" : "bg-red-500";
   return (
     <span
       className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded text-xs font-semibold text-white ${color}`}
@@ -28,7 +25,11 @@ function ScoreBadge({ score }: { score: number }) {
 function MediaBadge({ isMovie }: { isMovie: boolean }) {
   return (
     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-zinc-700 text-zinc-300">
-      {isMovie ? <Movie style={{ fontSize: 14 }} /> : <Tv style={{ fontSize: 14 }} />}
+      {isMovie ? (
+        <Movie style={{ fontSize: 14 }} />
+      ) : (
+        <Tv style={{ fontSize: 14 }} />
+      )}
       {isMovie ? "Movie" : "Show"}
     </span>
   );
@@ -133,7 +134,11 @@ export default function ProfilePage() {
                 : "text-zinc-400 hover:text-zinc-200"
             }`}
           >
-            {t === "ratings" ? <Star style={{ fontSize: 18 }} /> : <RateReview style={{ fontSize: 18 }} />}
+            {t === "ratings" ? (
+              <Star style={{ fontSize: 18 }} />
+            ) : (
+              <RateReview style={{ fontSize: 18 }} />
+            )}
             {t === "ratings" ? "Ratings" : "Reviews"}
           </button>
         ))}
@@ -153,7 +158,9 @@ export default function ProfilePage() {
         <div className="text-center py-8">
           <p className="text-zinc-400">Could not load data.</p>
           <button
-            onClick={() => session.accessToken && fetchData(session.accessToken)}
+            onClick={() =>
+              session.accessToken && fetchData(session.accessToken)
+            }
             className="mt-2 text-sm text-amber-400 hover:text-amber-300 transition-colors"
           >
             Retry

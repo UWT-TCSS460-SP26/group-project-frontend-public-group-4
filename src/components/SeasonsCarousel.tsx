@@ -26,7 +26,7 @@ export default function SeasonsCarousel({ seasons }: SeasonsCarouselProps) {
   return (
     <div className="mt-12">
       <h2 className="text-2xl font-bold mb-4">Seasons</h2>
-      <div className="flex overflow-x-auto gap-4 pb-4 snap-x [color-scheme:dark] [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:rounded-full [scrollbar-width:thin] [scrollbar-color:#404040_transparent]">
+      <div className="flex overflow-x-auto gap-4 pb-4 snap-x scheme-dark [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:rounded-full scrollbar-thin [scrollbar-color:#404040_transparent]">
         {displaySeasons.map((season) => {
           const seasonPosterUrl = season.poster_path
             ? `https://image.tmdb.org/t/p/w500${season.poster_path}`
@@ -38,9 +38,9 @@ export default function SeasonsCarousel({ seasons }: SeasonsCarouselProps) {
           return (
             <div
               key={season.id}
-              className="w-36 sm:w-40 flex-shrink-0 snap-start group relative overflow-hidden rounded-lg bg-neutral-800/50 transition-transform hover:scale-[1.03] border border-neutral-700/50"
+              className="w-36 sm:w-40 shrink-0 snap-start group relative overflow-hidden rounded-lg bg-neutral-800/50 transition-transform hover:scale-[1.03] border border-neutral-700/50"
             >
-              <div className="aspect-[2/3] relative bg-neutral-900">
+              <div className="aspect-2/3 relative bg-neutral-900">
                 <Image
                   src={seasonPosterUrl}
                   alt={`${season.name} poster`}

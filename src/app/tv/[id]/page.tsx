@@ -115,12 +115,12 @@ export default async function TVDetailPage({
   const genreString = (metadata.genres || []).map((g) => g.name).join(", ");
 
   return (
-    <main className="relative w-full flex-grow flex flex-col min-h-screen">
+    <main className="relative w-full grow flex flex-col min-h-screen">
       {/* Dynamic Blurred Poster Background */}
       <BlurredBackground imageUrl={posterUrl} />
 
       {/* Content Container */}
-      <div className="relative z-10 pt-16 px-4 sm:px-8 pb-16 max-w-7xl mx-auto w-full text-white flex-grow">
+      <div className="relative z-10 pt-16 px-4 sm:px-8 pb-16 max-w-7xl mx-auto w-full text-white grow">
         {/* Navigation */}
         <div className="mb-8">
           <Link
@@ -133,7 +133,7 @@ export default async function TVDetailPage({
 
         <div className="flex flex-col md:flex-row gap-8">
           {/* Left Column: Poster & Action Buttons */}
-          <div className="flex-shrink-0 w-full md:w-80 flex flex-col gap-4">
+          <div className="shrink-0 w-full md:w-80 flex flex-col gap-4">
             <Image
               src={posterUrl}
               alt={`${metadata.name} poster`}
@@ -148,7 +148,7 @@ export default async function TVDetailPage({
           </div>
 
           {/* Right Column: Details */}
-          <div className="flex flex-col flex-grow min-w-0">
+          <div className="flex flex-col grow min-w-0">
             <h1 className="text-4xl font-bold mb-2">
               {metadata.name}{" "}
               {releaseYear && (
@@ -260,13 +260,13 @@ export default async function TVDetailPage({
         {/* Bottom Section: Actions & Reviews */}
         <div className="mt-16 flex flex-col md:flex-row gap-8">
           {/* Left Column: Actions align with poster */}
-          <div className="flex-shrink-0 w-full md:w-80 flex flex-col gap-4">
+          <div className="shrink-0 w-full md:w-80 flex flex-col gap-4">
             <MediaActionButtons isLoggedIn={isLoggedIn} />
             <CommunityStats community={community} />
           </div>
 
           {/* Right Column: Reviews */}
-          <div className="flex flex-col flex-grow min-w-0">
+          <div className="flex flex-col grow min-w-0">
             <RecentReviews
               reviews={
                 community.recentReviews || (community as any).recent_reviews

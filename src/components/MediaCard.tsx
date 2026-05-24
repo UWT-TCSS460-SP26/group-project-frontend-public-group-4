@@ -23,7 +23,7 @@ function extractYear(dateStr: string): string {
 export default function MediaCard({ item, href }: MediaCardProps) {
   const card = (
     <div className="group relative overflow-hidden rounded-lg bg-neutral-800 transition-transform hover:scale-[1.03]">
-      <div className="aspect-[2/3] relative">
+      <div className="aspect-2/3 relative">
         {item.rating != null && (
           <div className="absolute top-2 left-2 z-10 flex items-center gap-1 rounded-md bg-black/70 px-1.5 py-0.5 backdrop-blur-sm">
             <svg
@@ -66,7 +66,7 @@ export default function MediaCard({ item, href }: MediaCardProps) {
           className="object-cover"
         />
         {/* Gradient overlay on hover */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
           <div className="absolute bottom-0 left-0 right-0 p-4">
             <p className="text-sm text-neutral-300 line-clamp-4">
               {item.description}
