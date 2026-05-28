@@ -57,7 +57,7 @@ Raw API response (MovieResult / ShowResult / DiscoveryResult)
 - **Browse pages** (`/movies`, `/tv`, home) fetch popular + discovery data, batch community stats via `getCommunityStats()`, then normalize everything to `MediaItem` and render via `MediaGrid`.
 - **Search mode**: When `?title=` is present, uses `searchMovies()`/`searchShows()` and renders individual `MovieCard`/`ShowCard` from `result-cards.tsx` (different layout than browse cards).
 - **Detail pages** (`/movies/[id]`, `/tv/[id]`): Fetch detail from API (includes metadata + community), render with `BlurredBackground`, poster, metadata grid, community stats, and reviews. Use `auth()` to check login state for action buttons.
-- **Profile page** (`/profile`): Client component, uses `useSession()` + `getRatings()`/`getReviews()` with access token.
+- **Profile page** (`/profile`): Client component, uses `useSession()` + `getRatings()`/`getReviews()` with access token. Extracted components live in `src/components/profile/` (ScoreBadge, MediaBadge, ProfileHeader, TabBar, RatingsList, ReviewsList). Lists are paginated (25 items/page) with First/Prev/Next/Last controls showing max 5 page numbers at a time. Delete buttons appear on row hover. Ratings are sorted newest-first by `ratingId` (no date field on RatingRecord). Reviews are sorted by `dateOfReview` descending.
 
 ### Component conventions
 
@@ -101,6 +101,13 @@ src/
     MediaActionButtons.tsx
     CommunityStats.tsx / RecentReviews.tsx / SeasonsCarousel.tsx
     auth-session-provider.tsx  # SessionProvider wrapper (client)
+    profile/                   # Profile page sub-components
+      ScoreBadge.tsx           # Colored rating badge (green/amber/red)
+      MediaBadge.tsx           # Movie/Show chip with icon
+      ProfileHeader.tsx        # Avatar, name, email
+      TabBar.tsx               # Ratings/Reviews tab switcher
+      RatingsList.tsx          # Paginated list with delete buttons
+      ReviewsList.tsx          # Paginated list with delete buttons
   lib/
     api.ts              # All API calls + ApiError class
     normalize.ts        # Raw API → MediaItem transforms
@@ -120,6 +127,8 @@ NEXTAUTH_SECRET        # Auth.js encryption secret
 - `apiGet<T>(path)` — public GET with 1h revalidation, throws `ApiError` on non-2xx
 - `searchMovies(title)` / `searchShows(title)` — search (returns empty array on error)
 - `getCommunityStats(ids, type)` — batch fetch averageRating + reviewCount for a list of TMDB IDs
-- `getRatings(token)` / `getReviews(token)` — auth-required, used in profile page
+- `getRatings(token)` / `getReviews(token)` — auth-required, fetch current user's data
+- `deleteRating(token, ratingId)` / `deleteReview(token, reviewId)` — DELETE endpoints
+- `fetchMediaTitles(items)` — batch-fetches `metadata.title`/`metadata.name` for a list of `{tmdbId, isMovie}` pairs; returns `Map<string, string>` keyed `"m-{id}"` / `"s-{id}"`. Used to display media titles on profile instead of raw TMDB IDs.
 - `ApiError` class has `status`, `statusText`, `body` — use `instanceof ApiError` for error branching
 - Detail page JSON uses **camelCase** (`averageRating`, `reviewCount`, `recentReviews`) but some fields may arrive in snake_case — `RecentReviews` component handles both.
