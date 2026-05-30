@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { apiGet, getRatings } from "@/lib/api";
+import { apiGet, getRatings, getReviews } from "@/lib/api";
 import { auth } from "@/auth";
 import BlurredBackground from "@/components/BlurredBackground";
 import MediaActionButtons from "@/components/MediaActionButtons";
@@ -57,6 +57,7 @@ export default async function MovieDetailPage({
   const { id } = await params;
   const session = await auth();
   const isLoggedIn = !!session?.user;
+  const accessToken = session?.accessToken;
   let movie: MovieDetail | null = null;
   let error = false;
 
@@ -80,15 +81,29 @@ export default async function MovieDetailPage({
   const { metadata, community } = movie;
 
   let userRating = null;
+  let userReview = null;
   if (isLoggedIn && session?.accessToken) {
-    const ratings = await getRatings(session.accessToken);
-    const found = ratings.find(
+    const [ratings, reviews] = await Promise.all([
+      getRatings(session.accessToken),
+      getReviews(session.accessToken),
+    ]);
+    const foundRating = ratings.find(
       (r: any) => r.tmdbIdentifier === movie.tmdbId && r.isMovie === true,
     );
-    if (found) {
+    if (foundRating) {
       userRating = {
-        id: found.ratingId,
-        value: (found as any).rating ?? (found as any).value,
+        id: foundRating.ratingId,
+        value: (foundRating as any).rating ?? (foundRating as any).value,
+      };
+    }
+    const foundReview = reviews.find(
+      (r) => r.tmdbIdentifier === movie.tmdbId && r.isMovie === true,
+    );
+    if (foundReview) {
+      userReview = {
+        reviewId: foundReview.reviewId,
+        reviewContent: foundReview.reviewContent,
+        dateOfReview: foundReview.dateOfReview,
       };
     }
   }
@@ -237,9 +252,11 @@ export default async function MovieDetailPage({
           <div className="shrink-0 w-full md:w-80 flex flex-col gap-4">
             <MediaActionButtons
               isLoggedIn={isLoggedIn}
+              accessToken={accessToken}
               tmdbIdentifier={movie.tmdbId}
               isMovie={true}
               userRating={userRating}
+              userReview={userReview}
               returnUrl={`/movies/${id}`}
             />
             <CommunityStats community={community} />

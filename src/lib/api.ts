@@ -34,7 +34,7 @@ async function fetchApi<T>(path: string, accessToken: string): Promise<T> {
       "Content-Type": "application/json",
     },
   });
-  if (!res.ok) throw new Error(`API ${path} returned ${res.status}`);
+  if (!res.ok) throw new ApiError(res.status, res.statusText, await res.text());
   return res.json();
 }
 
@@ -69,19 +69,57 @@ export async function deleteRating(
     throw new Error(`DELETE /ratings/${ratingId} returned ${res.status}`);
 }
 
-export async function deleteReview(
+export async function postReview(
   accessToken: string,
-  reviewId: number,
-): Promise<void> {
-  const res = await fetch(`${BASE_URL}/reviews/${reviewId}`, {
-    method: "DELETE",
+  body: { tmdbIdentifier: number; isMovie: boolean; reviewContent: string },
+): Promise<{ success: boolean }> {
+  const res = await fetch(`${BASE_URL}/reviews`, {
+    method: "POST",
     headers: {
       Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
     },
+    body: JSON.stringify(body),
   });
-  if (!res.ok)
-    throw new Error(`DELETE /reviews/${reviewId} returned ${res.status}`);
+  if (!res.ok) {
+    throw new ApiError(res.status, res.statusText, await res.text());
+  }
+  return res.json();
+}
+
+export async function updateReview(
+  accessToken: string,
+  reviewId: number,
+  body: { reviewContent: string},
+): Promise<{ success: boolean }> {
+  const res = await fetch(`${BASE_URL}/reviews/${reviewId}`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    throw new ApiError(res.status, res.statusText, await res.text());
+  }
+  return res.json();
+}
+
+export async function deleteReview(
+  accessToken: string,
+  reviewId: number,
+): Promise<{ success: boolean }> {
+  const res = await fetch(`${BASE_URL}/reviews/${reviewId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  if (!res.ok) {
+    throw new ApiError(res.status, res.statusText, await res.text());
+  }
+  return res.json();
 }
 
 /**
@@ -105,7 +143,7 @@ export class ApiError extends Error {
  */
 export async function apiGet<T = unknown>(path: string): Promise<T> {
   const response = await fetch(`${BASE_URL}${path}`, {
-    next: { revalidate: 3600 },
+    cache: "no-store",
   });
   if (!response.ok) {
     throw new ApiError(
@@ -131,7 +169,7 @@ export async function getCommunityStats(
       const res = await fetch(`${BASE_URL}${endpoint}/${id}`, {
         cache: "no-store",
       });
-      if (!res.ok) throw new Error(`details ${id} returned ${res.status}`);
+      if (!res.ok) throw new ApiError(res.status, res.statusText, await res.text());
       const data = (await res.json()) as {
         community: { averageRating: number | null; reviewCount: number };
       };

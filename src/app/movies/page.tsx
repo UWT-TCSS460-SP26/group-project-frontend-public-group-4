@@ -43,24 +43,10 @@ export default async function MoviesPage({
   }
 
   // ── Browse mode ──────────────────────────────────────────────
-  async function safeDiscovery(sort: string): Promise<DiscoveryResponse> {
-    try {
-      return await apiGet<DiscoveryResponse>(
-        `/community/discovery?type=movie&sort=${sort}`,
-      );
-    } catch {
-      return {
-        type: "movie",
-        sort: sort as DiscoveryResponse["sort"],
-        results: [],
-      };
-    }
-  }
-
   const [popularData, topRatedData, mostReviewedData] = await Promise.all([
     apiGet<ListResponse<MovieResult>>("/movies/popular"),
-    safeDiscovery("top-rated"),
-    safeDiscovery("most-reviewed"),
+    apiGet<DiscoveryResponse>("/community/discovery?type=movie&sort=top-rated"),
+    apiGet<DiscoveryResponse>("/community/discovery?type=movie&sort=most-reviewed"),
   ]);
 
   const rawPopular = popularData.results ?? [];

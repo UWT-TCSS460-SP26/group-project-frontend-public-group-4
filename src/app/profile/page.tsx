@@ -8,7 +8,9 @@ import {
   getReviews,
   deleteRating,
   deleteReview,
+  updateReview,
   fetchMediaTitles,
+  ApiError,
 } from "@/lib/api";
 import type { RatingRecord, ReviewRecord } from "@/types/community";
 import ProfileHeader from "@/components/profile/ProfileHeader";
@@ -16,6 +18,11 @@ import TabBar from "@/components/profile/TabBar";
 import type { Tab } from "@/components/profile/TabBar";
 import RatingsList from "@/components/profile/RatingsList";
 import ReviewsList from "@/components/profile/ReviewsList";
+
+interface Toast {
+  type: "success" | "error";
+  message: string;
+}
 
 export default function ProfilePage() {
   const { data: session, status } = useSession();
@@ -25,6 +32,14 @@ export default function ProfilePage() {
   const [titles, setTitles] = useState<Map<string, string>>(new Map());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [toast, setToast] = useState<Toast | null>(null);
+
+  // Auto-dismiss toast
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => setToast(null), 5000);
+    return () => clearTimeout(timer);
+  }, [toast]);
 
   const fetchData = useCallback(async (token: string) => {
     setLoading(true);
@@ -77,9 +92,23 @@ export default function ProfilePage() {
     try {
       await deleteReview(session.accessToken, reviewId);
       setReviews((prev) => prev.filter((r) => r.reviewId !== reviewId));
-    } catch {
-      // item stays in list; user can retry
+      setToast({ type: "success", message: "Review deleted." });
+    } catch (e) {
+      setToast({
+        type: "error",
+        message: e instanceof ApiError ? e.message : "Failed to delete review.",
+      });
     }
+  };
+
+  const handleUpdateReview = async (reviewId: number, content: string) => {
+    if (!session?.accessToken) throw new Error("Not authenticated");
+    await updateReview(session.accessToken, reviewId, { reviewContent: content });
+    setReviews((prev) =>
+      prev.map((r) =>
+        r.reviewId === reviewId ? { ...r, reviewContent: content } : r,
+      ),
+    );
   };
 
   if (status === "loading") {
@@ -126,6 +155,7 @@ export default function ProfilePage() {
           reviews={reviews}
           titles={titles}
           onDelete={handleDeleteReview}
+          onUpdate={handleUpdateReview}
           loading={loading}
           error={error}
           onRetry={() => session.accessToken && fetchData(session.accessToken)}
@@ -140,6 +170,33 @@ export default function ProfilePage() {
           Back to Home
         </Link>
       </div>
+
+      {/* Toast Popup */}
+      {toast && (
+        <div
+          role="alert"
+          aria-live="assertive"
+          className={`fixed bottom-6 right-6 z-50 max-w-sm rounded-lg px-5 py-4 shadow-xl border transition-all duration-300 ${
+            toast.type === "success"
+              ? "bg-green-900/95 border-green-700 text-green-100"
+              : "bg-red-900/95 border-red-700 text-red-100"
+          }`}
+        >
+          <div className="flex items-start gap-3">
+            <span className="text-lg shrink-0" aria-hidden="true">
+              {toast.type === "success" ? "✓" : "✕"}
+            </span>
+            <p className="text-sm leading-relaxed">{toast.message}</p>
+            <button
+              onClick={() => setToast(null)}
+              aria-label="Close notification"
+              className="shrink-0 text-white/60 hover:text-white ml-2 transition-colors"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
