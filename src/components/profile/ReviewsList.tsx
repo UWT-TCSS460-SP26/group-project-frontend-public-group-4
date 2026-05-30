@@ -54,6 +54,24 @@ export default function ReviewsList({
     return () => clearTimeout(timer);
   }, [toast]);
 
+  const handleSaveEdit = async (reviewId: number) => {
+    if (!editContent.trim() || saving) return;
+    setSaving(true);
+    try {
+      await onUpdate(reviewId, editContent.trim());
+      setEditingId(null);
+      setEditContent("");
+      setToast({ type: "success", message: "Review updated!" });
+    } catch (e) {
+      setToast({
+        type: "error",
+        message: e instanceof ApiError ? e.message : "Failed to update review.",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const sorted = [...reviews].sort(
     (a, b) =>
       new Date(b.dateOfReview).getTime() - new Date(a.dateOfReview).getTime(),
@@ -162,6 +180,7 @@ export default function ReviewsList({
                 id={`edit-review-${r.reviewId}`}
                 value={editContent}
                 onChange={(e) => setEditContent(e.target.value)}
+                onKeyDown={(e) => { if (e.ctrlKey && e.key === "Enter") { e.preventDefault(); handleSaveEdit(r.reviewId); } }}
                 rows={3}
                 maxLength={2000}
                 disabled={saving}
@@ -181,23 +200,7 @@ export default function ReviewsList({
                     Cancel
                   </button>
                   <button
-                    onClick={async () => {
-                      if (!editContent.trim() || saving) return;
-                      setSaving(true);
-                      try {
-                        await onUpdate(r.reviewId, editContent.trim());
-                        setEditingId(null);
-                        setEditContent("");
-                        setToast({ type: "success", message: "Review updated!" });
-                      } catch (e) {
-                        setToast({
-                          type: "error",
-                          message: e instanceof ApiError ? e.message : "Failed to update review.",
-                        });
-                      } finally {
-                        setSaving(false);
-                      }
-                    }}
+                    onClick={() => handleSaveEdit(r.reviewId)}
                     disabled={!editContent.trim() || saving}
                     className="flex items-center gap-1 text-xs px-3 py-1.5 rounded bg-amber-500 text-black font-medium hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >

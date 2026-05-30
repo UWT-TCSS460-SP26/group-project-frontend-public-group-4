@@ -143,7 +143,7 @@ export class ApiError extends Error {
  */
 export async function apiGet<T = unknown>(path: string): Promise<T> {
   const response = await fetch(`${BASE_URL}${path}`, {
-    next: { revalidate: 3600 },
+    cache: "no-store",
   });
   if (!response.ok) {
     throw new ApiError(

@@ -13,7 +13,7 @@ const PLACEHOLDER = "/placeholder-poster.svg";
 function posterUrl(path: string | null): string {
   if (!path) return PLACEHOLDER;
   if (path.startsWith("http")) return path;
-  return `https://image.tmdb.org/t/p/w780${path}`;
+  return `https://image.tmdb.org/t/p/w342${path}`;
 }
 
 function extractYear(dateStr: string): string {

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { postReview, updateReview, deleteReview, ApiError } from "@/lib/api";
 import RatingWidget from "./RatingWidget";
@@ -31,11 +32,18 @@ export default function MediaActionButtons({
   returnUrl,
 }: MediaActionButtonsProps) {
   const { data: session, status } = useSession();
+  const router = useRouter();
   const accessToken = serverToken || session?.accessToken;
   const loggedIn = isLoggedIn || status === "authenticated";
 
   const [reviewContent, setReviewContent] = useState(userReview?.reviewContent ?? "");
   const [existingReview, setExistingReview] = useState(userReview);
+
+  // Sync with server-fetched userReview after router.refresh()
+  useEffect(() => {
+    setExistingReview(userReview);
+  }, [userReview]);
+
   const [editing, setEditing] = useState(false);
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -63,13 +71,14 @@ export default function MediaActionButtons({
         reviewContent: reviewContent.trim(),
       });
       const newReview = {
-        reviewId: Date.now(),
+        reviewId: 0, // placeholder — synced from server after refresh
         reviewContent: reviewContent.trim(),
         dateOfReview: new Date().toISOString(),
       };
       setExistingReview(newReview);
       setReviewContent("");
       setToast({ type: "success", message: "Your review has been submitted!" });
+      router.refresh();
     } catch (e) {
       if (e instanceof ApiError) {
         setToast({ type: "error", message: e.message });
@@ -89,6 +98,7 @@ export default function MediaActionButtons({
       setExistingReview(null);
       setReviewContent("");
       setToast({ type: "success", message: "Review deleted." });
+      router.refresh();
     } catch (e) {
       setToast({ type: "error", message: e instanceof ApiError ? e.message : "Failed to delete review." });
     } finally {
@@ -104,6 +114,7 @@ export default function MediaActionButtons({
       setExistingReview({ ...existingReview, reviewContent: reviewContent.trim() });
       setEditing(false);
       setToast({ type: "success", message: "Review updated!" });
+      router.refresh();
     } catch (e) {
       setToast({ type: "error", message: e instanceof ApiError ? e.message : "Failed to update review." });
     } finally {
@@ -120,12 +131,12 @@ export default function MediaActionButtons({
         >
           Sign in to Rate
         </Link>
-        <button
-          disabled
-          className="w-full bg-neutral-700/50 text-white py-2.5 px-4 rounded font-semibold cursor-not-allowed opacity-70"
+        <Link
+          href={`/sign-in${returnUrl ? `?callbackUrl=${encodeURIComponent(returnUrl)}` : ""}`}
+          className="block w-full text-center bg-neutral-700 text-white py-2.5 px-4 rounded font-semibold hover:bg-neutral-600 transition-colors"
         >
           Sign in to Review
-        </button>
+        </Link>
       </div>
     );
   }
@@ -168,6 +179,7 @@ export default function MediaActionButtons({
               <textarea
                 value={reviewContent}
                 onChange={(e) => setReviewContent(e.target.value)}
+                onKeyDown={(e) => { if (e.ctrlKey && e.key === "Enter") { e.preventDefault(); handleUpdateReview(); } }}
                 rows={3}
                 maxLength={2000}
                 disabled={reviewSubmitting}
@@ -208,6 +220,7 @@ export default function MediaActionButtons({
             id="review-textarea"
             value={reviewContent}
             onChange={(e) => setReviewContent(e.target.value)}
+            onKeyDown={(e) => { if (e.ctrlKey && e.key === "Enter") { e.preventDefault(); handleSubmitReview(); } }}
             placeholder="What did you think..."
             rows={4}
             maxLength={2000}
