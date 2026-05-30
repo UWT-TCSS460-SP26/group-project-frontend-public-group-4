@@ -54,6 +54,7 @@ export default async function MovieDetailPage({
   const { id } = await params;
   const session = await auth();
   const isLoggedIn = !!session?.user;
+  const accessToken = session?.accessToken;
   let movie: MovieDetail | null = null;
   let error = false;
 
@@ -226,7 +227,12 @@ export default async function MovieDetailPage({
         <div className="mt-12 flex flex-col md:flex-row gap-8">
           {/* Left Column: Actions align with poster */}
           <div className="shrink-0 w-full md:w-80 flex flex-col gap-4">
-            <MediaActionButtons isLoggedIn={isLoggedIn} />
+            <MediaActionButtons
+              isLoggedIn={isLoggedIn}
+              accessToken={accessToken}
+              tmdbId={movie.tmdbId}
+              isMovie={true}
+            />
             <CommunityStats community={community} />
           </div>
 

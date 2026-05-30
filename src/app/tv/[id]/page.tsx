@@ -66,6 +66,7 @@ export default async function TVDetailPage({
   const { id } = await params;
   const session = await auth();
   const isLoggedIn = !!session?.user;
+  const accessToken = session?.accessToken;
   let show: ShowDetail | null = null;
   let error = false;
 
@@ -261,7 +262,12 @@ export default async function TVDetailPage({
         <div className="mt-16 flex flex-col md:flex-row gap-8">
           {/* Left Column: Actions align with poster */}
           <div className="shrink-0 w-full md:w-80 flex flex-col gap-4">
-            <MediaActionButtons isLoggedIn={isLoggedIn} />
+            <MediaActionButtons
+              isLoggedIn={isLoggedIn}
+              accessToken={accessToken}
+              tmdbId={show.tmdbId}
+              isMovie={false}
+            />
             <CommunityStats community={community} />
           </div>
 
