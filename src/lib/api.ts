@@ -54,6 +54,21 @@ export async function getReviews(accessToken: string): Promise<ReviewRecord[]> {
   }
 }
 
+export async function deleteRating(
+  accessToken: string,
+  ratingId: number,
+): Promise<void> {
+  const res = await fetch(`${BASE_URL}/ratings/${ratingId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+  if (!res.ok)
+    throw new Error(`DELETE /ratings/${ratingId} returned ${res.status}`);
+}
+
 export async function postReview(
   accessToken: string,
   body: { tmdbIdentifier: number; isMovie: boolean; reviewContent: string},
@@ -169,6 +184,38 @@ export async function getCommunityStats(
         rating: r.value.community.averageRating,
         reviewCount: r.value.community.reviewCount,
       });
+    }
+  }
+  return map;
+}
+
+/**
+ * Fetches the title for a batch of media items. Returns a Map keyed by
+ * "m-{tmdbId}" or "s-{tmdbId}" → title string.
+ */
+export async function fetchMediaTitles(
+  items: { tmdbId: number; isMovie: boolean }[],
+): Promise<Map<string, string>> {
+  const map = new Map<string, string>();
+  const results = await Promise.allSettled(
+    items.map(async ({ tmdbId, isMovie }) => {
+      const endpoint = isMovie
+        ? `/movies/details/${tmdbId}`
+        : `/shows/details/${tmdbId}`;
+      const res = await fetch(`${BASE_URL}${endpoint}`, { cache: "no-store" });
+      if (!res.ok) throw new Error(`details ${tmdbId} returned ${res.status}`);
+      const data = (await res.json()) as {
+        metadata: { title?: string; name?: string };
+      };
+      return {
+        key: isMovie ? `m-${tmdbId}` : `s-${tmdbId}`,
+        title: data.metadata.title ?? data.metadata.name ?? `TMDB #${tmdbId}`,
+      };
+    }),
+  );
+  for (const r of results) {
+    if (r.status === "fulfilled") {
+      map.set(r.value.key, r.value.title);
     }
   }
   return map;
