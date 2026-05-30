@@ -13,6 +13,7 @@ interface Review {
   date_of_review?: string;
   reviewContent?: string;
   review_content?: string;
+  username?: string;
 }
 
 interface RecentReviewsProps {
@@ -41,7 +42,7 @@ function ReviewCard({ review, idx }: { review: Review; idx: number }) {
           {/* Handle both object and string shapes for author */}
           {typeof review.author === "object" && review.author !== null
             ? review.author.displayName
-            : review.author || `User ${userId}`}
+            : review.author || review.username || `User ${userId}`}
         </span>
         <span className="text-sm text-neutral-400" suppressHydrationWarning>
           {date ? new Date(date).toLocaleDateString() : ""}
