@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Movie, Tv, Search, AccountCircle } from "@mui/icons-material";
 import { useSession, signOut } from "next-auth/react";
 
@@ -17,6 +17,7 @@ export default function Header() {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const { status } = useSession();
   const router = useRouter();
+  const pathname = usePathname();
   const isLoggedIn = status === "authenticated";
 
   function submitSearch() {
@@ -140,7 +141,7 @@ export default function Header() {
                   View Profile
                 </Link>
                 <button
-                  onClick={() => signOut({ callbackUrl: "/" })}
+                  onClick={() => signOut({ callbackUrl: pathname })}
                   className="flex w-full px-4 py-2.5 text-sm text-zinc-200 hover:bg-zinc-700 transition-colors border-t border-zinc-700"
                 >
                   Sign Out
@@ -150,7 +151,7 @@ export default function Header() {
           </div>
         ) : (
           <Link
-            href="/sign-in"
+            href={`/sign-in?callbackUrl=${encodeURIComponent(pathname)}`}
             className="flex items-center gap-1.5 py-1.5 px-3 rounded-md text-sm font-medium text-zinc-300 hover:text-white hover:bg-zinc-800 transition-colors"
             aria-label="Sign in"
           >

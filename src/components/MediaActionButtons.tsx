@@ -6,11 +6,13 @@ export default function MediaActionButtons({
   tmdbIdentifier,
   isMovie,
   userRating,
+  returnUrl,
 }: {
   isLoggedIn?: boolean;
   tmdbIdentifier?: number;
   isMovie?: boolean;
   userRating?: { id: number; value: number } | null;
+  returnUrl?: string;
 }) {
   return (
     <div className="flex flex-col gap-2">
@@ -29,7 +31,7 @@ export default function MediaActionButtons({
       ) : (
         <>
           <Link
-            href="/sign-in"
+            href={`/sign-in${returnUrl ? `?callbackUrl=${encodeURIComponent(returnUrl)}` : ""}`}
             className="block w-full text-center bg-amber-600 text-white py-2.5 px-4 rounded font-semibold hover:bg-amber-700 transition-colors"
           >
             Sign in to Rate

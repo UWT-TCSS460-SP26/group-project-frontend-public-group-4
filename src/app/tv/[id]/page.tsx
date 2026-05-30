@@ -275,6 +275,7 @@ export default async function TVDetailPage({
               tmdbIdentifier={show.tmdbId}
               isMovie={false}
               userRating={userRating}
+              returnUrl={`/tv/${id}`}
             />
             <CommunityStats community={community} />
           </div>
