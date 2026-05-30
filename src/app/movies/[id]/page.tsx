@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { apiGet } from "@/lib/api";
+import { apiGet, getRatings, getReviews } from "@/lib/api";
 import { auth } from "@/auth";
 import BlurredBackground from "@/components/BlurredBackground";
 import MediaActionButtons from "@/components/MediaActionButtons";
 import CommunityStats from "@/components/CommunityStats";
 import RecentReviews from "@/components/RecentReviews";
+import ImagePlaceholderIcon from "@/components/ImagePlaceholderIcon";
+import { formatDateAndYear } from "@/lib/formatters";
 
 export const metadata: Metadata = {
   title: "Movie Details — MediaRate",
@@ -39,6 +41,7 @@ interface MovieDetail {
     recentReviews: {
       reviewId?: number;
       author?: { displayName: string } | string;
+      username?: string;
       userId?: number;
       dateOfReview?: string;
       reviewContent?: string;
@@ -77,32 +80,46 @@ export default async function MovieDetailPage({
 
   const { metadata, community } = movie;
 
-  let releaseYear = "";
-  let formattedReleaseDate = "";
-  if (metadata.release_date) {
-    releaseYear = metadata.release_date.split("-")[0];
-    const [y, m, d] = metadata.release_date.split("-");
-    if (y && m && d) {
-      const date = new Date(Number(y), Number(m) - 1, Number(d));
-      formattedReleaseDate = date.toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      });
-    } else {
-      formattedReleaseDate = metadata.release_date;
+  let userRating = null;
+  let userReview = null;
+  if (isLoggedIn && session?.accessToken) {
+    const [ratings, reviews] = await Promise.all([
+      getRatings(session.accessToken),
+      getReviews(session.accessToken),
+    ]);
+    const foundRating = ratings.find(
+      (r: any) => r.tmdbIdentifier === movie.tmdbId && r.isMovie === true,
+    );
+    if (foundRating) {
+      userRating = {
+        id: foundRating.ratingId,
+        value: (foundRating as any).rating ?? (foundRating as any).value,
+      };
+    }
+    const foundReview = reviews.find(
+      (r) => r.tmdbIdentifier === movie.tmdbId && r.isMovie === true,
+    );
+    if (foundReview) {
+      userReview = {
+        reviewId: foundReview.reviewId,
+        reviewContent: foundReview.reviewContent,
+        dateOfReview: foundReview.dateOfReview,
+      };
     }
   }
+
+  const { releaseYear, formattedDate: formattedReleaseDate } =
+    formatDateAndYear(metadata.release_date);
   const posterUrl = metadata.poster_path
     ? `https://image.tmdb.org/t/p/w500${metadata.poster_path}`
-    : "https://via.placeholder.com/500x750?text=No+Poster";
+    : null;
 
   const genreString = (metadata.genres || []).map((g) => g.name).join(", ");
 
   return (
     <main className="relative w-full grow flex flex-col min-h-screen">
       {/* Dynamic Blurred Poster Background */}
-      <BlurredBackground imageUrl={posterUrl} />
+      {posterUrl && <BlurredBackground imageUrl={posterUrl} />}
 
       {/* Content Container */}
       <div className="relative z-10 pt-16 px-4 sm:px-8 pb-16 max-w-7xl mx-auto w-full text-white grow">
@@ -119,17 +136,23 @@ export default async function MovieDetailPage({
         <div className="flex flex-col md:flex-row gap-8">
           {/* Left Column: Poster & Placeholder Buttons */}
           <div className="shrink-0 w-full md:w-80 flex flex-col gap-4">
-            <Image
-              src={posterUrl}
-              alt={`${metadata.title} poster`}
-              className="w-full rounded-lg shadow-lg object-cover"
-              priority
-              loading="eager"
-              width={500}
-              height={750}
-              placeholder="blur"
-              blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
-            />
+            {posterUrl ? (
+              <Image
+                src={posterUrl}
+                alt={`${metadata.title} poster`}
+                className="w-full rounded-lg shadow-lg object-cover"
+                priority
+                loading="eager"
+                width={500}
+                height={750}
+                placeholder="blur"
+                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
+              />
+            ) : (
+              <div className="w-full aspect-2/3 bg-neutral-800 rounded-lg shadow-lg border border-neutral-700 flex items-center justify-center text-neutral-600">
+                <ImagePlaceholderIcon className="w-24 h-24" />
+              </div>
+            )}
           </div>
 
           {/* Right Column: Details */}
@@ -230,8 +253,11 @@ export default async function MovieDetailPage({
             <MediaActionButtons
               isLoggedIn={isLoggedIn}
               accessToken={accessToken}
-              tmdbId={movie.tmdbId}
+              tmdbIdentifier={movie.tmdbId}
               isMovie={true}
+              userRating={userRating}
+              userReview={userReview}
+              returnUrl={`/movies/${id}`}
             />
             <CommunityStats community={community} />
           </div>

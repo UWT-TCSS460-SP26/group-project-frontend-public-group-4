@@ -1,15 +1,22 @@
 "use client";
 
+import { Suspense, useCallback } from "react";
 import { useSession, signIn } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
-export default function SignInPage() {
+function SignInContent() {
   const { status } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") ?? "/";
+
+  const handleSignIn = useCallback(() => {
+    signIn("auth2", { callbackUrl });
+  }, [callbackUrl]);
 
   if (status === "authenticated") {
-    router.replace("/");
+    router.replace(callbackUrl);
     return null;
   }
 
@@ -21,7 +28,7 @@ export default function SignInPage() {
         personalized features.
       </p>
       <button
-        onClick={() => signIn("auth2", { callbackUrl: "/" })}
+        onClick={handleSignIn}
         className="rounded-md bg-amber-400 px-6 py-2.5 font-medium text-black hover:bg-amber-300 transition-colors"
       >
         Sign in with TCSS IAM
@@ -30,5 +37,13 @@ export default function SignInPage() {
         Back to home
       </Link>
     </main>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense>
+      <SignInContent />
+    </Suspense>
   );
 }

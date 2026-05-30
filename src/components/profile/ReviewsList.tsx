@@ -45,6 +45,7 @@ export default function ReviewsList({
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editContent, setEditContent] = useState("");
   const [saving, setSaving] = useState(false);
+  const [expandedIds, setExpandedIds] = useState<Set<number>>(new Set());
   const [toast, setToast] = useState<Toast | null>(null);
 
   useEffect(() => {
@@ -105,7 +106,7 @@ export default function ReviewsList({
         const isEditing = editingId === r.reviewId;
         const contentId = `review-content-${r.reviewId}`;
         const isLong = r.reviewContent.length > 300;
-        const [expanded, setExpanded] = useState(false);
+        const expanded = expandedIds.has(r.reviewId);
 
         return (
         <div
@@ -213,7 +214,13 @@ export default function ReviewsList({
               </p>
               {isLong && (
                 <button
-                  onClick={() => setExpanded(!expanded)}
+                  onClick={() => {
+                    setExpandedIds((prev) => {
+                      const next = new Set(prev);
+                      expanded ? next.delete(r.reviewId) : next.add(r.reviewId);
+                      return next;
+                    });
+                  }}
                   aria-expanded={expanded}
                   aria-controls={contentId}
                   className="text-amber-400 hover:text-amber-300 text-xs font-semibold mt-1 uppercase tracking-wider transition-colors"

@@ -71,7 +71,7 @@ export async function deleteRating(
 
 export async function postReview(
   accessToken: string,
-  body: { tmdbIdentifier: number; isMovie: boolean; reviewContent: string},
+  body: { tmdbIdentifier: number; isMovie: boolean; reviewContent: string },
 ): Promise<{ success: boolean }> {
   const res = await fetch(`${BASE_URL}/reviews`, {
     method: "POST",
