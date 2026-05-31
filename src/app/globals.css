@@ -1,121 +1,383 @@
 @import "tailwindcss";
 
-/* Light mode (default) */
-:root {
-  --background: #ffffff;
-  --foreground: #1a1a1a;
-  --card-bg: #f5f5f5;
-  --card-border: #e5e5e5;
-  --primary-color: #f59e0b;
-  --primary-hover: #f97316;
-  --primary-foreground: #000000;
-  --secondary-bg: #e5e5e5;
-  --secondary-hover: #d4d4d8;
-  --secondary-foreground: #1a1a1a;
-  --text-primary: #1a1a1a;
-  --text-muted: #2c2c2c;
-  --text-secondary: #38383b;
-  --gradient-overlay-via: rgba(15, 23, 42, 0.35);
-  --gradient-overlay-dark: rgba(15, 23, 42, 0.65);
-  --destructive-color: #ef4444;
-  --destructive-hover: #dc2626;
-  --edit-hover: #f97316;
-  --badge-success: #22c55e;
-  --badge-warning: #f59e0b;
-  --badge-danger: #ef4444;
-  --input-bg: #ffffff;
-  --input-border: #e5e5e5;
-  --input-focus-border: #f59e0b;
-  --divider: #f0f0f0;
-}
-
-/* Dark mode */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --card-bg: #27272a;
-    --card-border: #3f3f46;
-    --primary-color: #f59e0b;
-    --primary-hover: #fbbf24;
-    --primary-foreground: #000000;
-    --secondary-bg: #3f3f46;
-    --secondary-hover: #52525b;
-    --secondary-foreground: #ededed;
-    --text-primary: #ededed;
-    --text-muted: #a1a1a1;
-    --text-secondary: #71717a;
-    --destructive-color: #ef4444;
-    --destructive-hover: #fca5a5;
-    --edit-hover: #fbbf24;
-    --badge-success: #22c55e;
-    --badge-warning: #f59e0b;
-    --badge-danger: #ef4444;
-    --input-bg: #18181b;
-    --input-border: #3f3f46;
-    --input-focus-border: #f59e0b;
-    --divider: #27272a;
-  }
-}
-
-/* Force light mode when data-theme="light" */
+/* ============================================================
+   Light mode (default / data-theme="light")
+   ============================================================ */
+:root,
 [data-theme="light"] {
   --background: #ffffff;
   --foreground: #1a1a1a;
+
+  /* Cards & surfaces */
   --card-bg: #f5f5f5;
   --card-border: #e5e5e5;
+
+  /* Primary accent */
   --primary-color: #f59e0b;
   --primary-hover: #f97316;
   --primary-foreground: #000000;
+
+  /* Secondary */
   --secondary-bg: #e5e5e5;
   --secondary-hover: #d4d4d8;
   --secondary-foreground: #1a1a1a;
+
+  /* Text scale */
   --text-primary: #1a1a1a;
-  --text-muted: #2c2c2c;
-  --text-secondary: #38383b;
-  --gradient-overlay-via: rgba(15, 23, 42, 0.35);
-  --gradient-overlay-dark: rgba(15, 23, 42, 0.65);
+  --text-muted: #3d3d3d;
+  --text-secondary: #404040;
+
+  /* Surfaces (cards, review boxes, panels) */
+  --surface-bg: #f5f5f5;
+  --surface-bg-alt: #eeeeee;
+  --surface-bg-hover: #e5e5e5;
+  --surface-border: #e0e0e0;
+  --surface-text: #1a1a1a;
+  --surface-text-muted: #4a4a4a;
+  --surface-text-dim: #595959;
+
+  /* Header / nav */
+  --header-bg: #fafafa;
+  --header-border: #e5e5e5;
+  --header-text: #525252;
+  --header-text-muted: #666666;
+  --header-hover-bg: #f0f0f0;
+  --header-hover-text: #1a1a1a;
+
+  /* Dropdown menus */
+  --dropdown-bg: #ffffff;
+  --dropdown-border: #e5e5e5;
+  --dropdown-text: #1a1a1a;
+  --dropdown-hover-bg: #f5f5f5;
+  --dropdown-divider: #e5e5e5;
+
+  /* Destructive / warning */
   --destructive-color: #ef4444;
   --destructive-hover: #dc2626;
   --edit-hover: #f97316;
+
+  /* Badges */
   --badge-success: #22c55e;
   --badge-warning: #f59e0b;
   --badge-danger: #ef4444;
+
+  /* Inputs */
   --input-bg: #ffffff;
   --input-border: #e5e5e5;
   --input-focus-border: #f59e0b;
+
+  /* Dividers */
   --divider: #f0f0f0;
+
+  /* Gradient overlay (over blurred poster on media detail pages) */
+  --gradient-overlay-via: rgba(255, 255, 255, 0.55);
+  --gradient-overlay-dark: rgba(255, 255, 255, 0.85);
+
+  /* Rating widget specifics */
+  --rating-widget-bg: #f5f5f5;
+  --rating-widget-border: #e5e5e5;
+  --rating-bar-inactive: #d4d4d4;
+  --rating-display-bg: #eeeeee;
+
+  /* Review card on media pages */
+  --review-card-bg: #f5f5f5;
+  --review-card-header-bg: #eeeeee;
+  --review-card-border: #e5e5e5;
+  --review-card-text: #1a1a1a;
+  --review-card-text-muted: #4a4a4a;
+
+  /* Tab bar */
+  --tab-bar-bg: #e5e5e5;
+  --tab-active-bg: #d4d4d4;
+  --tab-active-text: #1a1a1a;
+  --tab-inactive-text: #595959;
+  --tab-hover-text: #1a1a1a;
+
+  /* Profile page specifics */
+  --profile-bg: #ffffff;
+  --profile-border: #e5e5e5;
+  --profile-text: #1a1a1a;
+  --profile-text-muted: #525252;
+  --profile-avatar-bg: #e5e5e5;
+  --profile-avatar-text: #737373;
+
+  /* Media badge */
+  --media-badge-bg: #e5e5e5;
+  --media-badge-text: #4a4a4a;
+
+  /* Seasons carousel */
+  --season-card-bg: #f5f5f5;
+  --season-card-border: #e5e5e5;
+  --season-card-text: #1a1a1a;
+  --season-card-text-muted: #525252;
+  --season-img-bg: #eeeeee;
+
+  /* Toast */
+  --toast-success-bg: #dcfce7;
+  --toast-success-border: #22c55e;
+  --toast-success-text: #166534;
+  --toast-error-bg: #fee2e2;
+  --toast-error-border: #ef4444;
+  --toast-error-text: #991b1b;
+
+  /* Buttons */
+  --btn-secondary-bg: #e5e5e5;
+  --btn-secondary-text: #1a1a1a;
+  --btn-secondary-hover-bg: #d4d4d4;
+
+  /* Search overlay */
+  --search-overlay-bg: rgba(0, 0, 0, 0.3);
+  --search-mode-btn-bg: #e5e5e5;
+  --search-mode-btn-text: #525252;
+  --search-mode-btn-hover-text: #1a1a1a;
+  --search-hint-text: #333333;
+
+  /* Disabled state */
+  --disabled-opacity: 0.4;
+
+  /* Rating button (idle state) */
+  --rating-btn-bg: #f59e0b;
+  --rating-btn-text: #000000;
+  --rating-btn-hover-bg: #f97316;
 }
 
-/* Force dark mode when data-theme="dark" */
+/* ============================================================
+   Dark mode (prefers-color-scheme: dark without data-theme attr,
+   or data-theme="dark")
+   ============================================================ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+
+    --card-bg: #27272a;
+    --card-border: #3f3f46;
+
+    --primary-color: #f59e0b;
+    --primary-hover: #fbbf24;
+    --primary-foreground: #000000;
+
+    --secondary-bg: #3f3f46;
+    --secondary-hover: #52525b;
+    --secondary-foreground: #ededed;
+
+    --text-primary: #ededed;
+    --text-muted: #a1a1a1;
+    --text-secondary: #71717a;
+
+    --surface-bg: #27272a;
+    --surface-bg-alt: #18181b;
+    --surface-bg-hover: #3f3f46;
+    --surface-border: #3f3f46;
+    --surface-text: #e4e4e7;
+    --surface-text-muted: #a1a1a1;
+    --surface-text-dim: #71717a;
+
+    --header-bg: #09090b;
+    --header-border: #27272a;
+    --header-text: #d4d4d8;
+    --header-text-muted: #a1a1a1;
+    --header-hover-bg: #27272a;
+    --header-hover-text: #ffffff;
+
+    --dropdown-bg: #27272a;
+    --dropdown-border: #3f3f46;
+    --dropdown-text: #e4e4e7;
+    --dropdown-hover-bg: #3f3f46;
+    --dropdown-divider: #3f3f46;
+
+    --destructive-color: #ef4444;
+    --destructive-hover: #fca5a5;
+    --edit-hover: #fbbf24;
+
+    --badge-success: #22c55e;
+    --badge-warning: #f59e0b;
+    --badge-danger: #ef4444;
+
+    --input-bg: #18181b;
+    --input-border: #3f3f46;
+    --input-focus-border: #f59e0b;
+
+    --divider: #27272a;
+
+    --gradient-overlay-via: rgba(0, 0, 0, 0.65);
+    --gradient-overlay-dark: rgba(0, 0, 0, 0.9);
+
+    --rating-widget-bg: #27272a;
+    --rating-widget-border: #3f3f46;
+    --rating-bar-inactive: #3f3f46;
+    --rating-display-bg: #18181b;
+
+    --review-card-bg: #18181b;
+    --review-card-header-bg: #27272a;
+    --review-card-border: #3f3f46;
+    --review-card-text: #d4d4d8;
+    --review-card-text-muted: #a1a1a1;
+
+    --tab-bar-bg: #27272a;
+    --tab-active-bg: #3f3f46;
+    --tab-active-text: #ffffff;
+    --tab-inactive-text: #a1a1a1;
+    --tab-hover-text: #e4e4e7;
+
+    --profile-bg: #0a0a0a;
+    --profile-border: #27272a;
+    --profile-text: #ededed;
+    --profile-text-muted: #a1a1a1;
+    --profile-avatar-bg: #3f3f46;
+    --profile-avatar-text: #a1a1a1;
+
+    --media-badge-bg: #3f3f46;
+    --media-badge-text: #d4d4d8;
+
+    --season-card-bg: #27272a;
+    --season-card-border: #3f3f46;
+    --season-card-text: #ffffff;
+    --season-card-text-muted: #a1a1a1;
+    --season-img-bg: #18181b;
+
+    --toast-success-bg: rgba(20, 83, 45, 0.95);
+    --toast-success-border: #22c55e;
+    --toast-success-text: #dcfce7;
+    --toast-error-bg: rgba(127, 29, 29, 0.95);
+    --toast-error-border: #ef4444;
+    --toast-error-text: #fee2e2;
+
+    --btn-secondary-bg: #3f3f46;
+    --btn-secondary-text: #e4e4e7;
+    --btn-secondary-hover-bg: #52525b;
+
+    --search-overlay-bg: rgba(0, 0, 0, 0.6);
+    --search-mode-btn-bg: #27272a;
+    --search-mode-btn-text: #a1a1a1;
+    --search-mode-btn-hover-text: #e4e4e7;
+    --search-hint-text: #ffffff;
+
+    --disabled-opacity: 0.4;
+
+    --rating-btn-bg: #d97706;
+    --rating-btn-text: #ffffff;
+    --rating-btn-hover-bg: #f59e0b;
+  }
+}
+
 [data-theme="dark"] {
   --background: #0a0a0a;
   --foreground: #ededed;
+
   --card-bg: #27272a;
   --card-border: #3f3f46;
+
   --primary-color: #f59e0b;
   --primary-hover: #fbbf24;
   --primary-foreground: #000000;
+
   --secondary-bg: #3f3f46;
   --secondary-hover: #52525b;
   --secondary-foreground: #ededed;
+
   --text-primary: #ededed;
   --text-muted: #a1a1a1;
   --text-secondary: #71717a;
-  --gradient-overlay-via: rgba(0, 0, 0, 0.65);
-  --gradient-overlay-dark: rgba(0, 0, 0, 0.9);
+
+  --surface-bg: #27272a;
+  --surface-bg-alt: #18181b;
+  --surface-bg-hover: #3f3f46;
+  --surface-border: #3f3f46;
+  --surface-text: #e4e4e7;
+  --surface-text-muted: #a1a1a1;
+  --surface-text-dim: #71717a;
+
+  --header-bg: #09090b;
+  --header-border: #27272a;
+  --header-text: #d4d4d8;
+  --header-text-muted: #a1a1a1;
+  --header-hover-bg: #27272a;
+  --header-hover-text: #ffffff;
+
+  --dropdown-bg: #27272a;
+  --dropdown-border: #3f3f46;
+  --dropdown-text: #e4e4e7;
+  --dropdown-hover-bg: #3f3f46;
+  --dropdown-divider: #3f3f46;
+
   --destructive-color: #ef4444;
   --destructive-hover: #fca5a5;
   --edit-hover: #fbbf24;
+
   --badge-success: #22c55e;
   --badge-warning: #f59e0b;
   --badge-danger: #ef4444;
+
   --input-bg: #18181b;
   --input-border: #3f3f46;
   --input-focus-border: #f59e0b;
+
   --divider: #27272a;
+
+  --gradient-overlay-via: rgba(0, 0, 0, 0.65);
+  --gradient-overlay-dark: rgba(0, 0, 0, 0.9);
+
+  --rating-widget-bg: #27272a;
+  --rating-widget-border: #3f3f46;
+  --rating-bar-inactive: #3f3f46;
+  --rating-display-bg: #18181b;
+
+  --review-card-bg: #18181b;
+  --review-card-header-bg: #27272a;
+  --review-card-border: #3f3f46;
+  --review-card-text: #d4d4d8;
+  --review-card-text-muted: #a1a1a1;
+
+  --tab-bar-bg: #27272a;
+  --tab-active-bg: #3f3f46;
+  --tab-active-text: #ffffff;
+  --tab-inactive-text: #a1a1a1;
+  --tab-hover-text: #e4e4e7;
+
+  --profile-bg: #0a0a0a;
+  --profile-border: #27272a;
+  --profile-text: #ededed;
+  --profile-text-muted: #a1a1a1;
+  --profile-avatar-bg: #3f3f46;
+  --profile-avatar-text: #a1a1a1;
+
+  --media-badge-bg: #3f3f46;
+  --media-badge-text: #d4d4d8;
+
+  --season-card-bg: #27272a;
+  --season-card-border: #3f3f46;
+  --season-card-text: #ffffff;
+  --season-card-text-muted: #a1a1a1;
+  --season-img-bg: #18181b;
+
+  --toast-success-bg: rgba(20, 83, 45, 0.95);
+  --toast-success-border: #22c55e;
+  --toast-success-text: #dcfce7;
+  --toast-error-bg: rgba(127, 29, 29, 0.95);
+  --toast-error-border: #ef4444;
+  --toast-error-text: #fee2e2;
+
+  --btn-secondary-bg: #3f3f46;
+  --btn-secondary-text: #e4e4e7;
+  --btn-secondary-hover-bg: #52525b;
+
+  --search-overlay-bg: rgba(0, 0, 0, 0.6);
+  --search-mode-btn-bg: #27272a;
+  --search-mode-btn-text: #a1a1a1;
+  --search-mode-btn-hover-text: #e4e4e7;
+  --search-hint-text: #ffffff;
+
+  --disabled-opacity: 0.4;
+
+  --rating-btn-bg: #d97706;
+  --rating-btn-text: #ffffff;
+  --rating-btn-hover-bg: #f59e0b;
 }
 
+/* ============================================================
+   Tailwind theme integration
+   ============================================================ */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -123,25 +385,9 @@
   --font-mono: var(--font-geist-mono);
 }
 
-body {
+html body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-/* Global link style can used across the app */
-.app-link {
-  color: var(--primary-color);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  text-decoration-thickness: 1px;
-}
-.app-link:hover {
-  color: var(--primary-hover);
-}
-.app-link:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
-  border-radius: 4px;
 }

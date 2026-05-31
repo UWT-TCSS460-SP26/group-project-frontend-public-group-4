@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { RateReview, Delete, Edit, Close, Check } from "@mui/icons-material";
 import { ApiError } from "@/lib/api";
 import MediaBadge from "./MediaBadge";
@@ -89,7 +90,11 @@ export default function ReviewsList({
     return (
       <div className="space-y-3">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="h-20 rounded-lg bg-zinc-800 animate-pulse" />
+          <div
+            key={i}
+            className="h-20 rounded-lg animate-pulse"
+            style={{ backgroundColor: "var(--surface-bg)" }}
+          />
         ))}
       </div>
     );
@@ -98,10 +103,17 @@ export default function ReviewsList({
   if (error) {
     return (
       <div className="text-center py-8">
-        <p className="text-zinc-400">Could not load reviews.</p>
+        <p style={{ color: "var(--text-muted)" }}>Could not load reviews.</p>
         <button
           onClick={onRetry}
-          className="mt-2 text-sm text-amber-400 hover:text-amber-300 transition-colors"
+          className="mt-2 text-sm transition-colors"
+          style={{ color: "var(--primary-color)" }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = "var(--primary-hover)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = "var(--primary-color)";
+          }}
         >
           Retry
         </button>
@@ -113,10 +125,10 @@ export default function ReviewsList({
     return (
       <div className="text-center py-8">
         <RateReview
-          className="mx-auto mb-2 text-zinc-600"
-          style={{ fontSize: 40 }}
+          className="mx-auto mb-2"
+          style={{ fontSize: 40, color: "var(--text-secondary)" }}
         />
-        <p className="text-zinc-500">No reviews yet</p>
+        <p style={{ color: "var(--text-secondary)" }}>No reviews yet</p>
       </div>
     );
   }
@@ -132,50 +144,24 @@ export default function ReviewsList({
         return (
         <div
           key={r.reviewId}
-          className="p-4 rounded-lg bg-zinc-800/60 border border-zinc-700/50 space-y-2 group"
+          className="p-4 rounded-lg border space-y-2 group"
+          style={{
+            backgroundColor: "var(--surface-bg)",
+            borderColor: "var(--surface-border)",
+          }}
         >
           <div className="flex items-center gap-2">
             <MediaBadge isMovie={r.isMovie} />
             <Link
-              href={
-                r.isMovie ? `/movies/${r.tmdbIdentifier}` : `/tv/${r.tmdbIdentifier}`
-              }
-              className="app-link text-base truncate max-w-70"
+              href={r.isMovie ? `/movies/${r.tmdbIdentifier}` : `/tv/${r.tmdbIdentifier}`}
+              className="text-base truncate max-w-70 no-underline"
+              style={{ color: "var(--surface-text-muted)" }}
             >
               {titles.get(
                 r.isMovie ? `m-${r.tmdbIdentifier}` : `s-${r.tmdbIdentifier}`,
               ) ?? `TMDB #${r.tmdbIdentifier}`}
             </Link>
-
-            {!isEditing && (
-              <>
-                <button
-                  onClick={() => {
-                    setEditingId(r.reviewId);
-                    setEditContent(r.reviewContent);
-                  }}
-                  aria-label={`Edit review for ${titles.get(r.isMovie ? `m-${r.tmdbIdentifier}` : `s-${r.tmdbIdentifier}`) ?? `TMDB #${r.tmdbIdentifier}`}`}
-                  className="p-1 rounded-md text-zinc-500 hover:text-amber-400 hover:bg-amber-400/10 opacity-0 group-hover:opacity-100 transition-all"
-                  title="Edit review"
-                >
-                  <Edit style={{ fontSize: 16 }} aria-hidden="true" />
-                </button>
-                <button
-                  onClick={() => {
-                    setDeleting(r.reviewId);
-                    onDelete(r.reviewId);
-                  }}
-                  disabled={deleting === r.reviewId}
-                  className="p-1 rounded-md text-zinc-500 hover:text-red-400 hover:bg-red-400/10 opacity-0 group-hover:opacity-100 transition-all disabled:opacity-50"
-                  title="Delete review"
-                  aria-label={`Delete review for ${titles.get(r.isMovie ? `m-${r.tmdbIdentifier}` : `s-${r.tmdbIdentifier}`) ?? `TMDB #${r.tmdbIdentifier}`}`}
-                >
-                  <Delete style={{ fontSize: 16 }} aria-hidden="true" />
-                </button>
-              </>
-            )}
-            
-            <span className="text-xs text-zinc-600 ml-auto">
+            <span className="text-xs ml-auto" style={{ color: "var(--text-secondary)" }}>
               {formatDate(r.dateOfReview)}
             </span>
           </div>
@@ -193,17 +179,32 @@ export default function ReviewsList({
                 rows={3}
                 maxLength={2000}
                 disabled={saving}
-                className="w-full bg-zinc-900 text-zinc-200 rounded p-2 text-sm resize-y border border-zinc-600 focus:border-amber-400 focus:outline-none transition-colors"
+                className="w-full rounded p-2 text-sm resize-y border focus:outline-none transition-colors"
+                style={{
+                  backgroundColor: "var(--input-bg)",
+                  color: "var(--foreground)",
+                  borderColor: "var(--input-border)",
+                }}
               />
               <div className="flex items-center justify-between">
-                <span className="text-xs text-zinc-500">
+                <span className="text-xs" style={{ color: "var(--text-secondary)" }}>
                   {editContent.length}/2000
                 </span>
                 <div className="flex gap-2">
                   <button
                     onClick={() => { setEditingId(null); setEditContent(""); }}
                     disabled={saving}
-                    className="flex items-center gap-1 text-xs px-3 py-1.5 rounded bg-zinc-700 text-zinc-300 hover:bg-zinc-600 transition-colors"
+                    className="flex items-center gap-1 text-xs px-3 py-1.5 rounded transition-colors"
+                    style={{
+                      backgroundColor: "var(--btn-secondary-bg)",
+                      color: "var(--btn-secondary-text)",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = "var(--btn-secondary-hover-bg)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "var(--btn-secondary-bg)";
+                    }}
                   >
                     <Close style={{ fontSize: 14 }} aria-hidden="true" />
                     Cancel
@@ -211,7 +212,20 @@ export default function ReviewsList({
                   <button
                     onClick={() => handleSaveEdit(r.reviewId)}
                     disabled={!editContent.trim() || saving}
-                    className="flex items-center gap-1 text-xs px-3 py-1.5 rounded bg-amber-500 text-black font-medium hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="flex items-center gap-1 text-xs px-3 py-1.5 rounded font-medium transition-colors"
+                    style={{
+                      backgroundColor: "var(--primary-color)",
+                      color: "var(--primary-foreground)",
+                      opacity: !editContent.trim() || saving ? 0.5 : 1,
+                    }}
+                    onMouseEnter={(e) => {
+                      if (editContent.trim() && !saving) {
+                        e.currentTarget.style.backgroundColor = "var(--primary-hover)";
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "var(--primary-color)";
+                    }}
                   >
                     <Check style={{ fontSize: 14 }} aria-hidden="true" />
                     {saving ? "Saving..." : "Save"}
@@ -221,7 +235,11 @@ export default function ReviewsList({
             </div>
           ) : (
             <div>
-              <p id={contentId} className="text-sm text-zinc-300 leading-relaxed whitespace-pre-wrap break-words">
+              <p
+                id={contentId}
+                className="text-sm leading-relaxed whitespace-pre-wrap break-words"
+                style={{ color: "var(--surface-text)" }}
+              >
                 {isLong && !expanded ? r.reviewContent.slice(0, 300) + "..." : r.reviewContent}
               </p>
               {isLong && (
@@ -235,11 +253,64 @@ export default function ReviewsList({
                   }}
                   aria-expanded={expanded}
                   aria-controls={contentId}
-                  className="text-amber-400 hover:text-amber-300 text-xs font-semibold mt-1 uppercase tracking-wider transition-colors"
+                  className="text-xs font-semibold mt-1 uppercase tracking-wider transition-colors"
+                  style={{ color: "var(--primary-color)" }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = "var(--primary-hover)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = "var(--primary-color)";
+                  }}
                 >
                   {expanded ? "Show less" : "Read more"}
                 </button>
               )}
+            </div>
+          )}
+
+          {!isEditing && (
+            <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-all">
+              <button
+                onClick={() => {
+                  setEditingId(r.reviewId);
+                  setEditContent(r.reviewContent);
+                }}
+                aria-label={`Edit review for ${titles.get(r.isMovie ? `m-${r.tmdbIdentifier}` : `s-${r.tmdbIdentifier}`) ?? `TMDB #${r.tmdbIdentifier}`}`}
+                className="p-1.5 rounded-md transition-colors"
+                style={{ color: "var(--text-secondary)" }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = "var(--primary-color)";
+                  e.currentTarget.style.backgroundColor = "var(--surface-bg-hover)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "var(--text-secondary)";
+                  e.currentTarget.style.backgroundColor = "transparent";
+                }}
+                title="Edit review"
+              >
+                <Edit style={{ fontSize: 18 }} aria-hidden="true" />
+              </button>
+              <button
+                onClick={() => {
+                  setDeleting(r.reviewId);
+                  onDelete(r.reviewId);
+                }}
+                disabled={deleting === r.reviewId}
+                className="p-1.5 rounded-md transition-colors disabled:opacity-50"
+                style={{ color: "var(--text-secondary)" }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = "var(--destructive-color)";
+                  e.currentTarget.style.backgroundColor = "var(--surface-bg-hover)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "var(--text-secondary)";
+                  e.currentTarget.style.backgroundColor = "transparent";
+                }}
+                title="Delete review"
+                aria-label={`Delete review for ${titles.get(r.isMovie ? `m-${r.tmdbIdentifier}` : `s-${r.tmdbIdentifier}`) ?? `TMDB #${r.tmdbIdentifier}`}`}
+              >
+                <Delete style={{ fontSize: 18 }} aria-hidden="true" />
+              </button>
             </div>
           )}
         </div>
@@ -265,14 +336,36 @@ export default function ReviewsList({
               <button
                 onClick={() => setPage(0)}
                 disabled={page === 0}
-                className="px-2 py-1.5 rounded-md text-xs font-medium bg-zinc-800 text-zinc-300 hover:bg-zinc-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="px-2 py-1.5 rounded-md text-xs font-medium transition-colors disabled:cursor-not-allowed"
+                style={{
+                  backgroundColor: "var(--surface-bg)",
+                  color: "var(--surface-text)",
+                  opacity: page === 0 ? 0.4 : 1,
+                }}
+                onMouseEnter={(e) => {
+                  if (page !== 0) e.currentTarget.style.backgroundColor = "var(--surface-bg-hover)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "var(--surface-bg)";
+                }}
               >
                 First
               </button>
               <button
                 onClick={() => setPage((p) => Math.max(0, p - 1))}
                 disabled={page === 0}
-                className="px-2 py-1.5 rounded-md text-sm bg-zinc-800 text-zinc-300 hover:bg-zinc-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="px-2 py-1.5 rounded-md text-sm transition-colors disabled:cursor-not-allowed"
+                style={{
+                  backgroundColor: "var(--surface-bg)",
+                  color: "var(--surface-text)",
+                  opacity: page === 0 ? 0.4 : 1,
+                }}
+                onMouseEnter={(e) => {
+                  if (page !== 0) e.currentTarget.style.backgroundColor = "var(--surface-bg-hover)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "var(--surface-bg)";
+                }}
               >
                 Prev
               </button>
@@ -280,11 +373,23 @@ export default function ReviewsList({
                 <button
                   key={i}
                   onClick={() => setPage(i)}
-                  className={`w-8 h-8 rounded-md text-sm font-medium transition-colors ${
-                    i === page
-                      ? "bg-amber-400 text-black"
-                      : "bg-zinc-800 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700"
-                  }`}
+                  className="w-8 h-8 rounded-md text-sm font-medium transition-colors"
+                  style={i === page
+                    ? { backgroundColor: "var(--primary-color)", color: "var(--primary-foreground)" }
+                    : { backgroundColor: "var(--surface-bg)", color: "var(--surface-text-muted)" }
+                  }
+                  onMouseEnter={(e) => {
+                    if (i !== page) {
+                      e.currentTarget.style.color = "var(--surface-text)";
+                      e.currentTarget.style.backgroundColor = "var(--surface-bg-hover)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (i !== page) {
+                      e.currentTarget.style.color = "var(--surface-text-muted)";
+                      e.currentTarget.style.backgroundColor = "var(--surface-bg)";
+                    }
+                  }}
                 >
                   {i + 1}
                 </button>
@@ -292,14 +397,36 @@ export default function ReviewsList({
               <button
                 onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
                 disabled={page === totalPages - 1}
-                className="px-2 py-1.5 rounded-md text-sm bg-zinc-800 text-zinc-300 hover:bg-zinc-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="px-2 py-1.5 rounded-md text-sm transition-colors disabled:cursor-not-allowed"
+                style={{
+                  backgroundColor: "var(--surface-bg)",
+                  color: "var(--surface-text)",
+                  opacity: page === totalPages - 1 ? 0.4 : 1,
+                }}
+                onMouseEnter={(e) => {
+                  if (page !== totalPages - 1) e.currentTarget.style.backgroundColor = "var(--surface-bg-hover)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "var(--surface-bg)";
+                }}
               >
                 Next
               </button>
               <button
                 onClick={() => setPage(totalPages - 1)}
                 disabled={page === totalPages - 1}
-                className="px-2 py-1.5 rounded-md text-xs font-medium bg-zinc-800 text-zinc-300 hover:bg-zinc-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="px-2 py-1.5 rounded-md text-xs font-medium transition-colors disabled:cursor-not-allowed"
+                style={{
+                  backgroundColor: "var(--surface-bg)",
+                  color: "var(--surface-text)",
+                  opacity: page === totalPages - 1 ? 0.4 : 1,
+                }}
+                onMouseEnter={(e) => {
+                  if (page !== totalPages - 1) e.currentTarget.style.backgroundColor = "var(--surface-bg-hover)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "var(--surface-bg)";
+                }}
               >
                 Last
               </button>
@@ -312,23 +439,23 @@ export default function ReviewsList({
         <div
           role="alert"
           aria-live="assertive"
-          className={`fixed bottom-6 right-6 z-50 max-w-sm rounded-lg px-5 py-4 shadow-xl border transition-all duration-300 ${
-            toast.type === "success"
-              ? "bg-green-900/95 border-green-700 text-green-100"
-              : "bg-red-900/95 border-red-700 text-red-100"
-          }`}
+          className="fixed bottom-6 right-6 z-50 max-w-sm rounded-lg px-5 py-4 shadow-xl border transition-all duration-300"
+          style={toast.type === "success"
+            ? { backgroundColor: "var(--toast-success-bg)", borderColor: "var(--toast-success-border)", color: "var(--toast-success-text)" }
+            : { backgroundColor: "var(--toast-error-bg)", borderColor: "var(--toast-error-border)", color: "var(--toast-error-text)" }
+          }
         >
           <div className="flex items-start gap-3">
             <span className="text-lg shrink-0" aria-hidden="true">
-              {toast.type === "success" ? "✓" : "✕"}
+              {toast.type === "success" ? "\u2713" : "\u2715"}
             </span>
             <p className="text-sm leading-relaxed">{toast.message}</p>
             <button
               onClick={() => setToast(null)}
               aria-label="Close notification"
-              className="shrink-0 text-white/60 hover:text-white ml-2 transition-colors"
+              className="shrink-0 opacity-60 hover:opacity-100 ml-2 transition-colors"
             >
-              ✕
+              {"\u2715"}
             </button>
           </div>
         </div>

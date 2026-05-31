@@ -10,7 +10,7 @@ interface MediaGridProps {
 export default function MediaGrid({ items, getItemHref }: MediaGridProps) {
   if (items.length === 0) {
     return (
-      <p className="text-neutral-400 text-center py-20">
+      <p className="text-center py-20" style={{ color: "var(--text-muted)" }}>
         Nothing to show right now.
       </p>
     );

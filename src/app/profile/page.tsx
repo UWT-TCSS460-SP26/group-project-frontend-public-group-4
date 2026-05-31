@@ -34,7 +34,6 @@ export default function ProfilePage() {
   const [error, setError] = useState(false);
   const [toast, setToast] = useState<Toast | null>(null);
 
-  // Auto-dismiss toast
   useEffect(() => {
     if (!toast) return;
     const timer = setTimeout(() => setToast(null), 5000);
@@ -49,7 +48,6 @@ export default function ProfilePage() {
       setRatings(r);
       setReviews(v);
 
-      // Fetch media titles for all unique tmdbId+type combos
       const seen = new Set<string>();
       const deduped: { tmdbId: number; isMovie: boolean }[] = [];
       for (const item of [...r, ...v]) {
@@ -114,7 +112,7 @@ export default function ProfilePage() {
   if (status === "loading") {
     return (
       <main className="flex flex-1 items-center justify-center">
-        <p className="text-zinc-400">Loading...</p>
+        <p style={{ color: "var(--text-muted)" }}>Loading...</p>
       </main>
     );
   }
@@ -124,10 +122,10 @@ export default function ProfilePage() {
   if (!user) {
     return (
       <main className="flex flex-1 flex-col items-center justify-center gap-6 px-4">
-        <p className="text-zinc-400">You are not signed in.</p>
+        <p style={{ color: "var(--text-muted)" }}>You are not signed in.</p>
         <Link
           href="/sign-in"
-          className="rounded-md bg-amber-400 px-6 py-2.5 font-medium text-black hover:bg-amber-300 transition-colors"
+          className="rounded-md bg-amber-400 px-6 py-2.5 font-medium text-black hover:bg-amber-300 transition-colors no-underline"
         >
           Sign In
         </Link>
@@ -162,10 +160,23 @@ export default function ProfilePage() {
         />
       )}
 
-      <div className="pt-4 border-t border-zinc-800 flex justify-center">
+      <div
+        className="pt-4 border-t flex justify-center"
+        style={{ borderColor: "var(--profile-border)" }}
+      >
         <Link
           href="/"
-          className="rounded-md bg-zinc-700 px-6 py-2.5 font-medium text-zinc-100 hover:bg-zinc-600 transition-colors"
+          className="rounded-md px-6 py-2.5 font-medium transition-colors no-underline"
+          style={{
+            backgroundColor: "var(--btn-secondary-bg)",
+            color: "var(--btn-secondary-text)",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = "var(--btn-secondary-hover-bg)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = "var(--btn-secondary-bg)";
+          }}
         >
           Back to Home
         </Link>
@@ -176,23 +187,23 @@ export default function ProfilePage() {
         <div
           role="alert"
           aria-live="assertive"
-          className={`fixed bottom-6 right-6 z-50 max-w-sm rounded-lg px-5 py-4 shadow-xl border transition-all duration-300 ${
-            toast.type === "success"
-              ? "bg-green-900/95 border-green-700 text-green-100"
-              : "bg-red-900/95 border-red-700 text-red-100"
-          }`}
+          className="fixed bottom-6 right-6 z-50 max-w-sm rounded-lg px-5 py-4 shadow-xl border transition-all duration-300"
+          style={toast.type === "success"
+            ? { backgroundColor: "var(--toast-success-bg)", borderColor: "var(--toast-success-border)", color: "var(--toast-success-text)" }
+            : { backgroundColor: "var(--toast-error-bg)", borderColor: "var(--toast-error-border)", color: "var(--toast-error-text)" }
+          }
         >
           <div className="flex items-start gap-3">
             <span className="text-lg shrink-0" aria-hidden="true">
-              {toast.type === "success" ? "✓" : "✕"}
+              {toast.type === "success" ? "\u2713" : "\u2715"}
             </span>
             <p className="text-sm leading-relaxed">{toast.message}</p>
             <button
               onClick={() => setToast(null)}
               aria-label="Close notification"
-              className="shrink-0 text-white/60 hover:text-white ml-2 transition-colors"
+              className="shrink-0 opacity-60 hover:opacity-100 ml-2 transition-colors"
             >
-              ✕
+              {"\u2715"}
             </button>
           </div>
         </div>

@@ -16,13 +16,13 @@ function ToastOverlay({ toast }: { toast: ToastType | null }) {
   if (!toast) return null;
   return (
     <div
-      className={`fixed bottom-4 right-4 z-50 px-4 py-3 rounded shadow-lg border text-sm font-semibold flex items-center gap-3 transition-all animate-in fade-in duration-300 ${
-        toast.type === "loading"
-          ? "bg-blue-900 border-blue-700 text-blue-100"
-          : toast.type === "success"
-            ? "bg-green-900 border-green-700 text-green-100"
-            : "bg-red-900 border-red-700 text-red-100"
-      }`}
+      className="fixed bottom-4 right-4 z-50 px-4 py-3 rounded shadow-lg border text-sm font-semibold flex items-center gap-3 transition-all animate-in fade-in duration-300"
+      style={toast.type === "loading"
+        ? { backgroundColor: "var(--surface-bg)", borderColor: "var(--primary-color)", color: "var(--primary-color)" }
+        : toast.type === "success"
+          ? { backgroundColor: "var(--toast-success-bg)", borderColor: "var(--toast-success-border)", color: "var(--toast-success-text)" }
+          : { backgroundColor: "var(--toast-error-bg)", borderColor: "var(--toast-error-border)", color: "var(--toast-error-text)" }
+      }
     >
       {toast.type === "loading" && (
         <svg
@@ -46,8 +46,8 @@ function ToastOverlay({ toast }: { toast: ToastType | null }) {
           ></path>
         </svg>
       )}
-      {toast.type === "success" && "✓ "}
-      {toast.type === "error" && "⚠ "}
+      {toast.type === "success" && "\u2713 "}
+      {toast.type === "error" && "\u26A0 "}
       {toast.message}
     </div>
   );
@@ -85,7 +85,7 @@ export default function RatingWidget({
     if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
     hoverTimeoutRef.current = setTimeout(() => {
       setHoverRating(val);
-    }, 40); // 40ms is short enough to feel instant, but enough to skip fast swipes
+    }, 40);
   };
 
   useEffect(() => {
@@ -141,7 +141,17 @@ export default function RatingWidget({
       <>
         <button
           onClick={() => setIsOpen(true)}
-          className="w-full bg-amber-600 text-white py-2.5 px-4 rounded font-semibold hover:bg-amber-700 transition-colors"
+          className="w-full py-2.5 px-4 rounded font-semibold transition-colors"
+          style={{
+            backgroundColor: "var(--rating-btn-bg)",
+            color: "var(--rating-btn-text)",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = "var(--rating-btn-hover-bg)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = "var(--rating-btn-bg)";
+          }}
         >
           Rate
         </button>
@@ -223,11 +233,12 @@ export default function RatingWidget({
     return (
       <>
         <div
-          className={`w-full h-[104px] bg-neutral-800/80 border border-neutral-700/50 p-2 rounded flex gap-2 transition-all ${
-            status === "submitting"
-              ? "animate-pulse opacity-60 pointer-events-none saturate-50"
-              : ""
-          }`}
+          className="w-full h-[104px] p-2 rounded flex gap-2 transition-all border"
+          style={{
+            backgroundColor: "var(--surface-bg)",
+            borderColor: "var(--surface-border)",
+            opacity: status === "submitting" ? 0.6 : 1,
+          }}
         >
           <div className="flex flex-col gap-2 w-1/3 shrink-0">
             <button
@@ -235,26 +246,54 @@ export default function RatingWidget({
                 setStatus("idle");
                 setIsOpen(true);
               }}
-              className="flex-1 rounded bg-neutral-900 text-amber-400 border border-amber-700 hover:bg-amber-900/50 hover:border-amber-400 hover:text-amber-300 transition-colors font-semibold shadow-sm text-sm flex items-center justify-center"
+              className="flex-1 rounded border font-semibold shadow-sm text-sm flex items-center justify-center transition-colors"
+              style={{
+                backgroundColor: "var(--surface-bg-alt)",
+                color: "var(--primary-color)",
+                borderColor: "var(--primary-color)",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "var(--surface-bg-hover)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "var(--surface-bg-alt)";
+              }}
             >
               Edit
             </button>
             {knownRatingId && (
               <button
                 onClick={() => setStatus("confirm-delete")}
-                className="flex-1 rounded bg-neutral-900 text-red-400 border border-red-700 hover:bg-red-900/50 hover:border-red-400 hover:text-red-300 transition-colors font-semibold shadow-sm text-sm flex items-center justify-center"
+                className="flex-1 rounded border font-semibold shadow-sm text-sm flex items-center justify-center transition-colors"
+                style={{
+                  backgroundColor: "var(--surface-bg-alt)",
+                  color: "var(--destructive-color)",
+                  borderColor: "var(--destructive-color)",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "var(--surface-bg-hover)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "var(--surface-bg-alt)";
+                }}
               >
                 Delete
               </button>
             )}
           </div>
-          <div className="flex-1 bg-neutral-900 border border-green-500/50 rounded flex flex-col items-center justify-center">
-            <span className="text-neutral-400 text-[10px] uppercase tracking-wider mb-0.5 font-semibold">
+          <div
+            className="flex-1 rounded border flex flex-col items-center justify-center"
+            style={{
+              backgroundColor: "var(--rating-display-bg)",
+              borderColor: "var(--badge-success)",
+            }}
+          >
+            <span className="text-[10px] uppercase tracking-wider mb-0.5 font-semibold" style={{ color: "var(--text-secondary)" }}>
               You Rated
             </span>
-            <span className="text-green-400 font-bold text-3xl">
+            <span className="font-bold text-3xl" style={{ color: "var(--badge-success)" }}>
               {rating}
-              <span className="text-lg text-neutral-500 font-medium">/10</span>
+              <span className="text-lg font-medium" style={{ color: "var(--text-secondary)" }}>/10</span>
             </span>
           </div>
         </div>
@@ -266,33 +305,67 @@ export default function RatingWidget({
   if (status === "existing") {
     return (
       <>
-        <div className="w-full h-[104px] bg-neutral-800/80 border border-neutral-700/50 p-2 rounded flex gap-2">
+        <div
+          className="w-full h-[104px] p-2 rounded flex gap-2 border"
+          style={{
+            backgroundColor: "var(--surface-bg)",
+            borderColor: "var(--surface-border)",
+          }}
+        >
           <div className="flex flex-col gap-2 w-1/3 shrink-0">
             <button
               onClick={() => {
                 setStatus("idle");
                 setIsOpen(true);
               }}
-              className="flex-1 rounded bg-neutral-900 text-amber-400 border border-amber-700 hover:bg-amber-900/50 hover:border-amber-400 hover:text-amber-300 transition-colors font-semibold shadow-sm text-sm flex items-center justify-center"
+              className="flex-1 rounded border font-semibold shadow-sm text-sm flex items-center justify-center transition-colors"
+              style={{
+                backgroundColor: "var(--surface-bg-alt)",
+                color: "var(--primary-color)",
+                borderColor: "var(--primary-color)",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "var(--surface-bg-hover)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "var(--surface-bg-alt)";
+              }}
             >
               Edit
             </button>
             {knownRatingId && (
               <button
                 onClick={() => setStatus("confirm-delete")}
-                className="flex-1 rounded bg-neutral-900 text-red-400 border border-red-700 hover:bg-red-900/50 hover:border-red-400 hover:text-red-300 transition-colors font-semibold shadow-sm text-sm flex items-center justify-center"
+                className="flex-1 rounded border font-semibold shadow-sm text-sm flex items-center justify-center transition-colors"
+                style={{
+                  backgroundColor: "var(--surface-bg-alt)",
+                  color: "var(--destructive-color)",
+                  borderColor: "var(--destructive-color)",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "var(--surface-bg-hover)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "var(--surface-bg-alt)";
+                }}
               >
                 Delete
               </button>
             )}
           </div>
-          <div className="flex-1 bg-neutral-900 border border-amber-500/50 rounded flex flex-col items-center justify-center">
-            <span className="text-neutral-400 text-[10px] uppercase tracking-wider mb-0.5 font-semibold">
+          <div
+            className="flex-1 rounded border flex flex-col items-center justify-center"
+            style={{
+              backgroundColor: "var(--rating-display-bg)",
+              borderColor: "var(--primary-color)",
+            }}
+          >
+            <span className="text-[10px] uppercase tracking-wider mb-0.5 font-semibold" style={{ color: "var(--text-secondary)" }}>
               Your Rating
             </span>
-            <span className="text-amber-400 font-bold text-3xl">
+            <span className="font-bold text-3xl" style={{ color: "var(--primary-color)" }}>
               {rating}
-              <span className="text-lg text-neutral-500 font-medium">/10</span>
+              <span className="text-lg font-medium" style={{ color: "var(--text-secondary)" }}>/10</span>
             </span>
           </div>
         </div>
@@ -304,22 +377,48 @@ export default function RatingWidget({
   if (status === "confirm-delete") {
     return (
       <>
-        <div className="w-full h-[144px] bg-neutral-800/80 border border-red-500/50 p-3 rounded flex flex-col">
+        <div
+          className="w-full h-[144px] p-3 rounded flex flex-col border"
+          style={{
+            backgroundColor: "var(--surface-bg)",
+            borderColor: "var(--destructive-color)",
+          }}
+        >
           <div className="flex-1 flex items-center justify-center px-2">
-            <p className="text-red-400 text-sm font-semibold text-center leading-relaxed">
+            <p className="text-sm font-semibold text-center leading-relaxed" style={{ color: "var(--destructive-color)" }}>
               Are you sure you want to delete your rating?
             </p>
           </div>
           <div className="flex gap-2 shrink-0 h-10">
             <button
               onClick={handleDelete}
-              className="flex-1 bg-red-600 text-white rounded font-semibold hover:bg-red-700 transition-colors text-sm"
+              className="flex-1 rounded font-semibold transition-colors text-sm"
+              style={{
+                backgroundColor: "var(--destructive-color)",
+                color: "#ffffff",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "var(--destructive-hover)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "var(--destructive-color)";
+              }}
             >
               Yes, Delete
             </button>
             <button
               onClick={() => setStatus(knownRatingId ? "existing" : "idle")}
-              className="flex-1 bg-neutral-700 text-white rounded font-semibold hover:bg-neutral-600 transition-colors text-sm"
+              className="flex-1 rounded font-semibold transition-colors text-sm"
+              style={{
+                backgroundColor: "var(--btn-secondary-bg)",
+                color: "var(--btn-secondary-text)",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "var(--btn-secondary-hover-bg)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "var(--btn-secondary-bg)";
+              }}
             >
               Cancel
             </button>
@@ -333,13 +432,19 @@ export default function RatingWidget({
   if (status === "conflict") {
     return (
       <>
-        <div className="w-full h-[144px] bg-amber-600/20 border border-amber-500/50 p-3 rounded flex flex-col">
+        <div
+          className="w-full h-[144px] p-3 rounded flex flex-col border"
+          style={{
+            backgroundColor: "var(--surface-bg)",
+            borderColor: "var(--primary-color)",
+          }}
+        >
           <div className="flex-1 flex flex-col items-center justify-center gap-1 overflow-hidden">
-            <p className="text-amber-400 text-sm font-semibold text-center leading-tight">
+            <p className="text-sm font-semibold text-center leading-tight" style={{ color: "var(--primary-color)" }}>
               {errorMessage || "You already rated this title."}
             </p>
             {knownRatingId && (
-              <p className="text-neutral-300 text-xs text-center">
+              <p className="text-xs text-center" style={{ color: "var(--surface-text)" }}>
                 Would you like to update it to {rating}?
               </p>
             )}
@@ -348,7 +453,17 @@ export default function RatingWidget({
             <div className="flex gap-2 shrink-0 h-[38px] mt-2">
               <button
                 onClick={handleSubmit}
-                className="flex-1 bg-amber-600 text-white rounded font-semibold hover:bg-amber-700 transition-colors text-xs"
+                className="flex-1 rounded font-semibold transition-colors text-xs"
+                style={{
+                  backgroundColor: "var(--primary-color)",
+                  color: "var(--primary-foreground)",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "var(--primary-hover)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "var(--primary-color)";
+                }}
               >
                 Yes, Update
               </button>
@@ -362,7 +477,17 @@ export default function RatingWidget({
                     setIsOpen(false);
                   }
                 }}
-                className="flex-1 bg-neutral-700 text-white rounded font-semibold hover:bg-neutral-600 transition-colors text-xs"
+                className="flex-1 rounded font-semibold transition-colors text-xs"
+                style={{
+                  backgroundColor: "var(--btn-secondary-bg)",
+                  color: "var(--btn-secondary-text)",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "var(--btn-secondary-hover-bg)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "var(--btn-secondary-bg)";
+                }}
               >
                 Cancel
               </button>
@@ -374,7 +499,17 @@ export default function RatingWidget({
                   setRating(5);
                   setIsOpen(false);
                 }}
-                className="w-full bg-neutral-700 text-white rounded font-semibold hover:bg-neutral-600 transition-colors text-xs"
+                className="w-full rounded font-semibold transition-colors text-xs"
+                style={{
+                  backgroundColor: "var(--btn-secondary-bg)",
+                  color: "var(--btn-secondary-text)",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "var(--btn-secondary-hover-bg)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "var(--btn-secondary-bg)";
+                }}
               >
                 Close
               </button>
@@ -388,14 +523,20 @@ export default function RatingWidget({
 
   return (
     <>
-      <div className="w-full h-[144px] bg-neutral-800/80 p-3 rounded border border-neutral-700/50 flex flex-col justify-between">
+      <div
+        className="w-full h-[144px] p-3 rounded border flex flex-col justify-between"
+        style={{
+          backgroundColor: "var(--rating-widget-bg)",
+          borderColor: "var(--rating-widget-border)",
+        }}
+      >
         <div className="flex justify-between items-center shrink-0 mb-1">
-          <span className="text-sm font-semibold text-neutral-200 flex items-baseline">
+          <span className="text-sm font-semibold flex items-baseline" style={{ color: "var(--surface-text)" }}>
             {knownRatingId ? "Change Rating: " : "Select Rating: "}
-            <span className="text-white ml-1 inline-block w-[2ch] text-center">
+            <span className="ml-1 inline-block w-[2ch] text-center" style={{ color: "var(--foreground)" }}>
               {hoverRating || rating}
             </span>
-            <span className="text-neutral-500 text-xs ml-0.5">/10</span>
+            <span className="text-xs ml-0.5" style={{ color: "var(--text-secondary)" }}>/10</span>
           </span>
           <button
             onClick={() => {
@@ -407,23 +548,19 @@ export default function RatingWidget({
                 setIsOpen(false);
               }
             }}
-            className="text-xs text-neutral-400 hover:text-white transition-colors"
+            className="text-xs transition-colors"
+            style={{ color: "var(--text-secondary)" }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = "var(--foreground)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = "var(--text-secondary)";
+            }}
           >
             Cancel
           </button>
         </div>
         <div className="flex-1 flex flex-col justify-center">
-          {/*
-          <input
-            type="range"
-            min="1"
-            max="10"
-            step="1"
-            value={rating}
-            onChange={(e) => setRating(parseInt(e.target.value))}
-            className="w-full accent-amber-500"
-          />
-          */}
           <div
             className="flex justify-between items-center gap-1 w-full h-8"
             onMouseLeave={() => handleHover(0)}
@@ -442,8 +579,11 @@ export default function RatingWidget({
                 <button
                   key={i}
                   type="button"
-                  style={customStyle}
-                  className={`flex-1 h-full rounded-[2px] transition-colors duration-150 ${isActive ? "" : "bg-neutral-700 hover:bg-neutral-600"}`}
+                  style={{
+                    ...customStyle,
+                    backgroundColor: isActive ? customStyle.backgroundColor : "var(--rating-bar-inactive)",
+                  }}
+                  className="flex-1 h-full rounded-[2px] transition-colors duration-150"
                   onMouseEnter={() => handleHover(i)}
                   onClick={() => setRating(i)}
                   aria-label={`Rate ${i} out of 10`}
@@ -452,14 +592,24 @@ export default function RatingWidget({
             })}
           </div>
           {status === "error" && (
-            <p className="text-red-400 text-[10px] text-center mt-1 leading-tight">
+            <p className="text-[10px] text-center mt-1 leading-tight" style={{ color: "var(--destructive-color)" }}>
               {errorMessage}
             </p>
           )}
         </div>
         <button
           onClick={handleSubmit}
-          className="w-full bg-amber-600 text-white h-[38px] rounded font-semibold hover:bg-amber-700 transition-colors text-sm shrink-0 mt-2"
+          className="w-full h-[38px] rounded font-semibold transition-colors text-sm shrink-0 mt-2"
+          style={{
+            backgroundColor: "var(--rating-btn-bg)",
+            color: "var(--rating-btn-text)",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = "var(--rating-btn-hover-bg)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = "var(--rating-btn-bg)";
+          }}
         >
           {knownRatingId ? "Update Rating" : "Submit Rating"}
         </button>

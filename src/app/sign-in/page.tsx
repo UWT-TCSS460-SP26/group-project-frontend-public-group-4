@@ -22,8 +22,13 @@ function SignInContent() {
 
   return (
     <main className="flex flex-1 flex-col items-center justify-center gap-6 px-4">
-      <h1 className="text-2xl font-bold text-zinc-100">Sign In</h1>
-      <p className="text-zinc-400 text-center max-w-sm">
+      <h1 className="text-2xl font-bold" style={{ color: "var(--foreground)" }}>
+        Sign In
+      </h1>
+      <p
+        className="text-center max-w-sm"
+        style={{ color: "var(--text-muted)" }}
+      >
         Sign in with your TCSS IAM account to access your profile and
         personalized features.
       </p>
@@ -33,7 +38,17 @@ function SignInContent() {
       >
         Sign in with TCSS IAM
       </button>
-      <Link href="/" className="text-sm text-zinc-400 hover:text-zinc-200">
+      <Link
+        href="/"
+        className="text-sm no-underline transition-colors"
+        style={{ color: "var(--text-muted)" }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.color = "var(--foreground)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.color = "var(--text-muted)";
+        }}
+      >
         Back to home
       </Link>
     </main>

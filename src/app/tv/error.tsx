@@ -15,10 +15,10 @@ export default function TVError({
 
   return (
     <div className="pt-16 px-4 sm:px-8 pb-16 max-w-7xl mx-auto text-center">
-      <h2 className="text-3xl font-bold text-white mb-4">
+      <h2 className="text-3xl font-bold mb-4" style={{ color: "var(--foreground)" }}>
         Couldn&apos;t load TV shows
       </h2>
-      <p className="text-zinc-400 mb-6">
+      <p className="mb-6" style={{ color: "var(--text-muted)" }}>
         The server might be temporarily unavailable. Please try again.
       </p>
       <button
