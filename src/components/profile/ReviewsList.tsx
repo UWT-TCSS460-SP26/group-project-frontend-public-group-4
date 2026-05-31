@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { RateReview, Delete, Edit, Close, Check } from "@mui/icons-material";
 import { ApiError } from "@/lib/api";
 import MediaBadge from "./MediaBadge";
@@ -148,14 +149,15 @@ export default function ReviewsList({
         >
           <div className="flex items-center gap-2">
             <MediaBadge isMovie={r.isMovie} />
-            <span
-              className="text-base truncate max-w-70"
+            <Link
+              href={r.isMovie ? `/movies/${r.tmdbIdentifier}` : `/tv/${r.tmdbIdentifier}`}
+              className="text-base truncate max-w-70 no-underline"
               style={{ color: "var(--surface-text-muted)" }}
             >
               {titles.get(
                 r.isMovie ? `m-${r.tmdbIdentifier}` : `s-${r.tmdbIdentifier}`,
               ) ?? `TMDB #${r.tmdbIdentifier}`}
-            </span>
+            </Link>
             <span className="text-xs ml-auto" style={{ color: "var(--text-secondary)" }}>
               {formatDate(r.dateOfReview)}
             </span>

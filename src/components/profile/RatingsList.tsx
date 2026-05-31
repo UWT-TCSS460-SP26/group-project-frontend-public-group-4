@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Star, Delete } from "@mui/icons-material";
 import ScoreBadge from "./ScoreBadge";
 import MediaBadge from "./MediaBadge";
@@ -92,14 +93,15 @@ export default function RatingsList({
         >
           <ScoreBadge score={r.rating} />
           <MediaBadge isMovie={r.isMovie} />
-          <span
-            className="text-base truncate max-w-[320px]"
+          <Link
+            href={r.isMovie ? `/movies/${r.tmdbIdentifier}` : `/tv/${r.tmdbIdentifier}`}
+            className="text-base truncate max-w-[320px] no-underline"
             style={{ color: "var(--surface-text)" }}
           >
             {titles.get(
               r.isMovie ? `m-${r.tmdbIdentifier}` : `s-${r.tmdbIdentifier}`,
             ) ?? `TMDB #${r.tmdbIdentifier}`}
-          </span>
+          </Link>
           <button
             onClick={() => {
               setDeleting(r.ratingId);
