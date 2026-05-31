@@ -5,7 +5,6 @@ import Link from "next/link";
 import { RateReview, Delete, Edit, Close, Check } from "@mui/icons-material";
 import { ApiError } from "@/lib/api";
 import MediaBadge from "./MediaBadge";
-import Link from "next/link";
 import type { ReviewRecord } from "@/types/community";
 
 const ITEMS_PER_PAGE = 25;

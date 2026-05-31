@@ -5,7 +5,6 @@ import Link from "next/link";
 import { Star, Delete } from "@mui/icons-material";
 import ScoreBadge from "./ScoreBadge";
 import MediaBadge from "./MediaBadge";
-import Link from "next/link";
 import type { RatingRecord } from "@/types/community";
 
 const ITEMS_PER_PAGE = 25;
