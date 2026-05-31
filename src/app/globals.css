@@ -129,3 +129,19 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* Global link style can used across the app */
+.app-link {
+  color: var(--primary-color);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+}
+.app-link:hover {
+  color: var(--primary-hover);
+}
+.app-link:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+  border-radius: 4px;
+}

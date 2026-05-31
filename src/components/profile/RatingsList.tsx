@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Star, Delete } from "@mui/icons-material";
 import ScoreBadge from "./ScoreBadge";
 import MediaBadge from "./MediaBadge";
+import Link from "next/link";
 import type { RatingRecord } from "@/types/community";
 
 const ITEMS_PER_PAGE = 25;
@@ -77,11 +78,16 @@ export default function RatingsList({
         >
           <ScoreBadge score={r.rating} />
           <MediaBadge isMovie={r.isMovie} />
-          <span className="text-base text-zinc-300 truncate max-w-[320px]">
-            {titles.get(
-              r.isMovie ? `m-${r.tmdbIdentifier}` : `s-${r.tmdbIdentifier}`,
-            ) ?? `TMDB #${r.tmdbIdentifier}`}
-          </span>
+          <Link
+              href={
+                r.isMovie ? `/movies/${r.tmdbIdentifier}` : `/tv/${r.tmdbIdentifier}`
+              }
+              className="app-link text-base truncate max-w-70"
+            >
+              {titles.get(
+                r.isMovie ? `m-${r.tmdbIdentifier}` : `s-${r.tmdbIdentifier}`,
+              ) ?? `TMDB #${r.tmdbIdentifier}`}
+          </Link>
           <button
             onClick={() => {
               setDeleting(r.ratingId);

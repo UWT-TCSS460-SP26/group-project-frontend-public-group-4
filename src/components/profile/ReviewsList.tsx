@@ -4,9 +4,12 @@ import { useState, useEffect } from "react";
 import { RateReview, Delete, Edit, Close, Check } from "@mui/icons-material";
 import { ApiError } from "@/lib/api";
 import MediaBadge from "./MediaBadge";
+import Link from "next/link";
 import type { ReviewRecord } from "@/types/community";
 
 const ITEMS_PER_PAGE = 25;
+
+const BASE_URL = "";
 
 interface Toast {
   type: "success" | "error";
@@ -133,14 +136,16 @@ export default function ReviewsList({
         >
           <div className="flex items-center gap-2">
             <MediaBadge isMovie={r.isMovie} />
-            <span className="text-base text-zinc-400 truncate max-w-70">
+            <Link
+              href={
+                r.isMovie ? `/movies/${r.tmdbIdentifier}` : `/tv/${r.tmdbIdentifier}`
+              }
+              className="app-link text-base truncate max-w-70"
+            >
               {titles.get(
                 r.isMovie ? `m-${r.tmdbIdentifier}` : `s-${r.tmdbIdentifier}`,
               ) ?? `TMDB #${r.tmdbIdentifier}`}
-            </span>
-            <span className="text-xs text-zinc-600 ml-auto">
-              {formatDate(r.dateOfReview)}
-            </span>
+            </Link>
 
             {!isEditing && (
               <>
@@ -169,6 +174,10 @@ export default function ReviewsList({
                 </button>
               </>
             )}
+            
+            <span className="text-xs text-zinc-600 ml-auto">
+              {formatDate(r.dateOfReview)}
+            </span>
           </div>
 
           {isEditing ? (
