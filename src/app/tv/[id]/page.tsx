@@ -81,9 +81,12 @@ export default async function TVDetailPage({
 
   if (error || !show) {
     return (
-      <div className="pt-16 px-4 sm:px-8 pb-16 max-w-7xl mx-auto text-white">
+      <div className="pt-16 px-4 sm:px-8 pb-16 max-w-7xl mx-auto text-[color:var(--text-primary)]">
         <h1 className="text-2xl font-bold mb-4">TV Show not found</h1>
-        <Link href="/tv" className="text-blue-400 hover:underline">
+        <Link
+          href="/tv"
+          className="text-[color:var(--primary-color)] hover:text-[color:var(--primary-hover)] underline-offset-2 hover:underline"
+        >
           &larr; Back to TV Shows
         </Link>
       </div>
@@ -138,12 +141,12 @@ export default async function TVDetailPage({
       {posterUrl && <BlurredBackground imageUrl={posterUrl} />}
 
       {/* Content Container */}
-      <div className="relative z-10 pt-16 px-4 sm:px-8 pb-16 max-w-7xl mx-auto w-full text-white grow">
+      <div className="relative z-10 pt-16 px-4 sm:px-8 pb-16 max-w-7xl mx-auto w-full text-[color:var(--text-primary)] grow">
         {/* Navigation */}
         <div className="mb-8">
           <Link
             href="/tv"
-            className="text-neutral-400 hover:text-white flex items-center gap-2 transition-colors w-fit"
+            className="text-[color:var(--text-muted)] hover:text-[color:var(--text-primary)] flex items-center gap-2 transition-colors w-fit"
           >
             <span>&larr;</span> Back to TV Shows
           </Link>
@@ -165,7 +168,7 @@ export default async function TVDetailPage({
                 blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
               />
             ) : (
-              <div className="w-full aspect-2/3 bg-neutral-800 rounded-lg shadow-lg border border-neutral-700 flex items-center justify-center text-neutral-600">
+              <div className="w-full aspect-2/3 bg-[color:var(--secondary-bg)] rounded-lg shadow-lg border border-[color:var(--card-border)] flex items-center justify-center text-[color:var(--text-muted)]">
                 <ImagePlaceholderIcon className="w-24 h-24" />
               </div>
             )}
@@ -176,49 +179,49 @@ export default async function TVDetailPage({
             <h1 className="text-4xl font-bold mb-2">
               {metadata.name}{" "}
               {releaseYear && (
-                <span className="text-neutral-400 font-normal">
+                <span className="text-[color:var(--text-muted)] font-normal">
                   ({releaseYear})
                 </span>
               )}
             </h1>
 
             {metadata.tagline && (
-              <p className="text-xl text-neutral-400 italic mb-4">
+              <p className="text-xl text-[color:var(--text-muted)] italic mb-4">
                 {metadata.tagline}
               </p>
             )}
 
-            <div className="flex flex-wrap gap-4 text-neutral-300 text-base mb-8">
+            <div className="flex flex-wrap gap-4 text-[color:var(--text-muted)] text-base mb-8">
               {formattedReleaseDate && <span>{formattedReleaseDate}</span>}
               {genreString && <span>{genreString}</span>}
             </div>
 
             {/* Differently Colored Description Box */}
-            <div className="bg-neutral-800 p-6 rounded-lg shadow-inner mb-8">
+            <div className="bg-[color:var(--secondary-bg)] p-6 rounded-lg shadow-inner mb-8">
               <h3 className="text-lg font-semibold mb-2">Overview</h3>
-              <p className="text-neutral-200 leading-relaxed">
+              <p className="text-[color:var(--text-primary)] leading-relaxed">
                 {metadata.overview || "No description available."}
               </p>
             </div>
 
             {/* Important Metadata Grid (Non-Expandable) */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-y-6 gap-x-4 border-t border-neutral-800 pt-6">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-y-6 gap-x-4 border-t border-[color:var(--card-border)] pt-6">
               {metadata.status && (
                 <div>
-                  <span className="block text-neutral-500 text-sm mb-1">
+                  <span className="block text-[color:var(--text-secondary)] text-sm mb-1">
                     Status
                   </span>
-                  <span className="text-neutral-200 font-medium">
+                  <span className="text-[color:var(--text-primary)] font-medium">
                     {metadata.status}
                   </span>
                 </div>
               )}
               {metadata.networks && metadata.networks.length > 0 && (
                 <div>
-                  <span className="block text-neutral-500 text-sm mb-1">
+                  <span className="block text-[color:var(--text-secondary)] text-sm mb-1">
                     Network
                   </span>
-                  <span className="text-neutral-200 font-medium">
+                  <span className="text-[color:var(--text-primary)] font-medium">
                     {metadata.networks[0].name}
                   </span>
                 </div>
@@ -226,50 +229,50 @@ export default async function TVDetailPage({
               {metadata.vote_average !== undefined &&
                 metadata.vote_average > 0 && (
                   <div>
-                    <span className="block text-neutral-500 text-sm mb-1">
+                    <span className="block text-[color:var(--text-secondary)] text-sm mb-1">
                       TMDB Rating
                     </span>
-                    <span className="text-neutral-200 font-medium">
+                    <span className="text-[color:var(--text-primary)] font-medium">
                       {metadata.vote_average.toFixed(1)} / 10
                     </span>
                   </div>
                 )}
               {metadata.last_air_date && (
                 <div>
-                  <span className="block text-neutral-500 text-sm mb-1">
+                  <span className="block text-[color:var(--text-secondary)] text-sm mb-1">
                     Last Aired
                   </span>
-                  <span className="text-neutral-200 font-medium">
+                  <span className="text-[color:var(--text-primary)] font-medium">
                     {metadata.last_air_date}
                   </span>
                 </div>
               )}
               {metadata.number_of_seasons > 0 && (
                 <div>
-                  <span className="block text-neutral-500 text-sm mb-1">
+                  <span className="block text-[color:var(--text-secondary)] text-sm mb-1">
                     Seasons
                   </span>
-                  <span className="text-neutral-200 font-medium">
+                  <span className="text-[color:var(--text-primary)] font-medium">
                     {metadata.number_of_seasons}
                   </span>
                 </div>
               )}
               {metadata.number_of_episodes > 0 && (
                 <div>
-                  <span className="block text-neutral-500 text-sm mb-1">
+                  <span className="block text-[color:var(--text-secondary)] text-sm mb-1">
                     Episodes
                   </span>
-                  <span className="text-neutral-200 font-medium">
+                  <span className="text-[color:var(--text-primary)] font-medium">
                     {metadata.number_of_episodes}
                   </span>
                 </div>
               )}
               {metadata.created_by && metadata.created_by.length > 0 && (
                 <div className="col-span-2 sm:col-span-4">
-                  <span className="block text-neutral-500 text-sm mb-1">
+                  <span className="block text-[color:var(--text-secondary)] text-sm mb-1">
                     Created By
                   </span>
-                  <span className="text-neutral-200 font-medium">
+                  <span className="text-[color:var(--text-primary)] font-medium">
                     {metadata.created_by.map((c) => c.name).join(", ")}
                   </span>
                 </div>

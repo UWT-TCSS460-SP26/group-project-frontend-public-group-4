@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Star, Delete } from "@mui/icons-material";
 import ScoreBadge from "./ScoreBadge";
 import MediaBadge from "./MediaBadge";
@@ -39,7 +40,11 @@ export default function RatingsList({
     return (
       <div className="space-y-3">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="h-20 rounded-lg bg-zinc-800 animate-pulse" />
+          <div
+            key={i}
+            className="h-20 rounded-lg animate-pulse"
+            style={{ backgroundColor: "var(--surface-bg)" }}
+          />
         ))}
       </div>
     );
@@ -48,10 +53,17 @@ export default function RatingsList({
   if (error) {
     return (
       <div className="text-center py-8">
-        <p className="text-zinc-400">Could not load ratings.</p>
+        <p style={{ color: "var(--text-muted)" }}>Could not load ratings.</p>
         <button
           onClick={onRetry}
-          className="mt-2 text-sm text-amber-400 hover:text-amber-300 transition-colors"
+          className="mt-2 text-sm transition-colors"
+          style={{ color: "var(--primary-color)" }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = "var(--primary-hover)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = "var(--primary-color)";
+          }}
         >
           Retry
         </button>
@@ -62,8 +74,8 @@ export default function RatingsList({
   if (sorted.length === 0) {
     return (
       <div className="text-center py-8">
-        <Star className="mx-auto mb-2 text-zinc-600" style={{ fontSize: 40 }} />
-        <p className="text-zinc-500">No ratings yet</p>
+        <Star className="mx-auto mb-2" style={{ fontSize: 40, color: "var(--surface-text-dim)" }} />
+        <p style={{ color: "var(--text-secondary)" }}>No ratings yet</p>
       </div>
     );
   }
@@ -73,22 +85,37 @@ export default function RatingsList({
       {pageItems.map((r) => (
         <div
           key={r.ratingId}
-          className="flex items-center gap-4 p-4 rounded-lg bg-zinc-800/60 border border-zinc-700/50 group"
+          className="flex items-center gap-4 p-4 rounded-lg border group"
+          style={{
+            backgroundColor: "var(--surface-bg)",
+            borderColor: "var(--surface-border)",
+          }}
         >
           <ScoreBadge score={r.rating} />
           <MediaBadge isMovie={r.isMovie} />
-          <span className="text-base text-zinc-300 truncate max-w-[320px]">
+          <Link
+            href={r.isMovie ? `/movies/${r.tmdbIdentifier}` : `/tv/${r.tmdbIdentifier}`}
+            className="text-base truncate max-w-[320px] no-underline"
+            style={{ color: "var(--surface-text)" }}
+          >
             {titles.get(
               r.isMovie ? `m-${r.tmdbIdentifier}` : `s-${r.tmdbIdentifier}`,
             ) ?? `TMDB #${r.tmdbIdentifier}`}
-          </span>
+          </Link>
           <button
             onClick={() => {
               setDeleting(r.ratingId);
               onDelete(r.ratingId);
             }}
             disabled={deleting === r.ratingId}
-            className="ml-auto p-1.5 rounded-md text-zinc-500 hover:text-red-400 hover:bg-red-400/10 opacity-0 group-hover:opacity-100 transition-all disabled:opacity-50"
+            className="ml-auto p-1.5 rounded-md opacity-0 group-hover:opacity-100 transition-all disabled:opacity-50"
+            style={{ color: "var(--surface-text-dim)" }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = "var(--destructive-color)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = "var(--surface-text-dim)";
+            }}
             title="Delete rating"
           >
             <Delete style={{ fontSize: 16 }} />
@@ -115,14 +142,36 @@ export default function RatingsList({
               <button
                 onClick={() => setPage(0)}
                 disabled={page === 0}
-                className="px-2 py-1.5 rounded-md text-xs font-medium bg-zinc-800 text-zinc-300 hover:bg-zinc-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="px-2 py-1.5 rounded-md text-xs font-medium transition-colors disabled:cursor-not-allowed"
+                style={{
+                  backgroundColor: "var(--surface-bg)",
+                  color: "var(--surface-text)",
+                  opacity: page === 0 ? 0.4 : 1,
+                }}
+                onMouseEnter={(e) => {
+                  if (page !== 0) e.currentTarget.style.backgroundColor = "var(--surface-bg-hover)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "var(--surface-bg)";
+                }}
               >
                 First
               </button>
               <button
                 onClick={() => setPage((p) => Math.max(0, p - 1))}
                 disabled={page === 0}
-                className="px-2 py-1.5 rounded-md text-sm bg-zinc-800 text-zinc-300 hover:bg-zinc-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="px-2 py-1.5 rounded-md text-sm transition-colors disabled:cursor-not-allowed"
+                style={{
+                  backgroundColor: "var(--surface-bg)",
+                  color: "var(--surface-text)",
+                  opacity: page === 0 ? 0.4 : 1,
+                }}
+                onMouseEnter={(e) => {
+                  if (page !== 0) e.currentTarget.style.backgroundColor = "var(--surface-bg-hover)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "var(--surface-bg)";
+                }}
               >
                 Prev
               </button>
@@ -130,11 +179,24 @@ export default function RatingsList({
                 <button
                   key={i}
                   onClick={() => setPage(i)}
-                  className={`w-8 h-8 rounded-md text-sm font-medium transition-colors ${
+                  className="w-8 h-8 rounded-md text-sm font-medium transition-colors"
+                  style={
                     i === page
-                      ? "bg-amber-400 text-black"
-                      : "bg-zinc-800 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700"
-                  }`}
+                      ? { backgroundColor: "var(--primary-color)", color: "var(--primary-foreground)" }
+                      : { backgroundColor: "var(--surface-bg)", color: "var(--surface-text-dim)" }
+                  }
+                  onMouseEnter={(e) => {
+                    if (i !== page) {
+                      e.currentTarget.style.color = "var(--surface-text)";
+                      e.currentTarget.style.backgroundColor = "var(--surface-bg-hover)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (i !== page) {
+                      e.currentTarget.style.color = "var(--surface-text-dim)";
+                      e.currentTarget.style.backgroundColor = "var(--surface-bg)";
+                    }
+                  }}
                 >
                   {i + 1}
                 </button>
@@ -142,14 +204,36 @@ export default function RatingsList({
               <button
                 onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
                 disabled={page === totalPages - 1}
-                className="px-2 py-1.5 rounded-md text-sm bg-zinc-800 text-zinc-300 hover:bg-zinc-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="px-2 py-1.5 rounded-md text-sm transition-colors disabled:cursor-not-allowed"
+                style={{
+                  backgroundColor: "var(--surface-bg)",
+                  color: "var(--surface-text)",
+                  opacity: page === totalPages - 1 ? 0.4 : 1,
+                }}
+                onMouseEnter={(e) => {
+                  if (page !== totalPages - 1) e.currentTarget.style.backgroundColor = "var(--surface-bg-hover)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "var(--surface-bg)";
+                }}
               >
                 Next
               </button>
               <button
                 onClick={() => setPage(totalPages - 1)}
                 disabled={page === totalPages - 1}
-                className="px-2 py-1.5 rounded-md text-xs font-medium bg-zinc-800 text-zinc-300 hover:bg-zinc-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="px-2 py-1.5 rounded-md text-xs font-medium transition-colors disabled:cursor-not-allowed"
+                style={{
+                  backgroundColor: "var(--surface-bg)",
+                  color: "var(--surface-text)",
+                  opacity: page === totalPages - 1 ? 0.4 : 1,
+                }}
+                onMouseEnter={(e) => {
+                  if (page !== totalPages - 1) e.currentTarget.style.backgroundColor = "var(--surface-bg-hover)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "var(--surface-bg)";
+                }}
               >
                 Last
               </button>

@@ -6,7 +6,36 @@ import { useRouter, usePathname } from "next/navigation";
 import { Movie, Tv, Search, AccountCircle } from "@mui/icons-material";
 import { useSession, signOut } from "next-auth/react";
 
+import { DarkMode, LightMode } from "@mui/icons-material";
+import { useColorMode } from "@/lib/theme";
+
 type SearchMode = "movies" | "tv";
+
+export function ThemeToggle() {
+  const { mode, toggleColorMode } = useColorMode();
+
+  return (
+    <button
+      onClick={toggleColorMode}
+      className="p-2 rounded-md transition-colors"
+      style={{
+        color: "var(--header-text)",
+        backgroundColor: "transparent",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.color = "var(--header-hover-text)";
+        e.currentTarget.style.backgroundColor = "var(--header-hover-bg)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.color = "var(--header-text)";
+        e.currentTarget.style.backgroundColor = "transparent";
+      }}
+      aria-label="Toggle theme"
+    >
+      {mode === 'dark' ? <LightMode /> : <DarkMode />}
+    </button>
+  );
+}
 
 export default function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
@@ -62,13 +91,25 @@ export default function Header() {
     }
   }, [menuOpen]);
 
+  const headerLinkClass =
+    "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors";
+  const headerIconClass = "p-2 transition-colors";
+
   return (
     <>
-      <header className="sticky top-0 z-50 flex items-center gap-4 px-4 h-14 bg-zinc-950 text-zinc-100 border-b border-zinc-800">
+      <header
+        className="sticky top-0 z-50 flex items-center gap-4 px-4 h-14 border-b"
+        style={{
+          backgroundColor: "var(--header-bg)",
+          color: "var(--header-text)",
+          borderColor: "var(--header-border)",
+        }}
+      >
         {/* Logo */}
         <a
           href="/"
-          className="flex items-center gap-2 font-bold text-lg tracking-tight shrink-0 mr-2"
+          className="flex items-center gap-2 font-bold text-lg tracking-tight shrink-0 mr-2 no-underline"
+          style={{ color: "var(--header-text)" }}
         >
           <span className="text-amber-400">Media</span>Rate
         </a>
@@ -77,14 +118,32 @@ export default function Header() {
         <nav className="hidden sm:flex items-center gap-1">
           <a
             href="/movies"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium text-zinc-300 hover:text-white hover:bg-zinc-800 transition-colors"
+            className={headerLinkClass}
+            style={{ color: "var(--header-text)" }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = "var(--header-hover-text)";
+              e.currentTarget.style.backgroundColor = "var(--header-hover-bg)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = "var(--header-text)";
+              e.currentTarget.style.backgroundColor = "transparent";
+            }}
           >
             <Movie fontSize="small" />
             Movies
           </a>
           <a
             href="/tv"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium text-zinc-300 hover:text-white hover:bg-zinc-800 transition-colors"
+            className={headerLinkClass}
+            style={{ color: "var(--header-text)" }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = "var(--header-hover-text)";
+              e.currentTarget.style.backgroundColor = "var(--header-hover-bg)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = "var(--header-text)";
+              e.currentTarget.style.backgroundColor = "transparent";
+            }}
           >
             <Tv fontSize="small" />
             TV Shows
@@ -95,14 +154,16 @@ export default function Header() {
         <div className="flex sm:hidden items-center gap-1">
           <a
             href="/movies"
-            className="p-2 text-zinc-300 hover:text-white"
+            className={headerIconClass}
+            style={{ color: "var(--header-text)" }}
             aria-label="Movies"
           >
             <Movie fontSize="small" />
           </a>
           <a
             href="/tv"
-            className="p-2 text-zinc-300 hover:text-white"
+            className={headerIconClass}
+            style={{ color: "var(--header-text)" }}
             aria-label="TV Shows"
           >
             <Tv fontSize="small" />
@@ -115,34 +176,78 @@ export default function Header() {
         {/* Search */}
         <button
           onClick={() => setSearchOpen(true)}
-          className="p-2 rounded-md text-zinc-300 hover:text-white hover:bg-zinc-800 transition-colors"
+          className={headerIconClass + " rounded-md"}
+          style={{ color: "var(--header-text)" }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = "var(--header-hover-text)";
+            e.currentTarget.style.backgroundColor = "var(--header-hover-bg)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = "var(--header-text)";
+            e.currentTarget.style.backgroundColor = "transparent";
+          }}
           aria-label="Search"
         >
           <Search />
         </button>
+
+        {/* Theme Toggle */}
+        <ThemeToggle />
 
         {/* Profile */}
         {isLoggedIn ? (
           <div ref={menuRef} className="relative">
             <button
               onClick={() => setMenuOpen((v) => !v)}
-              className="flex items-center gap-1.5 p-2 rounded-md text-zinc-300 hover:text-white hover:bg-zinc-800 transition-colors"
+              className={headerIconClass + " flex items-center gap-1.5 rounded-md"}
+              style={{ color: "var(--header-text)" }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = "var(--header-hover-text)";
+                e.currentTarget.style.backgroundColor = "var(--header-hover-bg)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = "var(--header-text)";
+                e.currentTarget.style.backgroundColor = "transparent";
+              }}
               aria-label="Profile menu"
             >
               <AccountCircle />
             </button>
             {menuOpen && (
-              <div className="absolute right-0 top-full mt-1 w-44 rounded-md bg-zinc-800 border border-zinc-700 shadow-lg overflow-hidden">
+              <div
+                className="absolute right-0 top-full mt-1 w-44 rounded-md shadow-lg overflow-hidden border"
+                style={{
+                  backgroundColor: "var(--dropdown-bg)",
+                  borderColor: "var(--dropdown-border)",
+                }}
+              >
                 <Link
                   href="/profile"
                   onClick={() => setMenuOpen(false)}
-                  className="flex w-full px-4 py-2.5 text-sm text-zinc-200 hover:bg-zinc-700 transition-colors"
+                  className="flex w-full px-4 py-2.5 text-sm transition-colors no-underline"
+                  style={{ color: "var(--dropdown-text)" }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = "var(--dropdown-hover-bg)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "transparent";
+                  }}
                 >
                   View Profile
                 </Link>
                 <button
                   onClick={() => signOut({ callbackUrl: pathname })}
-                  className="flex w-full px-4 py-2.5 text-sm text-zinc-200 hover:bg-zinc-700 transition-colors border-t border-zinc-700"
+                  className="flex w-full px-4 py-2.5 text-sm transition-colors"
+                  style={{
+                    color: "var(--dropdown-text)",
+                    borderTop: "1px solid var(--dropdown-divider)",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = "var(--dropdown-hover-bg)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "transparent";
+                  }}
                 >
                   Sign Out
                 </button>
@@ -152,7 +257,16 @@ export default function Header() {
         ) : (
           <Link
             href={`/sign-in?callbackUrl=${encodeURIComponent(pathname)}`}
-            className="flex items-center gap-1.5 py-1.5 px-3 rounded-md text-sm font-medium text-zinc-300 hover:text-white hover:bg-zinc-800 transition-colors"
+            className={headerLinkClass + " no-underline"}
+            style={{ color: "var(--header-text)" }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = "var(--header-hover-text)";
+              e.currentTarget.style.backgroundColor = "var(--header-hover-bg)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = "var(--header-text)";
+              e.currentTarget.style.backgroundColor = "transparent";
+            }}
             aria-label="Sign in"
           >
             <AccountCircle fontSize="small" />
@@ -165,15 +279,17 @@ export default function Header() {
       {searchOpen && (
         <div className="fixed inset-0 top-14 z-50">
           <div
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 backdrop-blur-sm"
+            style={{ backgroundColor: "var(--search-overlay-bg)" }}
             onClick={() => setSearchOpen(false)}
           />
           <div className="relative flex flex-col items-center pt-12 px-6">
             <div className="w-full max-w-lg">
-              <div className="flex items-center gap-2 bg-zinc-800 rounded-xl overflow-hidden ring-1 ring-zinc-700 focus-within:ring-amber-400 transition-shadow">
+              <div className="flex items-center gap-2 rounded-xl overflow-hidden ring-1 ring-[var(--card-border)] focus-within:ring-amber-400 transition-shadow"
+                style={{ backgroundColor: "var(--card-bg)" }}>
                 <Search
-                  className="ml-4 text-zinc-500"
-                  style={{ fontSize: 22 }}
+                  className="ml-4"
+                  style={{ color: "var(--text-secondary)", fontSize: 22 }}
                 />
                 <input
                   ref={searchInputRef}
@@ -184,35 +300,64 @@ export default function Header() {
                     if (e.key === "Enter") submitSearch();
                   }}
                   placeholder={`Search ${searchMode === "movies" ? "movies" : "TV shows"}...`}
-                  className="flex-1 py-3.5 pr-4 bg-transparent text-base text-white placeholder-zinc-500 outline-none"
+                  className="flex-1 py-3.5 px-4 bg-transparent text-base outline-none"
+                  style={{
+                    color: "var(--foreground)",
+                  }}
                 />
+                <button
+                  onClick={submitSearch}
+                  className="bg-amber-400 px-5 py-3.5 text-sm font-semibold text-black hover:bg-amber-500 transition-colors rounded-xl ml-[-4px]"
+                >
+                  Search
+                </button>
               </div>
               <div className="flex gap-2 mt-4">
                 <button
                   onClick={() => setSearchMode("movies")}
-                  className={`flex items-center gap-2 flex-1 justify-center py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                    searchMode === "movies"
-                      ? "bg-amber-400 text-black"
-                      : "bg-zinc-800 text-zinc-400 hover:text-zinc-200"
-                  }`}
+                  className="flex items-center gap-2 flex-1 justify-center py-2.5 rounded-lg text-sm font-medium transition-colors"
+                  style={searchMode === "movies"
+                    ? { backgroundColor: "var(--primary-color)", color: "var(--primary-foreground)" }
+                    : { backgroundColor: "var(--search-mode-btn-bg)", color: "var(--search-mode-btn-text)" }
+                  }
+                  onMouseEnter={(e) => {
+                    if (searchMode !== "movies") {
+                      e.currentTarget.style.color = "var(--search-mode-btn-hover-text)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (searchMode !== "movies") {
+                      e.currentTarget.style.color = "var(--search-mode-btn-text)";
+                    }
+                  }}
                 >
                   <Movie style={{ fontSize: 18 }} />
                   Movies
                 </button>
                 <button
                   onClick={() => setSearchMode("tv")}
-                  className={`flex items-center gap-2 flex-1 justify-center py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                    searchMode === "tv"
-                      ? "bg-amber-400 text-black"
-                      : "bg-zinc-800 text-zinc-400 hover:text-zinc-200"
-                  }`}
+                  className="flex items-center gap-2 flex-1 justify-center py-2.5 rounded-lg text-sm font-medium transition-colors"
+                  style={searchMode === "tv"
+                    ? { backgroundColor: "var(--primary-color)", color: "var(--primary-foreground)" }
+                    : { backgroundColor: "var(--search-mode-btn-bg)", color: "var(--search-mode-btn-text)" }
+                  }
+                  onMouseEnter={(e) => {
+                    if (searchMode !== "tv") {
+                      e.currentTarget.style.color = "var(--search-mode-btn-hover-text)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (searchMode !== "tv") {
+                      e.currentTarget.style.color = "var(--search-mode-btn-text)";
+                    }
+                  }}
                 >
                   <Tv style={{ fontSize: 18 }} />
                   TV Shows
                 </button>
               </div>
-              <p className="text-xs text-zinc-600 text-center mt-3">
-                Press Enter to search
+              <p className="text-sm text-center mt-3" style={{ color: "var(--search-hint-text)" }}>
+                Press Enter to search or click the button
               </p>
             </div>
           </div>

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AppThemeProvider } from '@/lib/theme';
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AuthSessionProvider from "@/components/auth-session-provider";
@@ -31,8 +32,10 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <AuthSessionProvider>
-          <Header />
-          {children}
+          <AppThemeProvider>
+            <Header />
+            {children}
+          </AppThemeProvider>
         </AuthSessionProvider>
       </body>
     </html>

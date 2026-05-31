@@ -20,13 +20,25 @@ export default function ProfileHeader({
           className="w-20 h-20 rounded-full ring-2 ring-amber-400"
         />
       ) : (
-        <div className="w-20 h-20 rounded-full bg-zinc-700 flex items-center justify-center text-zinc-400 text-3xl font-bold ring-2 ring-amber-400">
+        <div
+          className="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-bold ring-2 ring-amber-400"
+          style={{
+            backgroundColor: "var(--profile-avatar-bg)",
+            color: "var(--profile-avatar-text)",
+          }}
+        >
           {(name ?? "U")[0].toUpperCase()}
         </div>
       )}
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-zinc-100">{name ?? "User"}</h1>
-        {email && <p className="text-sm text-zinc-500 mt-0.5">{email}</p>}
+        <h1 className="text-2xl font-bold" style={{ color: "var(--profile-text)" }}>
+          {name ?? "User"}
+        </h1>
+        {email && (
+          <p className="text-sm mt-0.5" style={{ color: "var(--profile-text-muted)" }}>
+            {email}
+          </p>
+        )}
       </div>
     </div>
   );

@@ -81,7 +81,7 @@ export default async function TVPage({
     <div className="pt-16 px-2 sm:px-4 lg:px-6 pb-16">
       {topRatedShows.length > 0 && (
         <section className="mb-12">
-          <h2 className="text-3xl font-bold text-white mb-6">
+          <h2 className="text-3xl font-bold text-[var(--foreground)] mb-6">
             Top Rated TV Shows
           </h2>
           <MediaGrid
@@ -93,7 +93,7 @@ export default async function TVPage({
 
       {mostReviewedShows.length > 0 && (
         <section className="mb-12">
-          <h2 className="text-3xl font-bold text-white mb-6">
+          <h2 className="text-3xl font-bold text-[var(--foreground)] mb-6">
             Most Reviewed TV Shows
           </h2>
           <MediaGrid
@@ -104,7 +104,7 @@ export default async function TVPage({
       )}
 
       <section>
-        <h2 className="text-3xl font-bold text-white mb-6">Popular TV Shows</h2>
+        <h2 className="text-3xl font-bold text-[var(--foreground)] mb-6">Popular TV Shows</h2>
         <MediaGrid
           items={popularShows}
           getItemHref={(item) => `/tv/${item.id}`}

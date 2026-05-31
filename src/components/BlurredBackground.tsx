@@ -5,7 +5,13 @@ export default function BlurredBackground({ imageUrl }: { imageUrl: string }) {
         className="absolute inset-0 bg-cover bg-center opacity-25 blur-[100px] scale-110 saturate-150"
         style={{ backgroundImage: `url(${imageUrl})` }}
       />
-      <div className="absolute inset-0 bg-linear-to-b from-transparent via-neutral-950/80 to-neutral-950" />
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage:
+            "linear-gradient(180deg, transparent 0%, var(--gradient-overlay-via) 40%, var(--gradient-overlay-dark) 100%)",
+        }}
+      />
     </div>
   );
 }
