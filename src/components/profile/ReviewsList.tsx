@@ -159,52 +159,6 @@ export default function ReviewsList({
             <span className="text-xs ml-auto" style={{ color: "var(--text-secondary)" }}>
               {formatDate(r.dateOfReview)}
             </span>
-
-            {!isEditing && (
-              <>
-                <button
-                  onClick={() => {
-                    setEditingId(r.reviewId);
-                    setEditContent(r.reviewContent);
-                  }}
-                  aria-label={`Edit review for ${titles.get(r.isMovie ? `m-${r.tmdbIdentifier}` : `s-${r.tmdbIdentifier}`) ?? `TMDB #${r.tmdbIdentifier}`}`}
-                  className="p-1 rounded-md opacity-0 group-hover:opacity-100 transition-all"
-                  style={{ color: "var(--text-secondary)" }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = "var(--primary-color)";
-                    e.currentTarget.style.backgroundColor = "var(--surface-bg-hover)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = "var(--text-secondary)";
-                    e.currentTarget.style.backgroundColor = "transparent";
-                  }}
-                  title="Edit review"
-                >
-                  <Edit style={{ fontSize: 16 }} aria-hidden="true" />
-                </button>
-                <button
-                  onClick={() => {
-                    setDeleting(r.reviewId);
-                    onDelete(r.reviewId);
-                  }}
-                  disabled={deleting === r.reviewId}
-                  className="p-1 rounded-md opacity-0 group-hover:opacity-100 transition-all disabled:opacity-50"
-                  style={{ color: "var(--text-secondary)" }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = "var(--destructive-color)";
-                    e.currentTarget.style.backgroundColor = "var(--surface-bg-hover)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = "var(--text-secondary)";
-                    e.currentTarget.style.backgroundColor = "transparent";
-                  }}
-                  title="Delete review"
-                  aria-label={`Delete review for ${titles.get(r.isMovie ? `m-${r.tmdbIdentifier}` : `s-${r.tmdbIdentifier}`) ?? `TMDB #${r.tmdbIdentifier}`}`}
-                >
-                  <Delete style={{ fontSize: 16 }} aria-hidden="true" />
-                </button>
-              </>
-            )}
           </div>
 
           {isEditing ? (
@@ -306,6 +260,52 @@ export default function ReviewsList({
                   {expanded ? "Show less" : "Read more"}
                 </button>
               )}
+            </div>
+          )}
+
+          {!isEditing && (
+            <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-all">
+              <button
+                onClick={() => {
+                  setEditingId(r.reviewId);
+                  setEditContent(r.reviewContent);
+                }}
+                aria-label={`Edit review for ${titles.get(r.isMovie ? `m-${r.tmdbIdentifier}` : `s-${r.tmdbIdentifier}`) ?? `TMDB #${r.tmdbIdentifier}`}`}
+                className="p-1.5 rounded-md transition-colors"
+                style={{ color: "var(--text-secondary)" }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = "var(--primary-color)";
+                  e.currentTarget.style.backgroundColor = "var(--surface-bg-hover)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "var(--text-secondary)";
+                  e.currentTarget.style.backgroundColor = "transparent";
+                }}
+                title="Edit review"
+              >
+                <Edit style={{ fontSize: 18 }} aria-hidden="true" />
+              </button>
+              <button
+                onClick={() => {
+                  setDeleting(r.reviewId);
+                  onDelete(r.reviewId);
+                }}
+                disabled={deleting === r.reviewId}
+                className="p-1.5 rounded-md transition-colors disabled:opacity-50"
+                style={{ color: "var(--text-secondary)" }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = "var(--destructive-color)";
+                  e.currentTarget.style.backgroundColor = "var(--surface-bg-hover)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "var(--text-secondary)";
+                  e.currentTarget.style.backgroundColor = "transparent";
+                }}
+                title="Delete review"
+                aria-label={`Delete review for ${titles.get(r.isMovie ? `m-${r.tmdbIdentifier}` : `s-${r.tmdbIdentifier}`) ?? `TMDB #${r.tmdbIdentifier}`}`}
+              >
+                <Delete style={{ fontSize: 18 }} aria-hidden="true" />
+              </button>
             </div>
           )}
         </div>

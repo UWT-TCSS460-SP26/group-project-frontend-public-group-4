@@ -68,7 +68,7 @@ export default function MediaCard({ item, href }: MediaCardProps) {
         {/* Gradient overlay on hover */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
           <div className="absolute bottom-0 left-0 right-0 p-4">
-            <p className="text-sm text-[var(--text-secondary)] line-clamp-4">
+            <p className="text-sm text-white/80 line-clamp-4">
               {item.description}
             </p>
           </div>
