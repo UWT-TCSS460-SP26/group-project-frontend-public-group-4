@@ -1,8 +1,119 @@
 @import "tailwindcss";
 
+/* Light mode (default) */
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #1a1a1a;
+  --card-bg: #f5f5f5;
+  --card-border: #e5e5e5;
+  --primary-color: #f59e0b;
+  --primary-hover: #f97316;
+  --primary-foreground: #000000;
+  --secondary-bg: #e5e5e5;
+  --secondary-hover: #d4d4d8;
+  --secondary-foreground: #1a1a1a;
+  --text-primary: #1a1a1a;
+  --text-muted: #2c2c2c;
+  --text-secondary: #38383b;
+  --gradient-overlay-via: rgba(15, 23, 42, 0.35);
+  --gradient-overlay-dark: rgba(15, 23, 42, 0.65);
+  --destructive-color: #ef4444;
+  --destructive-hover: #dc2626;
+  --edit-hover: #f97316;
+  --badge-success: #22c55e;
+  --badge-warning: #f59e0b;
+  --badge-danger: #ef4444;
+  --input-bg: #ffffff;
+  --input-border: #e5e5e5;
+  --input-focus-border: #f59e0b;
+  --divider: #f0f0f0;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+    --card-bg: #27272a;
+    --card-border: #3f3f46;
+    --primary-color: #f59e0b;
+    --primary-hover: #fbbf24;
+    --primary-foreground: #000000;
+    --secondary-bg: #3f3f46;
+    --secondary-hover: #52525b;
+    --secondary-foreground: #ededed;
+    --text-primary: #ededed;
+    --text-muted: #a1a1a1;
+    --text-secondary: #71717a;
+    --destructive-color: #ef4444;
+    --destructive-hover: #fca5a5;
+    --edit-hover: #fbbf24;
+    --badge-success: #22c55e;
+    --badge-warning: #f59e0b;
+    --badge-danger: #ef4444;
+    --input-bg: #18181b;
+    --input-border: #3f3f46;
+    --input-focus-border: #f59e0b;
+    --divider: #27272a;
+  }
+}
+
+/* Force light mode when data-theme="light" */
+[data-theme="light"] {
+  --background: #ffffff;
+  --foreground: #1a1a1a;
+  --card-bg: #f5f5f5;
+  --card-border: #e5e5e5;
+  --primary-color: #f59e0b;
+  --primary-hover: #f97316;
+  --primary-foreground: #000000;
+  --secondary-bg: #e5e5e5;
+  --secondary-hover: #d4d4d8;
+  --secondary-foreground: #1a1a1a;
+  --text-primary: #1a1a1a;
+  --text-muted: #2c2c2c;
+  --text-secondary: #38383b;
+  --gradient-overlay-via: rgba(15, 23, 42, 0.35);
+  --gradient-overlay-dark: rgba(15, 23, 42, 0.65);
+  --destructive-color: #ef4444;
+  --destructive-hover: #dc2626;
+  --edit-hover: #f97316;
+  --badge-success: #22c55e;
+  --badge-warning: #f59e0b;
+  --badge-danger: #ef4444;
+  --input-bg: #ffffff;
+  --input-border: #e5e5e5;
+  --input-focus-border: #f59e0b;
+  --divider: #f0f0f0;
+}
+
+/* Force dark mode when data-theme="dark" */
+[data-theme="dark"] {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --card-bg: #27272a;
+  --card-border: #3f3f46;
+  --primary-color: #f59e0b;
+  --primary-hover: #fbbf24;
+  --primary-foreground: #000000;
+  --secondary-bg: #3f3f46;
+  --secondary-hover: #52525b;
+  --secondary-foreground: #ededed;
+  --text-primary: #ededed;
+  --text-muted: #a1a1a1;
+  --text-secondary: #71717a;
+  --gradient-overlay-via: rgba(0, 0, 0, 0.65);
+  --gradient-overlay-dark: rgba(0, 0, 0, 0.9);
+  --destructive-color: #ef4444;
+  --destructive-hover: #fca5a5;
+  --edit-hover: #fbbf24;
+  --badge-success: #22c55e;
+  --badge-warning: #f59e0b;
+  --badge-danger: #ef4444;
+  --input-bg: #18181b;
+  --input-border: #3f3f46;
+  --input-focus-border: #f59e0b;
+  --divider: #27272a;
 }
 
 @theme inline {
@@ -12,15 +123,9 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }

@@ -6,7 +6,24 @@ import { useRouter, usePathname } from "next/navigation";
 import { Movie, Tv, Search, AccountCircle } from "@mui/icons-material";
 import { useSession, signOut } from "next-auth/react";
 
+import { DarkMode, LightMode } from "@mui/icons-material"; 
+import { useColorMode } from "@/lib/theme";
+
 type SearchMode = "movies" | "tv";
+
+export function ThemeToggle() {
+  const { mode, toggleColorMode } = useColorMode();
+
+  return (
+    <button
+      onClick={toggleColorMode}
+      className="p-2 rounded-md text-zinc-300 hover:text-white hover:bg-zinc-800 transition-colors"
+      aria-label="Toggle theme"
+    >
+      {mode === 'dark' ? <LightMode /> : <DarkMode />}
+    </button>
+  );
+}
 
 export default function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
@@ -121,6 +138,9 @@ export default function Header() {
           <Search />
         </button>
 
+        {/* Theme Toggle */}
+        <ThemeToggle />
+
         {/* Profile */}
         {isLoggedIn ? (
           <div ref={menuRef} className="relative">
@@ -170,9 +190,9 @@ export default function Header() {
           />
           <div className="relative flex flex-col items-center pt-12 px-6">
             <div className="w-full max-w-lg">
-              <div className="flex items-center gap-2 bg-zinc-800 rounded-xl overflow-hidden ring-1 ring-zinc-700 focus-within:ring-amber-400 transition-shadow">
+              <div className="flex items-center gap-2 bg-[var(--card-bg)] rounded-xl overflow-hidden ring-1 ring-[var(--card-border)] focus-within:ring-amber-400 transition-shadow">
                 <Search
-                  className="ml-4 text-zinc-500"
+                  className="ml-4 text-[var(--text-secondary)]"
                   style={{ fontSize: 22 }}
                 />
                 <input
@@ -184,8 +204,14 @@ export default function Header() {
                     if (e.key === "Enter") submitSearch();
                   }}
                   placeholder={`Search ${searchMode === "movies" ? "movies" : "TV shows"}...`}
-                  className="flex-1 py-3.5 pr-4 bg-transparent text-base text-white placeholder-zinc-500 outline-none"
+                  className="flex-1 py-3.5 px-4 bg-transparent text-base text-[var(--foreground)] placeholder-[color:var(--text-secondary)] outline-none"
                 />
+                <button
+                  onClick={submitSearch}
+                  className="rounded-r-xl bg-amber-400 px-5 py-3.5 text-sm font-semibold text-black hover:bg-amber-500 transition-colors"
+                >
+                  Search
+                </button>
               </div>
               <div className="flex gap-2 mt-4">
                 <button
@@ -194,8 +220,8 @@ export default function Header() {
                     searchMode === "movies"
                       ? "bg-amber-400 text-black"
                       : "bg-zinc-800 text-zinc-400 hover:text-zinc-200"
-                  }`}
-                >
+                  }`}>
+
                   <Movie style={{ fontSize: 18 }} />
                   Movies
                 </button>
@@ -211,8 +237,8 @@ export default function Header() {
                   TV Shows
                 </button>
               </div>
-              <p className="text-xs text-zinc-600 text-center mt-3">
-                Press Enter to search
+              <p className="text-sm text-white text-center mt-3">
+                Press Enter to search or click the button
               </p>
             </div>
           </div>
