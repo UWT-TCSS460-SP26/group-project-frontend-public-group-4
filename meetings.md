@@ -202,3 +202,20 @@
 | Josh   | ✅ Works | As a visitor, I want to browse what's popular or trending so that I have something to look at before I search.                             | Mediacards load slow |
 | Phelan | ✅ Works | All of the auth/ user profiles                                                                                                             | Nice header          |
 | Nathan | ✅ Works | As a visitor, I want to open a movie or show detail page so that I can read about something before deciding whether to (eventually)rate it | Nice details page    |
+
+## Week 9
+
+**Date:** 5/26/2026 · **Time:** 12:30 – 1:20 pm · **Attendees:** All members
+
+### Tasks
+
+| Member     | User Story                                                                                                                                |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| **Nathan** | As a user, I want to rate a movie or show so that I can record how I felt about it.                                                       |
+|            | As a user, I want to edit or delete content I own so that I can change my mind or fix a mistake.                                          |
+|            | As a visitor, I want write affordances to be inert when I'm not signed in so that the app doesn't appear broken when I haven't logged in. |
+| **Ocean**  | As a team, we want our consumer app to feel like one product so that a user moving between views isn't jarred by inconsistent choices.    |
+| **Joshua** | As a user, I want to write a review so that I can share my thoughts with other people who watched it.                                     |
+|            | As a user, I want to edit or delete content I own so that I can change my mind or fix a mistake.                                          |
+|            | As a visitor, I want write affordances to be inert when I'm not signed in so that the app doesn't appear broken when I haven't logged in. |
+| **Phelan** | As a user, I want a profile page that shows everything I've rated and reviewed so that I can see my activity in one place.                |
