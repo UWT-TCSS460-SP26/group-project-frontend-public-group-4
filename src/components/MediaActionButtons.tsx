@@ -39,7 +39,6 @@ export default function MediaActionButtons({
   const [reviewContent, setReviewContent] = useState(userReview?.reviewContent ?? "");
   const [existingReview, setExistingReview] = useState(userReview);
 
-  // Sync with server-fetched userReview after router.refresh()
   useEffect(() => {
     setExistingReview(userReview);
   }, [userReview]);
@@ -49,7 +48,6 @@ export default function MediaActionButtons({
   const [deleting, setDeleting] = useState(false);
   const [toast, setToast] = useState<Toast | null>(null);
 
-  // Auto-dismiss toast after 5s
   useEffect(() => {
     if (!toast) return;
     const timer = setTimeout(() => setToast(null), 5000);
@@ -71,7 +69,7 @@ export default function MediaActionButtons({
         reviewContent: reviewContent.trim(),
       });
       const newReview = {
-        reviewId: 0, // placeholder — synced from server after refresh
+        reviewId: 0,
         reviewContent: reviewContent.trim(),
         dateOfReview: new Date().toISOString(),
       };
@@ -127,13 +125,33 @@ export default function MediaActionButtons({
       <div className="flex flex-col gap-2">
         <Link
           href={`/sign-in${returnUrl ? `?callbackUrl=${encodeURIComponent(returnUrl)}` : ""}`}
-          className="block w-full text-center bg-amber-600 text-white py-2.5 px-4 rounded font-semibold hover:bg-amber-700 transition-colors"
+          className="block w-full text-center py-2.5 px-4 rounded font-semibold transition-colors no-underline"
+          style={{
+            backgroundColor: "var(--rating-btn-bg)",
+            color: "var(--rating-btn-text)",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = "var(--rating-btn-hover-bg)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = "var(--rating-btn-bg)";
+          }}
         >
           Sign in to Rate
         </Link>
         <Link
           href={`/sign-in${returnUrl ? `?callbackUrl=${encodeURIComponent(returnUrl)}` : ""}`}
-          className="block w-full text-center bg-neutral-700 text-white py-2.5 px-4 rounded font-semibold hover:bg-neutral-600 transition-colors"
+          className="block w-full text-center py-2.5 px-4 rounded font-semibold transition-colors no-underline"
+          style={{
+            backgroundColor: "var(--btn-secondary-bg)",
+            color: "var(--btn-secondary-text)",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = "var(--btn-secondary-hover-bg)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = "var(--btn-secondary-bg)";
+          }}
         >
           Sign in to Review
         </Link>
@@ -152,23 +170,47 @@ export default function MediaActionButtons({
 
       {/* Review Section */}
       {existingReview ? (
-        <div className="bg-neutral-800 rounded-lg p-4 border border-neutral-700">
+        <div
+          className="rounded-lg p-4 border"
+          style={{
+            backgroundColor: "var(--review-card-bg)",
+            borderColor: "var(--review-card-border)",
+          }}
+        >
           <div className="flex items-center justify-between mb-2">
-            <span className="text-neutral-400 text-xs">
+            <span className="text-xs" style={{ color: "var(--review-card-text-muted)" }}>
               Your review &middot; {new Date(existingReview.dateOfReview).toLocaleDateString()}
             </span>
             <div className="flex gap-1">
               <button
                 onClick={() => { setEditing(true); setReviewContent(existingReview.reviewContent); }}
                 disabled={editing || deleting}
-                className="text-xs px-2 py-1 rounded text-zinc-400 hover:text-amber-400 hover:bg-zinc-700/50 transition-colors"
+                className="text-xs px-2 py-1 rounded transition-colors"
+                style={{ color: "var(--text-secondary)" }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = "var(--primary-color)";
+                  e.currentTarget.style.backgroundColor = "var(--surface-bg-hover)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "var(--text-secondary)";
+                  e.currentTarget.style.backgroundColor = "transparent";
+                }}
               >
                 Edit
               </button>
               <button
                 onClick={handleDeleteReview}
                 disabled={deleting}
-                className="text-xs px-2 py-1 rounded text-zinc-400 hover:text-red-400 hover:bg-zinc-700/50 transition-colors"
+                className="text-xs px-2 py-1 rounded transition-colors"
+                style={{ color: "var(--text-secondary)" }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = "var(--destructive-color)";
+                  e.currentTarget.style.backgroundColor = "var(--surface-bg-hover)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "var(--text-secondary)";
+                  e.currentTarget.style.backgroundColor = "transparent";
+                }}
               >
                 {deleting ? "Deleting..." : "Delete"}
               </button>
@@ -183,15 +225,32 @@ export default function MediaActionButtons({
                 rows={3}
                 maxLength={2000}
                 disabled={reviewSubmitting}
-                className="w-full bg-neutral-900 text-white rounded p-2 text-sm resize-y border border-neutral-600 focus:border-amber-400 focus:outline-none transition-colors"
+                className="w-full rounded p-2 text-sm resize-y border focus:outline-none transition-colors"
+                style={{
+                  backgroundColor: "var(--input-bg)",
+                  color: "var(--foreground)",
+                  borderColor: "var(--input-border)",
+                }}
               />
               <div className="flex items-center justify-between">
-                <span className="text-xs text-neutral-500">{reviewContent.length}/2000</span>
+                <span className="text-xs" style={{ color: "var(--text-secondary)" }}>
+                  {reviewContent.length}/2000
+                </span>
                 <div className="flex gap-2">
                   <button
                     onClick={() => { setEditing(false); setReviewContent(existingReview.reviewContent); }}
                     disabled={reviewSubmitting}
-                    className="text-xs px-3 py-1.5 rounded bg-zinc-700 text-zinc-300 hover:bg-zinc-600 transition-colors"
+                    className="text-xs px-3 py-1.5 rounded transition-colors"
+                    style={{
+                      backgroundColor: "var(--btn-secondary-bg)",
+                      color: "var(--btn-secondary-text)",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = "var(--btn-secondary-hover-bg)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "var(--btn-secondary-bg)";
+                    }}
                   >
                     Cancel
                   </button>
@@ -206,14 +265,20 @@ export default function MediaActionButtons({
               </div>
             </div>
           ) : (
-            <p className="text-sm text-zinc-300 leading-relaxed whitespace-pre-wrap break-words">
+            <p className="text-sm leading-relaxed whitespace-pre-wrap break-words" style={{ color: "var(--review-card-text)" }}>
               {existingReview.reviewContent}
             </p>
           )}
         </div>
       ) : (
-        <div className="bg-neutral-800 rounded-lg p-4 border border-neutral-700">
-          <label htmlFor="review-textarea" className="text-neutral-300 text-sm mb-2 block font-medium">
+        <div
+          className="rounded-lg p-4 border"
+          style={{
+            backgroundColor: "var(--review-card-bg)",
+            borderColor: "var(--review-card-border)",
+          }}
+        >
+          <label htmlFor="review-textarea" className="text-sm mb-2 block font-medium" style={{ color: "var(--review-card-text)" }}>
             Write a Review
           </label>
           <textarea
@@ -225,14 +290,34 @@ export default function MediaActionButtons({
             rows={4}
             maxLength={2000}
             disabled={reviewSubmitting}
-            className="w-full bg-neutral-900 text-white rounded p-3 text-sm resize-y border border-neutral-700 focus:border-blue-500 focus:outline-none transition-colors placeholder:text-neutral-500"
+            className="w-full rounded p-3 text-sm resize-y border focus:outline-none transition-colors"
+            style={{
+              backgroundColor: "var(--input-bg)",
+              color: "var(--foreground)",
+              borderColor: "var(--input-border)",
+            }}
           />
           <div className="flex items-center justify-between mt-3">
-            <span className="text-neutral-500 text-xs">{reviewContent.length}/2000</span>
+            <span className="text-xs" style={{ color: "var(--text-secondary)" }}>
+              {reviewContent.length}/2000
+            </span>
             <button
               onClick={handleSubmitReview}
               disabled={!reviewContent.trim() || reviewSubmitting}
-              className="bg-blue-600 text-white text-sm px-4 py-1.5 rounded font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="text-sm px-4 py-1.5 rounded font-semibold transition-colors"
+              style={{
+                backgroundColor: "var(--primary-color)",
+                color: "var(--primary-foreground)",
+                opacity: !reviewContent.trim() || reviewSubmitting ? 0.5 : 1,
+              }}
+              onMouseEnter={(e) => {
+                if (!(!reviewContent.trim() || reviewSubmitting)) {
+                  e.currentTarget.style.backgroundColor = "var(--primary-hover)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "var(--primary-color)";
+              }}
             >
               {reviewSubmitting ? "Submitting..." : "Submit"}
             </button>
@@ -245,23 +330,23 @@ export default function MediaActionButtons({
         <div
           role="alert"
           aria-live="assertive"
-          className={`fixed bottom-6 right-6 z-50 max-w-sm rounded-lg px-5 py-4 shadow-xl border transition-all duration-300 ${
-            toast.type === "success"
-              ? "bg-green-900/95 border-green-700 text-green-100"
-              : "bg-red-900/95 border-red-700 text-red-100"
-          }`}
+          className="fixed bottom-6 right-6 z-50 max-w-sm rounded-lg px-5 py-4 shadow-xl border transition-all duration-300"
+          style={toast.type === "success"
+            ? { backgroundColor: "var(--toast-success-bg)", borderColor: "var(--toast-success-border)", color: "var(--toast-success-text)" }
+            : { backgroundColor: "var(--toast-error-bg)", borderColor: "var(--toast-error-border)", color: "var(--toast-error-text)" }
+          }
         >
           <div className="flex items-start gap-3">
             <span className="text-lg shrink-0" aria-hidden="true">
-              {toast.type === "success" ? "✓" : "✕"}
+              {toast.type === "success" ? "\u2713" : "\u2715"}
             </span>
             <p className="text-sm leading-relaxed">{toast.message}</p>
             <button
               onClick={() => setToast(null)}
               aria-label="Close notification"
-              className="shrink-0 text-white/60 hover:text-white ml-2 transition-colors"
+              className="shrink-0 opacity-60 hover:opacity-100 ml-2 transition-colors"
             >
-              ✕
+              {"\u2715"}
             </button>
           </div>
         </div>
