@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { postReview, updateReview, deleteReview, ApiError } from "@/lib/api";
+import { submitReview, updateReview, deleteReview } from "@/lib/reviews";
 import RatingWidget from "./RatingWidget";
 
 interface MediaActionButtonsProps {
@@ -56,20 +56,22 @@ export default function MediaActionButtons({
 
   const handleSubmitReview = async () => {
     if (!reviewContent.trim()) return;
-    if (!accessToken) {
-      setToast({ type: "error", message: "Not authenticated. Try signing out and back in." });
-      return;
-    }
     if (tmdbIdentifier == null) return;
     setReviewSubmitting(true);
     try {
-      await postReview(accessToken, {
+      const result = await submitReview({
         tmdbIdentifier,
         isMovie: !!isMovie,
         reviewContent: reviewContent.trim(),
       });
+
+      if (result.error) {
+        setToast({ type: "error", message: result.error });
+        return;
+      }
+
       const newReview = {
-        reviewId: 0,
+        reviewId: (result.data as any)?.reviewId ?? 0,
         reviewContent: reviewContent.trim(),
         dateOfReview: new Date().toISOString(),
       };
@@ -78,43 +80,47 @@ export default function MediaActionButtons({
       setToast({ type: "success", message: "Your review has been submitted!" });
       router.refresh();
     } catch (e) {
-      if (e instanceof ApiError) {
-        setToast({ type: "error", message: e.message });
-      } else {
-        setToast({ type: "error", message: "Failed to submit review. Please try again." });
-      }
+      setToast({ type: "error", message: "Failed to submit review. Please try again." });
     } finally {
       setReviewSubmitting(false);
     }
   };
 
   const handleDeleteReview = async () => {
-    if (!existingReview || !accessToken) return;
+    if (!existingReview) return;
     setDeleting(true);
     try {
-      await deleteReview(accessToken, existingReview.reviewId);
+      const result = await deleteReview(existingReview.reviewId);
+      if (result.error) {
+        setToast({ type: "error", message: result.error });
+        return;
+      }
       setExistingReview(null);
       setReviewContent("");
       setToast({ type: "success", message: "Review deleted." });
       router.refresh();
     } catch (e) {
-      setToast({ type: "error", message: e instanceof ApiError ? e.message : "Failed to delete review." });
+      setToast({ type: "error", message: "Failed to delete review." });
     } finally {
       setDeleting(false);
     }
   };
 
   const handleUpdateReview = async () => {
-    if (!reviewContent.trim() || !existingReview || !accessToken) return;
+    if (!reviewContent.trim() || !existingReview) return;
     setReviewSubmitting(true);
     try {
-      await updateReview(accessToken, existingReview.reviewId, { reviewContent: reviewContent.trim() });
+      const result = await updateReview(existingReview.reviewId, { reviewContent: reviewContent.trim() });
+      if (result.error) {
+        setToast({ type: "error", message: result.error });
+        return;
+      }
       setExistingReview({ ...existingReview, reviewContent: reviewContent.trim() });
       setEditing(false);
       setToast({ type: "success", message: "Review updated!" });
       router.refresh();
     } catch (e) {
-      setToast({ type: "error", message: e instanceof ApiError ? e.message : "Failed to update review." });
+      setToast({ type: "error", message: "Failed to update review." });
     } finally {
       setReviewSubmitting(false);
     }
