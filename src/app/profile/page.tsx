@@ -7,11 +7,10 @@ import {
   getRatings,
   getReviews,
   deleteRating,
-  deleteReview,
-  updateReview,
   fetchMediaTitles,
   ApiError,
 } from "@/lib/api";
+import { deleteReview, updateReview } from "@/lib/reviews";
 import type { RatingRecord, ReviewRecord } from "@/types/community";
 import ProfileHeader from "@/components/profile/ProfileHeader";
 import TabBar from "@/components/profile/TabBar";
@@ -86,22 +85,27 @@ export default function ProfilePage() {
   };
 
   const handleDeleteReview = async (reviewId: number) => {
-    if (!session?.accessToken) return;
     try {
-      await deleteReview(session.accessToken, reviewId);
+      const result = await deleteReview(reviewId);
+      if (result.error) {
+        setToast({ type: "error", message: result.error });
+        return;
+      }
       setReviews((prev) => prev.filter((r) => r.reviewId !== reviewId));
       setToast({ type: "success", message: "Review deleted." });
     } catch (e) {
       setToast({
         type: "error",
-        message: e instanceof ApiError ? e.message : "Failed to delete review.",
+        message: "Failed to delete review.",
       });
     }
   };
 
   const handleUpdateReview = async (reviewId: number, content: string) => {
-    if (!session?.accessToken) throw new Error("Not authenticated");
-    await updateReview(session.accessToken, reviewId, { reviewContent: content });
+    const result = await updateReview(reviewId, { reviewContent: content });
+    if (result.error) {
+      throw new Error(result.error);
+    }
     setReviews((prev) =>
       prev.map((r) =>
         r.reviewId === reviewId ? { ...r, reviewContent: content } : r,
