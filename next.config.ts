@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
     authInterrupts: true,
   },
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
