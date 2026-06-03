@@ -32,7 +32,7 @@ export function ThemeToggle() {
       }}
       aria-label="Toggle theme"
     >
-      {mode === 'dark' ? <LightMode /> : <DarkMode />}
+      {mode === "dark" ? <LightMode /> : <DarkMode />}
     </button>
   );
 }
@@ -148,6 +148,21 @@ export default function Header() {
             <Tv fontSize="small" />
             TV Shows
           </a>
+          <a
+            href="/about"
+            className={headerLinkClass}
+            style={{ color: "var(--header-text)" }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = "var(--header-hover-text)";
+              e.currentTarget.style.backgroundColor = "var(--header-hover-bg)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = "var(--header-text)";
+              e.currentTarget.style.backgroundColor = "transparent";
+            }}
+          >
+            About
+          </a>
         </nav>
 
         {/* Mobile nav icons */}
@@ -199,11 +214,14 @@ export default function Header() {
           <div ref={menuRef} className="relative">
             <button
               onClick={() => setMenuOpen((v) => !v)}
-              className={headerIconClass + " flex items-center gap-1.5 rounded-md"}
+              className={
+                headerIconClass + " flex items-center gap-1.5 rounded-md"
+              }
               style={{ color: "var(--header-text)" }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.color = "var(--header-hover-text)";
-                e.currentTarget.style.backgroundColor = "var(--header-hover-bg)";
+                e.currentTarget.style.backgroundColor =
+                  "var(--header-hover-bg)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.color = "var(--header-text)";
@@ -227,7 +245,8 @@ export default function Header() {
                   className="flex w-full px-4 py-2.5 text-sm transition-colors no-underline"
                   style={{ color: "var(--dropdown-text)" }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "var(--dropdown-hover-bg)";
+                    e.currentTarget.style.backgroundColor =
+                      "var(--dropdown-hover-bg)";
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = "transparent";
@@ -243,7 +262,8 @@ export default function Header() {
                     borderTop: "1px solid var(--dropdown-divider)",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "var(--dropdown-hover-bg)";
+                    e.currentTarget.style.backgroundColor =
+                      "var(--dropdown-hover-bg)";
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = "transparent";
@@ -285,8 +305,10 @@ export default function Header() {
           />
           <div className="relative flex flex-col items-center pt-12 px-6">
             <div className="w-full max-w-lg">
-              <div className="flex items-center gap-2 rounded-xl overflow-hidden ring-1 ring-[var(--card-border)] focus-within:ring-amber-400 transition-shadow"
-                style={{ backgroundColor: "var(--card-bg)" }}>
+              <div
+                className="flex items-center gap-2 rounded-xl overflow-hidden ring-1 ring-[var(--card-border)] focus-within:ring-amber-400 transition-shadow"
+                style={{ backgroundColor: "var(--card-bg)" }}
+              >
                 <Search
                   className="ml-4"
                   style={{ color: "var(--text-secondary)", fontSize: 22 }}
@@ -316,18 +338,27 @@ export default function Header() {
                 <button
                   onClick={() => setSearchMode("movies")}
                   className="flex items-center gap-2 flex-1 justify-center py-2.5 rounded-lg text-sm font-medium transition-colors"
-                  style={searchMode === "movies"
-                    ? { backgroundColor: "var(--primary-color)", color: "var(--primary-foreground)" }
-                    : { backgroundColor: "var(--search-mode-btn-bg)", color: "var(--search-mode-btn-text)" }
+                  style={
+                    searchMode === "movies"
+                      ? {
+                          backgroundColor: "var(--primary-color)",
+                          color: "var(--primary-foreground)",
+                        }
+                      : {
+                          backgroundColor: "var(--search-mode-btn-bg)",
+                          color: "var(--search-mode-btn-text)",
+                        }
                   }
                   onMouseEnter={(e) => {
                     if (searchMode !== "movies") {
-                      e.currentTarget.style.color = "var(--search-mode-btn-hover-text)";
+                      e.currentTarget.style.color =
+                        "var(--search-mode-btn-hover-text)";
                     }
                   }}
                   onMouseLeave={(e) => {
                     if (searchMode !== "movies") {
-                      e.currentTarget.style.color = "var(--search-mode-btn-text)";
+                      e.currentTarget.style.color =
+                        "var(--search-mode-btn-text)";
                     }
                   }}
                 >
@@ -337,18 +368,27 @@ export default function Header() {
                 <button
                   onClick={() => setSearchMode("tv")}
                   className="flex items-center gap-2 flex-1 justify-center py-2.5 rounded-lg text-sm font-medium transition-colors"
-                  style={searchMode === "tv"
-                    ? { backgroundColor: "var(--primary-color)", color: "var(--primary-foreground)" }
-                    : { backgroundColor: "var(--search-mode-btn-bg)", color: "var(--search-mode-btn-text)" }
+                  style={
+                    searchMode === "tv"
+                      ? {
+                          backgroundColor: "var(--primary-color)",
+                          color: "var(--primary-foreground)",
+                        }
+                      : {
+                          backgroundColor: "var(--search-mode-btn-bg)",
+                          color: "var(--search-mode-btn-text)",
+                        }
                   }
                   onMouseEnter={(e) => {
                     if (searchMode !== "tv") {
-                      e.currentTarget.style.color = "var(--search-mode-btn-hover-text)";
+                      e.currentTarget.style.color =
+                        "var(--search-mode-btn-hover-text)";
                     }
                   }}
                   onMouseLeave={(e) => {
                     if (searchMode !== "tv") {
-                      e.currentTarget.style.color = "var(--search-mode-btn-text)";
+                      e.currentTarget.style.color =
+                        "var(--search-mode-btn-text)";
                     }
                   }}
                 >
@@ -356,7 +396,10 @@ export default function Header() {
                   TV Shows
                 </button>
               </div>
-              <p className="text-sm text-center mt-3" style={{ color: "var(--search-hint-text)" }}>
+              <p
+                className="text-sm text-center mt-3"
+                style={{ color: "var(--search-hint-text)" }}
+              >
                 Press Enter to search or click the button
               </p>
             </div>
