@@ -1,43 +1,19 @@
-# AI response given to me by teammate
-This is a fantastic architectural question. You’ve hit on a core debate in modern web development: Should the frontend browser talk directly to the backend API, or should the frontend server act as a middleman?
+# As a visitor, I want an About page so that I can see who built this app and what data it's built on.¶
 
-The short answer is: Both are industry standards, but they belong to different eras and architectures. Given that you are using the Next.js App Router, using Server Actions ("use server") is the modern "Next.js standard" and is highly recommended for your specific setup.
+- A dedicated /about route, linked from the app's primary navigation. The page credits your team (names, plus the roles each member played across the quarter — back-end builders Sprints 1–4, front-end builders Sprints 5–8), names your upstream partner group whose API powers the browse / search / detail / rate / review experience, and acknowledges the shared services this app sits on top of: TMDB for the movie and TV metadata, Auth² for the OAuth2 sign-in, the course Token Playground if you used it.
 
-Here is a breakdown of exactly how both patterns work, the pros and cons, and why Server Actions are likely the better choice for your team.
+- A short paragraph on the story of the build is welcome but not required — what you learned, what surprised you, what you'd do differently. Keep the page consistent with the rest of the app's visual identity (Story 1) — it's the most personal page in the app, and it should still feel like part of the app.
 
-Pattern 1: The Traditional Standard (Client Fetch + CORS)
-How it works: The user's browser makes a fetch() request directly to https://group-project-backend.onrender.com. Used by: Traditional Single Page Applications (SPAs) like pure React, Vue, or Angular.
+# Story 1 (this is referenced in the story above)
 
-Pros:
+As a team, we want our consumer app to present a single, coherent visual identity across every view so that a user moving between sign-in, browse, search, detail, profile, and About never feels like they jumped to a different product.¶
+This is the sprint story. Walk the app end-to-end and name your design system out loud: the typography scale (how many sizes, where each one is used), the spacing system (a 4px or 8px grid? MUI's spacing tokens?), the color palette (primary, secondary, surface, text, error — and what each one means in your app), the button hierarchy (primary / secondary / tertiary / text), the card and list patterns, the empty / loading / error states. Pick a set of components and reuse them at every call site; if a view is rolling its own, that's the work.
 
-Less load on your frontend server: Your Next.js server just serves the HTML/JS, and the user's device does all the heavy lifting of talking to the backend.
-Direct communication: Theoretically slightly faster because there is no middleman.
-Cons:
+Sprint 7's bar was intentional, not perfect — this sprint's bar is finished. By the end of the week, nothing on any view should look like it was thrown together for that view only. If two pages use cards, they should look like the same card. If two routes have an empty state, the empty state should look and read like it came from the same hand. If two buttons mean the same thing, they should be the same button.
 
-CORS headaches: As you've discovered, the backend team has to explicitly whitelist every single domain your app might be hosted on (localhost, preview URLs, production URLs).
-Security: You are forced to send the user's accessToken to the browser so the browser can attach it to the request. While not inherently dangerous, keeping tokens off the client is generally safer.
-Clunky UI Updates: In Next.js, when a user submits a review via the browser, the server doesn't know about it. You have to force the page to reload (using router.refresh()) to see the updated data, which causes an extra round-trip request.
-Pattern 2: The Modern Next.js Standard (Server Actions)
-How it works: The user clicks a button, which triggers a Server Action ("use server"). The user's browser sends the data to your Next.js server. Your Next.js server then turns around, attaches the auth token, and forwards the request to the backend API. Used by: Next.js (App Router), SvelteKit, Remix.
+If you're on MUI, lean on the theme — extend it, don't fight it. Tokens for color, typography, spacing, and shape propagate everywhere they're referenced; changing one value should change the whole app. If you're hand-rolling, factor out the shared components and import them everywhere instead of restyling at every call site.As a team, we want our consumer app to present a single, coherent visual identity across every view so that a user moving between sign-in, browse, search, detail, profile, and About never feels like they jumped to a different product.¶
+This is the sprint story. Walk the app end-to-end and name your design system out loud: the typography scale (how many sizes, where each one is used), the spacing system (a 4px or 8px grid? MUI's spacing tokens?), the color palette (primary, secondary, surface, text, error — and what each one means in your app), the button hierarchy (primary / secondary / tertiary / text), the card and list patterns, the empty / loading / error states. Pick a set of components and reuse them at every call site; if a view is rolling its own, that's the work.
 
-Pros:
+Sprint 7's bar was intentional, not perfect — this sprint's bar is finished. By the end of the week, nothing on any view should look like it was thrown together for that view only. If two pages use cards, they should look like the same card. If two routes have an empty state, the empty state should look and read like it came from the same hand. If two buttons mean the same thing, they should be the same button.
 
-Zero CORS issues: Browsers enforce CORS; servers do not. Since your Next.js server is making the request to the Express backend, CORS doesn't even exist in the equation. You never have to ask the backend team to whitelist a URL again.
-Better Security: You can grab the accessToken directly from auth() on the server. The token never has to be exposed to the browser's JavaScript.
-Seamless UI Updates (The Killer Feature): Look at your src/lib/ratings.ts file. After it successfully posts to the backend, it calls revalidatePath("/movies/[id]"). This tells Next.js, "Hey, the data changed!" Next.js immediately fetches the fresh data and sends the updated HTML straight to the user in the exact same response. No router.refresh() needed, no blinking UI.
-Cons:
-
-# Task 
-Do what ratings does in reviews, ratings works on the production front end but reviews doesnt because of a cors issue.
-
-lets move the api client and stuff to "use server"
-
-# other maybe useful stuff
-
-Table:
-Ratings (ratings.ts)Reviews (api.ts)File directive"use server" (line 1)None – plain moduleCallerRatingWidget.tsx imports server actionsMediaActionButtons.tsx ("use client") imports plain functionsWhere fetch() runsNext.js server (server-to-server)Browser (browser-to-backend)CORS involved?No – CORS is browser-onlyYes – cross-origin browser request
-
-Body text:
-src/lib/ratings.ts:1 has "use server", making submitRating, updateRating, and deleteRating into Server Actions. The fetch() calls run on the Next.js server, not in the user's browser. Server-to-server requests don't go through CORS at all.
-src/lib/api.ts has no directive. Its postReview, updateReview, deleteReview are just regular async functions. When MediaActionButtons.tsx (a "use client" component at line 1) calls them, the fetch() runs in the browser – a cross-origin request to group-project-backend-group-3-1.onrender.com. The backend doesn't include your production frontend origin in its CORS allowlist, so it fails.
-The read operations (getReviews, getRatings in api.ts) happen to work because they're called from server components (pages), so they also run server-side.
+If you're on MUI, lean on the theme — extend it, don't fight it. Tokens for color, typography, spacing, and shape propagate everywhere they're referenced; changing one value should change the whole app. If you're hand-rolling, factor out the shared components and import them everywhere instead of restyling at every call site.
