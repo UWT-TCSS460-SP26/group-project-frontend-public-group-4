@@ -5,6 +5,7 @@ import Link from "next/link";
 import { RateReview, Delete, Edit, Close, Check } from "@mui/icons-material";
 import { ApiError } from "@/lib/api";
 import MediaBadge from "./MediaBadge";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import type { ReviewRecord } from "@/types/community";
 
 const ITEMS_PER_PAGE = 25;
@@ -45,6 +46,7 @@ export default function ReviewsList({
 }: ReviewsListProps) {
   const [page, setPage] = useState(0);
   const [deleting, setDeleting] = useState<number | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editContent, setEditContent] = useState("");
   const [saving, setSaving] = useState(false);
@@ -141,178 +143,206 @@ export default function ReviewsList({
         const expanded = expandedIds.has(r.reviewId);
 
         return (
-        <div
-          key={r.reviewId}
-          className="p-4 rounded-lg border space-y-2 group"
-          style={{
-            backgroundColor: "var(--surface-bg)",
-            borderColor: "var(--surface-border)",
-          }}
-        >
-          <div className="flex items-center gap-2">
-            <MediaBadge isMovie={r.isMovie} />
-            <Link
-              href={r.isMovie ? `/movies/${r.tmdbIdentifier}` : `/tv/${r.tmdbIdentifier}`}
-              className="text-base truncate max-w-70 no-underline"
-              style={{ color: "var(--surface-text-muted)" }}
-            >
-              {titles.get(
-                r.isMovie ? `m-${r.tmdbIdentifier}` : `s-${r.tmdbIdentifier}`,
-              ) ?? `TMDB #${r.tmdbIdentifier}`}
-            </Link>
-            <span className="text-xs ml-auto" style={{ color: "var(--text-secondary)" }}>
-              {formatDate(r.dateOfReview)}
-            </span>
-          </div>
+          <div
+            key={r.reviewId}
+            className="p-4 rounded-lg border space-y-2 group"
+            style={{
+              backgroundColor: "var(--surface-bg)",
+              borderColor: "var(--surface-border)",
+            }}
+          >
+            <div className="flex items-center gap-2">
+              <MediaBadge isMovie={r.isMovie} />
+              <Link
+                href={
+                  r.isMovie
+                    ? `/movies/${r.tmdbIdentifier}`
+                    : `/tv/${r.tmdbIdentifier}`
+                }
+                className="text-base truncate max-w-70 no-underline"
+                style={{ color: "var(--surface-text-muted)" }}
+              >
+                {titles.get(
+                  r.isMovie ? `m-${r.tmdbIdentifier}` : `s-${r.tmdbIdentifier}`,
+                ) ?? `TMDB #${r.tmdbIdentifier}`}
+              </Link>
+              <span
+                className="text-xs ml-auto"
+                style={{ color: "var(--text-secondary)" }}
+              >
+                {formatDate(r.dateOfReview)}
+              </span>
+            </div>
 
-          {isEditing ? (
-            <div className="space-y-2">
-              <label htmlFor={`edit-review-${r.reviewId}`} className="sr-only">
-                Edit your review
-              </label>
-              <textarea
-                id={`edit-review-${r.reviewId}`}
-                value={editContent}
-                onChange={(e) => setEditContent(e.target.value)}
-                onKeyDown={(e) => { if (e.ctrlKey && e.key === "Enter") { e.preventDefault(); handleSaveEdit(r.reviewId); } }}
-                rows={3}
-                maxLength={2000}
-                disabled={saving}
-                className="w-full rounded p-2 text-sm resize-y border focus:outline-none transition-colors"
-                style={{
-                  backgroundColor: "var(--input-bg)",
-                  color: "var(--foreground)",
-                  borderColor: "var(--input-border)",
-                }}
-              />
-              <div className="flex items-center justify-between">
-                <span className="text-xs" style={{ color: "var(--text-secondary)" }}>
-                  {editContent.length}/2000
-                </span>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => { setEditingId(null); setEditContent(""); }}
-                    disabled={saving}
-                    className="flex items-center gap-1 text-xs px-3 py-1.5 rounded transition-colors"
-                    style={{
-                      backgroundColor: "var(--btn-secondary-bg)",
-                      color: "var(--btn-secondary-text)",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = "var(--btn-secondary-hover-bg)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = "var(--btn-secondary-bg)";
-                    }}
+            {isEditing ? (
+              <div className="space-y-2">
+                <label
+                  htmlFor={`edit-review-${r.reviewId}`}
+                  className="sr-only"
+                >
+                  Edit your review
+                </label>
+                <textarea
+                  id={`edit-review-${r.reviewId}`}
+                  value={editContent}
+                  onChange={(e) => setEditContent(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.ctrlKey && e.key === "Enter") {
+                      e.preventDefault();
+                      handleSaveEdit(r.reviewId);
+                    }
+                  }}
+                  rows={3}
+                  maxLength={2000}
+                  disabled={saving}
+                  className="w-full rounded p-2 text-sm resize-y border focus:outline-none transition-colors"
+                  style={{
+                    backgroundColor: "var(--input-bg)",
+                    color: "var(--foreground)",
+                    borderColor: "var(--input-border)",
+                  }}
+                />
+                <div className="flex items-center justify-between">
+                  <span
+                    className="text-xs"
+                    style={{ color: "var(--text-secondary)" }}
                   >
-                    <Close style={{ fontSize: 14 }} aria-hidden="true" />
-                    Cancel
-                  </button>
-                  <button
-                    onClick={() => handleSaveEdit(r.reviewId)}
-                    disabled={!editContent.trim() || saving}
-                    className="flex items-center gap-1 text-xs px-3 py-1.5 rounded font-medium transition-colors"
-                    style={{
-                      backgroundColor: "var(--primary-color)",
-                      color: "var(--primary-foreground)",
-                      opacity: !editContent.trim() || saving ? 0.5 : 1,
-                    }}
-                    onMouseEnter={(e) => {
-                      if (editContent.trim() && !saving) {
-                        e.currentTarget.style.backgroundColor = "var(--primary-hover)";
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = "var(--primary-color)";
-                    }}
-                  >
-                    <Check style={{ fontSize: 14 }} aria-hidden="true" />
-                    {saving ? "Saving..." : "Save"}
-                  </button>
+                    {editContent.length}/2000
+                  </span>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        setEditingId(null);
+                        setEditContent("");
+                      }}
+                      disabled={saving}
+                      className="flex items-center gap-1 text-xs px-3 py-1.5 rounded transition-colors"
+                      style={{
+                        backgroundColor: "var(--btn-secondary-bg)",
+                        color: "var(--btn-secondary-text)",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor =
+                          "var(--btn-secondary-hover-bg)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor =
+                          "var(--btn-secondary-bg)";
+                      }}
+                    >
+                      <Close style={{ fontSize: 14 }} aria-hidden="true" />
+                      Cancel
+                    </button>
+                    <button
+                      onClick={() => handleSaveEdit(r.reviewId)}
+                      disabled={!editContent.trim() || saving}
+                      className="flex items-center gap-1 text-xs px-3 py-1.5 rounded font-medium transition-colors"
+                      style={{
+                        backgroundColor: "var(--primary-color)",
+                        color: "var(--primary-foreground)",
+                        opacity: !editContent.trim() || saving ? 0.5 : 1,
+                      }}
+                      onMouseEnter={(e) => {
+                        if (editContent.trim() && !saving) {
+                          e.currentTarget.style.backgroundColor =
+                            "var(--primary-hover)";
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor =
+                          "var(--primary-color)";
+                      }}
+                    >
+                      <Check style={{ fontSize: 14 }} aria-hidden="true" />
+                      {saving ? "Saving..." : "Save"}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ) : (
-            <div>
-              <p
-                id={contentId}
-                className="text-sm leading-relaxed whitespace-pre-wrap break-words"
-                style={{ color: "var(--surface-text)" }}
-              >
-                {isLong && !expanded ? r.reviewContent.slice(0, 300) + "..." : r.reviewContent}
-              </p>
-              {isLong && (
+            ) : (
+              <div>
+                <p
+                  id={contentId}
+                  className="text-sm leading-relaxed whitespace-pre-wrap break-words"
+                  style={{ color: "var(--surface-text)" }}
+                >
+                  {isLong && !expanded
+                    ? r.reviewContent.slice(0, 300) + "..."
+                    : r.reviewContent}
+                </p>
+                {isLong && (
+                  <button
+                    onClick={() => {
+                      setExpandedIds((prev) => {
+                        const next = new Set(prev);
+                        expanded
+                          ? next.delete(r.reviewId)
+                          : next.add(r.reviewId);
+                        return next;
+                      });
+                    }}
+                    aria-expanded={expanded}
+                    aria-controls={contentId}
+                    className="text-xs font-semibold mt-1 uppercase tracking-wider transition-colors"
+                    style={{ color: "var(--primary-color)" }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = "var(--primary-hover)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = "var(--primary-color)";
+                    }}
+                  >
+                    {expanded ? "Show less" : "Read more"}
+                  </button>
+                )}
+              </div>
+            )}
+
+            {!isEditing && (
+              <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-all">
                 <button
                   onClick={() => {
-                    setExpandedIds((prev) => {
-                      const next = new Set(prev);
-                      expanded ? next.delete(r.reviewId) : next.add(r.reviewId);
-                      return next;
-                    });
+                    setEditingId(r.reviewId);
+                    setEditContent(r.reviewContent);
                   }}
-                  aria-expanded={expanded}
-                  aria-controls={contentId}
-                  className="text-xs font-semibold mt-1 uppercase tracking-wider transition-colors"
-                  style={{ color: "var(--primary-color)" }}
+                  aria-label={`Edit review for ${titles.get(r.isMovie ? `m-${r.tmdbIdentifier}` : `s-${r.tmdbIdentifier}`) ?? `TMDB #${r.tmdbIdentifier}`}`}
+                  className="p-1.5 rounded-md transition-colors"
+                  style={{ color: "var(--text-secondary)" }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.color = "var(--primary-hover)";
+                    e.currentTarget.style.color = "var(--primary-color)";
+                    e.currentTarget.style.backgroundColor =
+                      "var(--surface-bg-hover)";
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.color = "var(--primary-color)";
+                    e.currentTarget.style.color = "var(--text-secondary)";
+                    e.currentTarget.style.backgroundColor = "transparent";
                   }}
+                  title="Edit review"
                 >
-                  {expanded ? "Show less" : "Read more"}
+                  <Edit style={{ fontSize: 18 }} aria-hidden="true" />
                 </button>
-              )}
-            </div>
-          )}
-
-          {!isEditing && (
-            <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-all">
-              <button
-                onClick={() => {
-                  setEditingId(r.reviewId);
-                  setEditContent(r.reviewContent);
-                }}
-                aria-label={`Edit review for ${titles.get(r.isMovie ? `m-${r.tmdbIdentifier}` : `s-${r.tmdbIdentifier}`) ?? `TMDB #${r.tmdbIdentifier}`}`}
-                className="p-1.5 rounded-md transition-colors"
-                style={{ color: "var(--text-secondary)" }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.color = "var(--primary-color)";
-                  e.currentTarget.style.backgroundColor = "var(--surface-bg-hover)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.color = "var(--text-secondary)";
-                  e.currentTarget.style.backgroundColor = "transparent";
-                }}
-                title="Edit review"
-              >
-                <Edit style={{ fontSize: 18 }} aria-hidden="true" />
-              </button>
-              <button
-                onClick={() => {
-                  setDeleting(r.reviewId);
-                  onDelete(r.reviewId);
-                }}
-                disabled={deleting === r.reviewId}
-                className="p-1.5 rounded-md transition-colors disabled:opacity-50"
-                style={{ color: "var(--text-secondary)" }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.color = "var(--destructive-color)";
-                  e.currentTarget.style.backgroundColor = "var(--surface-bg-hover)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.color = "var(--text-secondary)";
-                  e.currentTarget.style.backgroundColor = "transparent";
-                }}
-                title="Delete review"
-                aria-label={`Delete review for ${titles.get(r.isMovie ? `m-${r.tmdbIdentifier}` : `s-${r.tmdbIdentifier}`) ?? `TMDB #${r.tmdbIdentifier}`}`}
-              >
-                <Delete style={{ fontSize: 18 }} aria-hidden="true" />
-              </button>
-            </div>
-          )}
-        </div>
+                <button
+                  onClick={() => setConfirmDeleteId(r.reviewId)}
+                  disabled={deleting === r.reviewId}
+                  className="p-1.5 rounded-md transition-colors disabled:opacity-50"
+                  style={{ color: "var(--text-secondary)" }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = "var(--destructive-color)";
+                    e.currentTarget.style.backgroundColor =
+                      "var(--surface-bg-hover)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = "var(--text-secondary)";
+                    e.currentTarget.style.backgroundColor = "transparent";
+                  }}
+                  title="Delete review"
+                  aria-label={`Delete review for ${titles.get(r.isMovie ? `m-${r.tmdbIdentifier}` : `s-${r.tmdbIdentifier}`) ?? `TMDB #${r.tmdbIdentifier}`}`}
+                >
+                  <Delete style={{ fontSize: 18 }} aria-hidden="true" />
+                </button>
+              </div>
+            )}
+          </div>
         );
       })}
 
@@ -342,7 +372,9 @@ export default function ReviewsList({
                   opacity: page === 0 ? 0.4 : 1,
                 }}
                 onMouseEnter={(e) => {
-                  if (page !== 0) e.currentTarget.style.backgroundColor = "var(--surface-bg-hover)";
+                  if (page !== 0)
+                    e.currentTarget.style.backgroundColor =
+                      "var(--surface-bg-hover)";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = "var(--surface-bg)";
@@ -360,7 +392,9 @@ export default function ReviewsList({
                   opacity: page === 0 ? 0.4 : 1,
                 }}
                 onMouseEnter={(e) => {
-                  if (page !== 0) e.currentTarget.style.backgroundColor = "var(--surface-bg-hover)";
+                  if (page !== 0)
+                    e.currentTarget.style.backgroundColor =
+                      "var(--surface-bg-hover)";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = "var(--surface-bg)";
@@ -373,20 +407,29 @@ export default function ReviewsList({
                   key={i}
                   onClick={() => setPage(i)}
                   className="w-8 h-8 rounded-md text-sm font-medium transition-colors"
-                  style={i === page
-                    ? { backgroundColor: "var(--primary-color)", color: "var(--primary-foreground)" }
-                    : { backgroundColor: "var(--surface-bg)", color: "var(--surface-text-muted)" }
+                  style={
+                    i === page
+                      ? {
+                          backgroundColor: "var(--primary-color)",
+                          color: "var(--primary-foreground)",
+                        }
+                      : {
+                          backgroundColor: "var(--surface-bg)",
+                          color: "var(--surface-text-muted)",
+                        }
                   }
                   onMouseEnter={(e) => {
                     if (i !== page) {
                       e.currentTarget.style.color = "var(--surface-text)";
-                      e.currentTarget.style.backgroundColor = "var(--surface-bg-hover)";
+                      e.currentTarget.style.backgroundColor =
+                        "var(--surface-bg-hover)";
                     }
                   }}
                   onMouseLeave={(e) => {
                     if (i !== page) {
                       e.currentTarget.style.color = "var(--surface-text-muted)";
-                      e.currentTarget.style.backgroundColor = "var(--surface-bg)";
+                      e.currentTarget.style.backgroundColor =
+                        "var(--surface-bg)";
                     }
                   }}
                 >
@@ -403,7 +446,9 @@ export default function ReviewsList({
                   opacity: page === totalPages - 1 ? 0.4 : 1,
                 }}
                 onMouseEnter={(e) => {
-                  if (page !== totalPages - 1) e.currentTarget.style.backgroundColor = "var(--surface-bg-hover)";
+                  if (page !== totalPages - 1)
+                    e.currentTarget.style.backgroundColor =
+                      "var(--surface-bg-hover)";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = "var(--surface-bg)";
@@ -421,7 +466,9 @@ export default function ReviewsList({
                   opacity: page === totalPages - 1 ? 0.4 : 1,
                 }}
                 onMouseEnter={(e) => {
-                  if (page !== totalPages - 1) e.currentTarget.style.backgroundColor = "var(--surface-bg-hover)";
+                  if (page !== totalPages - 1)
+                    e.currentTarget.style.backgroundColor =
+                      "var(--surface-bg-hover)";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = "var(--surface-bg)";
@@ -434,14 +481,40 @@ export default function ReviewsList({
         })()}
 
       {/* Toast Popup */}
+      <ConfirmDialog
+        open={confirmDeleteId !== null}
+        title="Delete Review"
+        message="Are you sure you want to delete this review? Deleted content cannot be recovered."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        loading={deleting !== null}
+        onConfirm={() => {
+          if (confirmDeleteId !== null) {
+            setDeleting(confirmDeleteId);
+            onDelete(confirmDeleteId);
+            setConfirmDeleteId(null);
+          }
+        }}
+        onCancel={() => setConfirmDeleteId(null)}
+      />
+
       {toast && (
         <div
           role="alert"
           aria-live="assertive"
           className="fixed bottom-6 right-6 z-50 max-w-sm rounded-lg px-5 py-4 shadow-xl border transition-all duration-300"
-          style={toast.type === "success"
-            ? { backgroundColor: "var(--toast-success-bg)", borderColor: "var(--toast-success-border)", color: "var(--toast-success-text)" }
-            : { backgroundColor: "var(--toast-error-bg)", borderColor: "var(--toast-error-border)", color: "var(--toast-error-text)" }
+          style={
+            toast.type === "success"
+              ? {
+                  backgroundColor: "var(--toast-success-bg)",
+                  borderColor: "var(--toast-success-border)",
+                  color: "var(--toast-success-text)",
+                }
+              : {
+                  backgroundColor: "var(--toast-error-bg)",
+                  borderColor: "var(--toast-error-border)",
+                  color: "var(--toast-error-text)",
+                }
           }
         >
           <div className="flex items-start gap-3">
