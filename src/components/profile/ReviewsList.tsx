@@ -156,8 +156,8 @@ export default function ReviewsList({
               <Link
                 href={
                   r.isMovie
-                    ? `/movies/${r.tmdbIdentifier}`
-                    : `/tv/${r.tmdbIdentifier}`
+                    ? `/movies/${r.tmdbIdentifier}?returnUrl=%2Fprofile`
+                    : `/tv/${r.tmdbIdentifier}?returnUrl=%2Fprofile`
                 }
                 className="text-base truncate max-w-70 no-underline"
                 style={{ color: "var(--surface-text-muted)" }}

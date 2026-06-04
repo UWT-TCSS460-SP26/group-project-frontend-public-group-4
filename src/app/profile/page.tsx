@@ -11,6 +11,7 @@ import {
   ApiError,
 } from "@/lib/api";
 import { deleteReview, updateReview } from "@/lib/reviews";
+import { updateRating } from "@/lib/ratings";
 import type { RatingRecord, ReviewRecord } from "@/types/community";
 import ProfileHeader from "@/components/profile/ProfileHeader";
 import TabBar from "@/components/profile/TabBar";
@@ -46,7 +47,10 @@ export default function ProfilePage() {
     }
     window.addEventListener("shortcut:toggle-profile-tab", handleToggleTab);
     return () =>
-      window.removeEventListener("shortcut:toggle-profile-tab", handleToggleTab);
+      window.removeEventListener(
+        "shortcut:toggle-profile-tab",
+        handleToggleTab,
+      );
   }, []);
 
   const fetchData = useCallback(async (token: string) => {
@@ -92,6 +96,18 @@ export default function ProfilePage() {
     } catch {
       // item stays in list; user can retry
     }
+  };
+
+  const handleUpdateRating = async (ratingId: number, newScore: number) => {
+    const result = await updateRating(ratingId, newScore);
+    if (result.error) {
+      throw new Error(result.error);
+    }
+    setRatings((prev) =>
+      prev.map((r) =>
+        r.ratingId === ratingId ? { ...r, rating: newScore } : r,
+      ),
+    );
   };
 
   const handleDeleteReview = async (reviewId: number) => {
@@ -148,7 +164,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <main className="flex-1 max-w-3xl mx-auto w-full px-4 py-10 space-y-8">
+    <main className="flex-1 max-w-3xl mx-auto w-full pt-6 md:pt-12 px-4 pb-12 space-y-8">
       <ProfileHeader name={user.name} email={user.email} image={user.image} />
 
       <TabBar active={tab} onChange={setTab} />
@@ -158,6 +174,7 @@ export default function ProfilePage() {
           ratings={ratings}
           titles={titles}
           onDelete={handleDeleteRating}
+          onUpdate={handleUpdateRating}
           loading={loading}
           error={error}
           onRetry={() => session.accessToken && fetchData(session.accessToken)}

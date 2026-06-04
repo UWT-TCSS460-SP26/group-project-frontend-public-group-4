@@ -68,6 +68,20 @@ export default async function MovieDetailPage({
   let movie: MovieDetail | null = null;
   let error = false;
 
+  let backUrl = "/movies";
+  let backText = "Back to Movies";
+
+  if (returnUrlParam) {
+    backUrl = returnUrlParam;
+    if (returnUrlParam.includes("title=")) {
+      backText = "Back to Search";
+    } else if (returnUrlParam === "/") {
+      backText = "Back to Home";
+    } else if (returnUrlParam.includes("profile")) {
+      backText = "Back to Profile";
+    }
+  }
+
   try {
     movie = await apiGet<MovieDetail>(`/movies/details/${id}`);
   } catch (e) {
@@ -76,13 +90,13 @@ export default async function MovieDetailPage({
 
   if (error || !movie) {
     return (
-      <div className="pt-16 px-4 sm:px-8 pb-16 max-w-7xl mx-auto text-[color:var(--text-primary)]">
+      <div className="pt-6 md:pt-12 px-4 pb-12 max-w-7xl mx-auto text-[color:var(--text-primary)]">
         <h1 className="text-2xl font-bold mb-4">Movie not found</h1>
         <Link
-          href="/movies"
+          href={backUrl}
           className="text-[color:var(--primary-color)] hover:text-[color:var(--primary-hover)] underline-offset-2 hover:underline"
         >
-          &larr; Back to Movies
+          &larr; {backText}
         </Link>
       </div>
     );
@@ -126,27 +140,13 @@ export default async function MovieDetailPage({
 
   const genreString = (metadata.genres || []).map((g) => g.name).join(", ");
 
-  let backUrl = "/movies";
-  let backText = "Back to Movies";
-
-  if (returnUrlParam) {
-    backUrl = returnUrlParam;
-    if (returnUrlParam.includes("title=")) {
-      backText = "Back to Search";
-    } else if (returnUrlParam === "/") {
-      backText = "Back to Home";
-    } else if (returnUrlParam.startsWith("/profile")) {
-      backText = "Back to Profile";
-    }
-  }
-
   return (
     <main className="relative w-full grow flex flex-col min-h-screen">
       {/* Dynamic Blurred Poster Background */}
       {posterUrl && <BlurredBackground imageUrl={posterUrl} />}
 
       {/* Content Container */}
-      <div className="relative z-10 pt-16 px-4 sm:px-8 pb-16 max-w-7xl mx-auto w-full text-[color:var(--text-primary)] grow">
+      <div className="relative z-10 pt-6 md:pt-12 px-4 pb-12 max-w-7xl mx-auto w-full text-[color:var(--text-primary)] grow">
         {/* Navigation */}
         <div className="mb-8">
           <Link

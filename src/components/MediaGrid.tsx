@@ -22,7 +22,7 @@ export default function MediaGrid({
   }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-5 gap-4 lg:gap-8">
+    <div className="grid grid-cols-2 md:grid-cols-5 gap-2 sm:gap-4 lg:gap-8">
       {items.map((item, index) => (
         <MediaCard
           key={item.id}

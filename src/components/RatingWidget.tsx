@@ -126,6 +126,13 @@ export default function RatingWidget({
     }
   }, [initialRatingId, initialRatingValue, tmdbIdentifier]);
 
+  useEffect(() => {
+    if (status === "success") {
+      const timer = setTimeout(() => setStatus("existing"), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [status]);
+
   const triggerToast = (newToast: ToastType, duration = 3000) => {
     setToast(newToast);
     if (newToast.type !== "loading") {
@@ -141,6 +148,9 @@ export default function RatingWidget({
       setErrorMessage("Missing media identifier (tmdbIdentifier).");
       return;
     }
+
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    setHoverRating(0);
 
     // Optimistic UI updates
     setRating(clickedRating);
@@ -227,7 +237,7 @@ export default function RatingWidget({
   return (
     <>
       <div
-        className="w-full p-3 rounded border flex flex-col gap-3 transition-colors"
+        className="w-full p-3 rounded border flex flex-col gap-3 transition-colors duration-300"
         style={{
           backgroundColor: "var(--review-card-bg)",
           borderColor,
