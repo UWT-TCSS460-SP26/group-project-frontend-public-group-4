@@ -219,3 +219,23 @@
 |            | As a user, I want to edit or delete content I own so that I can change my mind or fix a mistake.                                          |
 |            | As a visitor, I want write affordances to be inert when I'm not signed in so that the app doesn't appear broken when I haven't logged in. |
 | **Phelan** | As a user, I want a profile page that shows everything I've rated and reviewed so that I can see my activity in one place.                |
+
+## Week 10
+
+**Date:** 6/2/2026 · **Time:** 12:30 – 1:30 pm · **Attendees:** All members
+
+### Tasks
+
+| Member     | User Story                                                                                                                                                                         |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Nathan** | Mobile Navigation                                                                                                                                                                  |
+| **Oisin**  | Lighthouse stuff                                                                                                                                                                   |
+|            | Consumer app presents a coherent visual identity — typography scale, spacing system, color palette, button hierarchy, and component vocabulary applied uniformly across every view |
+| **Joshua** | About page                                                                                                                                                                         |
+| **Phelan** | Front end feature (hopefully skip)                                                                                                                                                 |
+|            | Backend Bugs                                                                                                                                                                       |
+
+### Group Work
+
+- Discussed the contents in the retrospective
+- All members contributed to answering the 4 questions

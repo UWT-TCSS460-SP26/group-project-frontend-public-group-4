@@ -579,6 +579,7 @@ export default function RatingWidget({
                 <button
                   key={i}
                   type="button"
+                  id={i === 1 ? "rating-bar-1" : undefined}
                   style={{
                     ...customStyle,
                     backgroundColor: isActive ? customStyle.backgroundColor : "var(--rating-bar-inactive)",

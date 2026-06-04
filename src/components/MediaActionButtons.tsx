@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect, useId } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { submitReview, updateReview, deleteReview } from "@/lib/reviews";
 import RatingWidget from "./RatingWidget";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 interface MediaActionButtonsProps {
   isLoggedIn?: boolean;
@@ -15,7 +16,9 @@ interface MediaActionButtonsProps {
   userRating?: { id: number; value: number } | null;
   userReview?: {
     reviewId: number;
+
     reviewContent: string;
+
     dateOfReview: string;
   } | null;
   returnUrl?: string;
@@ -52,14 +55,30 @@ export default function MediaActionButtons({
   const [editing, setEditing] = useState(false);
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [toast, setToast] = useState<Toast | null>(null);
-  const textareaId = useId();
 
   useEffect(() => {
     if (!toast) return;
     const timer = setTimeout(() => setToast(null), 5000);
     return () => clearTimeout(timer);
   }, [toast]);
+
+  // Keyboard shortcut listeners
+  useEffect(() => {
+    function handleFocusRating() {
+      document.getElementById("rating-bar-1")?.focus();
+    }
+    function handleFocusReview() {
+      document.getElementById("review-textarea")?.focus();
+    }
+    window.addEventListener("shortcut:focus-rating", handleFocusRating);
+    window.addEventListener("shortcut:focus-review", handleFocusReview);
+    return () => {
+      window.removeEventListener("shortcut:focus-rating", handleFocusRating);
+      window.removeEventListener("shortcut:focus-review", handleFocusReview);
+    };
+  }, []);
 
   const handleSubmitReview = async () => {
     if (!reviewContent.trim()) return;
@@ -89,6 +108,7 @@ export default function MediaActionButtons({
     } catch (e) {
       setToast({
         type: "error",
+
         message: "Failed to submit review. Please try again.",
       });
     } finally {
@@ -129,6 +149,7 @@ export default function MediaActionButtons({
       }
       setExistingReview({
         ...existingReview,
+
         reviewContent: reviewContent.trim(),
       });
       setEditing(false);
@@ -212,6 +233,7 @@ export default function MediaActionButtons({
               <button
                 onClick={() => {
                   setEditing(true);
+
                   setReviewContent(existingReview.reviewContent);
                 }}
                 disabled={editing || deleting}
@@ -230,7 +252,7 @@ export default function MediaActionButtons({
                 Edit
               </button>
               <button
-                onClick={handleDeleteReview}
+                onClick={() => setConfirmDelete(true)}
                 disabled={deleting}
                 className="text-xs px-2 py-1 rounded transition-colors"
                 style={{ color: "var(--text-secondary)" }}
@@ -280,6 +302,7 @@ export default function MediaActionButtons({
                   <button
                     onClick={() => {
                       setEditing(false);
+
                       setReviewContent(existingReview.reviewContent);
                     }}
                     disabled={reviewSubmitting}
@@ -327,14 +350,14 @@ export default function MediaActionButtons({
           }}
         >
           <label
-            htmlFor={textareaId}
+            htmlFor="review-textarea"
             className="text-sm mb-2 block font-medium"
             style={{ color: "var(--review-card-text)" }}
           >
             Write a Review
           </label>
           <textarea
-            id={textareaId}
+            id="review-textarea"
             value={reviewContent}
             onChange={(e) => setReviewContent(e.target.value)}
             onKeyDown={(e) => {
@@ -386,6 +409,20 @@ export default function MediaActionButtons({
         </div>
       )}
 
+      <ConfirmDialog
+        open={confirmDelete}
+        title="Delete Review"
+        message="Are you sure you want to delete this review? Deleted content cannot be recovered."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        loading={deleting}
+        onConfirm={() => {
+          setConfirmDelete(false);
+          handleDeleteReview();
+        }}
+        onCancel={() => setConfirmDelete(false)}
+      />
+
       {/* Toast Popup */}
       {toast && (
         <div
@@ -396,12 +433,16 @@ export default function MediaActionButtons({
             toast.type === "success"
               ? {
                   backgroundColor: "var(--toast-success-bg)",
+
                   borderColor: "var(--toast-success-border)",
+
                   color: "var(--toast-success-text)",
                 }
               : {
                   backgroundColor: "var(--toast-error-bg)",
+
                   borderColor: "var(--toast-error-border)",
+
                   color: "var(--toast-error-text)",
                 }
           }
