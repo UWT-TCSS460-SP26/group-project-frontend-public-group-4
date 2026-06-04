@@ -62,6 +62,22 @@ export default function MediaActionButtons({
     return () => clearTimeout(timer);
   }, [toast]);
 
+  // Keyboard shortcut listeners
+  useEffect(() => {
+    function handleFocusRating() {
+      document.getElementById("rating-bar-1")?.focus();
+    }
+    function handleFocusReview() {
+      document.getElementById("review-textarea")?.focus();
+    }
+    window.addEventListener("shortcut:focus-rating", handleFocusRating);
+    window.addEventListener("shortcut:focus-review", handleFocusReview);
+    return () => {
+      window.removeEventListener("shortcut:focus-rating", handleFocusRating);
+      window.removeEventListener("shortcut:focus-review", handleFocusReview);
+    };
+  }, []);
+
   const handleSubmitReview = async () => {
     if (!reviewContent.trim()) return;
     if (tmdbIdentifier == null) return;

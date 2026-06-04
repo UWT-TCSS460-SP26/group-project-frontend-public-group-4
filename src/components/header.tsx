@@ -8,8 +8,8 @@ import { useSession, signOut } from "next-auth/react";
 
 import { DarkMode, LightMode } from "@mui/icons-material";
 import { useColorMode } from "@/lib/theme";
-
-type SearchMode = "movies" | "tv";
+import { useSearchOverlay } from "@/contexts/SearchOverlayContext";
+import type { SearchMode } from "@/contexts/SearchOverlayContext";
 
 export function ThemeToggle() {
   const { mode, toggleColorMode } = useColorMode();
@@ -38,8 +38,6 @@ export function ThemeToggle() {
 }
 
 export default function Header() {
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [searchMode, setSearchMode] = useState<SearchMode>("movies");
   const [query, setQuery] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -48,6 +46,8 @@ export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
   const isLoggedIn = status === "authenticated";
+  const { searchOpen, setSearchOpen, searchMode, setSearchMode } =
+    useSearchOverlay();
 
   function submitSearch() {
     const q = query.trim();
@@ -64,17 +64,6 @@ export default function Header() {
   // Focus input when search opens
   useEffect(() => {
     if (searchOpen) searchInputRef.current?.focus();
-  }, [searchOpen]);
-
-  // Close on Escape
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") setSearchOpen(false);
-    }
-    if (searchOpen) {
-      document.addEventListener("keydown", handleKeyDown);
-      return () => document.removeEventListener("keydown", handleKeyDown);
-    }
   }, [searchOpen]);
 
   // Close profile dropdown on outside click
