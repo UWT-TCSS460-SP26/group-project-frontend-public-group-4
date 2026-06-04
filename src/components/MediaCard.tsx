@@ -6,6 +6,7 @@ import type { MediaItem } from "@/types/media";
 interface MediaCardProps {
   item: MediaItem;
   href?: string;
+  priority?: boolean;
 }
 
 const PLACEHOLDER = "/placeholder-poster.svg";
@@ -20,7 +21,7 @@ function extractYear(dateStr: string): string {
   return dateStr ? dateStr.slice(0, 4) : "—";
 }
 
-export default function MediaCard({ item, href }: MediaCardProps) {
+export default function MediaCard({ item, href, priority = false }: MediaCardProps) {
   const card = (
     <div className="group relative overflow-hidden rounded-lg bg-[var(--card-bg)] border border-[var(--card-border)] transition-transform hover:scale-[1.03]">
       <div className="aspect-2/3 relative">
@@ -64,6 +65,7 @@ export default function MediaCard({ item, href }: MediaCardProps) {
           fill
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 20vw"
           className="object-cover"
+          priority={priority}
         />
         {/* Gradient overlay on hover */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
