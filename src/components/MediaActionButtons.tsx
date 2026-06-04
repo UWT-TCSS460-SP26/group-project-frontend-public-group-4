@@ -284,7 +284,7 @@ export default function MediaActionButtons({
                 rows={3}
                 maxLength={2000}
                 disabled={reviewSubmitting}
-                className="w-full rounded p-2 text-sm resize-y border focus:outline-none transition-colors"
+                className="w-full rounded p-2 text-sm resize-y border focus:outline-none transition-colors placeholder:text-[color:var(--text-muted)]"
                 style={{
                   backgroundColor: "var(--input-bg)",
                   color: "var(--foreground)",
@@ -370,7 +370,7 @@ export default function MediaActionButtons({
             rows={4}
             maxLength={2000}
             disabled={reviewSubmitting}
-            className="w-full rounded p-3 text-sm resize-y border focus:outline-none transition-colors"
+            className="w-full rounded p-3 text-sm resize-y border focus:outline-none transition-colors placeholder:text-[color:var(--text-muted)]"
             style={{
               backgroundColor: "var(--input-bg)",
               color: "var(--foreground)",

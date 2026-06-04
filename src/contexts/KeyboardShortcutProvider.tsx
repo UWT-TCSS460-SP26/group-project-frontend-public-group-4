@@ -68,17 +68,17 @@ export default function KeyboardShortcutProvider({
         return;
       }
 
-      // ── Shift+M / Shift+T : open search in specific mode (before input guard,
+      // ── Alt+M / Alt+T : open search in specific mode (before input guard,
       //     so it works even when the search input is focused) ──
       if (
-        (e.key === "M" || e.key === "T") &&
-        e.shiftKey &&
+        (e.key.toLowerCase() === "m" || e.key.toLowerCase() === "t") &&
+        e.altKey &&
         !e.ctrlKey &&
         !e.metaKey &&
-        !e.altKey
+        !e.shiftKey
       ) {
         e.preventDefault();
-        setSearchMode(e.key === "M" ? "movies" : "tv");
+        setSearchMode(e.key.toLowerCase() === "m" ? "movies" : "tv");
         setSearchOpen(true);
         return;
       }
@@ -109,7 +109,10 @@ export default function KeyboardShortcutProvider({
 
       // ── Ctrl+K or / : open search ──
       if (
-        (e.key === "k" && (e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey) ||
+        (e.key === "k" &&
+          (e.ctrlKey || e.metaKey) &&
+          !e.shiftKey &&
+          !e.altKey) ||
         (e.key === "/" && !e.ctrlKey && !e.metaKey)
       ) {
         e.preventDefault();
@@ -124,8 +127,8 @@ export default function KeyboardShortcutProvider({
         return;
       }
 
-      // ── Ctrl+Shift+T : toggle theme ──
-      if (e.key === "T" && e.ctrlKey && e.shiftKey) {
+      // ── Ctrl+Alt+T : toggle theme ──
+      if (e.key.toLowerCase() === "t" && e.ctrlKey && e.altKey) {
         e.preventDefault();
         toggleColorMode();
         return;
@@ -161,15 +164,21 @@ export default function KeyboardShortcutProvider({
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [router, pathname, toggleColorMode, setSearchOpen, searchOpen, helpOpen, searchMode, setSearchMode]);
+  }, [
+    router,
+    pathname,
+    toggleColorMode,
+    setSearchOpen,
+    searchOpen,
+    helpOpen,
+    searchMode,
+    setSearchMode,
+  ]);
 
   return (
     <>
       {children}
-      <KeyboardHelpDialog
-        open={helpOpen}
-        onClose={() => setHelpOpen(false)}
-      />
+      <KeyboardHelpDialog open={helpOpen} onClose={() => setHelpOpen(false)} />
     </>
   );
 }

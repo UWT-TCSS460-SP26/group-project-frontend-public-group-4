@@ -418,6 +418,7 @@ export default function RatingWidget({
                   return (
                     <button
                       key={i}
+                      id={i === 1 ? "rating-bar-1" : undefined}
                       type="button"
                       style={{
                         ...customStyle,
