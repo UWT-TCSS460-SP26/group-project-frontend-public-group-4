@@ -176,7 +176,8 @@ export default function ProfilePage() {
             color: "var(--btn-secondary-text)",
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = "var(--btn-secondary-hover-bg)";
+            e.currentTarget.style.backgroundColor =
+              "var(--btn-secondary-hover-bg)";
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.backgroundColor = "var(--btn-secondary-bg)";
@@ -192,9 +193,18 @@ export default function ProfilePage() {
           role="alert"
           aria-live="assertive"
           className="fixed bottom-6 right-6 z-50 max-w-sm rounded-lg px-5 py-4 shadow-xl border transition-all duration-300"
-          style={toast.type === "success"
-            ? { backgroundColor: "var(--toast-success-bg)", borderColor: "var(--toast-success-border)", color: "var(--toast-success-text)" }
-            : { backgroundColor: "var(--toast-error-bg)", borderColor: "var(--toast-error-border)", color: "var(--toast-error-text)" }
+          style={
+            toast.type === "success"
+              ? {
+                  backgroundColor: "var(--toast-success-bg)",
+                  borderColor: "var(--toast-success-border)",
+                  color: "var(--toast-success-text)",
+                }
+              : {
+                  backgroundColor: "var(--toast-error-bg)",
+                  borderColor: "var(--toast-error-border)",
+                  color: "var(--toast-error-text)",
+                }
           }
         >
           <div className="flex items-start gap-3">

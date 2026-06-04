@@ -32,9 +32,14 @@ export default async function MoviesPage({
             No movies found for &ldquo;{title}&rdquo;.
           </p>
         ) : (
-          <div className={styles.grid}>
-            {results.map((m) => (
-              <MovieCard key={m.id} movie={m} />
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6 mt-6">
+            {results.map((m, index) => (
+              <MovieCard
+                key={m.id}
+                movie={m}
+                returnUrl={`/movies?title=${encodeURIComponent(title)}`}
+                priority={index < 6}
+              />
             ))}
           </div>
         )}
@@ -46,7 +51,9 @@ export default async function MoviesPage({
   const [popularData, topRatedData, mostReviewedData] = await Promise.all([
     apiGet<ListResponse<MovieResult>>("/movies/popular"),
     apiGet<DiscoveryResponse>("/community/discovery?type=movie&sort=top-rated"),
-    apiGet<DiscoveryResponse>("/community/discovery?type=movie&sort=most-reviewed"),
+    apiGet<DiscoveryResponse>(
+      "/community/discovery?type=movie&sort=most-reviewed",
+    ),
   ]);
 
   const rawPopular = popularData.results ?? [];
@@ -81,34 +88,43 @@ export default async function MoviesPage({
   return (
     <div className="pt-16 px-2 sm:px-4 lg:px-6 pb-16">
       {topRatedMovies.length > 0 && (
-        <section className="mb-12">
+        <section className="mb-12 lg:w-11/12 lg:mx-auto">
           <h2 className="text-3xl font-bold text-[var(--foreground)] mb-6">
             Top Rated Movies
           </h2>
           <MediaGrid
             items={topRatedMovies}
-            getItemHref={(item) => `/movies/${item.id}`}
+            getItemHref={(item) =>
+              `/movies/${item.id}?returnUrl=${encodeURIComponent("/movies")}`
+            }
+            priorityCount={6}
           />
         </section>
       )}
 
       {mostReviewedMovies.length > 0 && (
-        <section className="mb-12">
+        <section className="mb-12 lg:w-11/12 lg:mx-auto">
           <h2 className="text-3xl font-bold text-[var(--foreground)] mb-6">
             Most Reviewed Movies
           </h2>
           <MediaGrid
             items={mostReviewedMovies}
-            getItemHref={(item) => `/movies/${item.id}`}
+            getItemHref={(item) =>
+              `/movies/${item.id}?returnUrl=${encodeURIComponent("/movies")}`
+            }
           />
         </section>
       )}
 
-      <section>
-        <h2 className="text-3xl font-bold text-[var(--foreground)] mb-6">Popular Movies</h2>
+      <section className="lg:w-11/12 lg:mx-auto">
+        <h2 className="text-3xl font-bold text-[var(--foreground)] mb-6">
+          Popular Movies
+        </h2>
         <MediaGrid
           items={popularMovies}
-          getItemHref={(item) => `/movies/${item.id}`}
+          getItemHref={(item) =>
+            `/movies/${item.id}?returnUrl=${encodeURIComponent("/movies")}`
+          }
         />
       </section>
     </div>

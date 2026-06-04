@@ -69,33 +69,47 @@ function PosterFallback({ title }: { title: string }) {
   );
 }
 
-export function MovieCard({ movie }: { movie: MovieResult }) {
+export function MovieCard({
+  movie,
+  returnUrl,
+  priority = false,
+}: {
+  movie: MovieResult;
+  returnUrl?: string;
+  priority?: boolean;
+}) {
   const posterUrl = getPosterUrl(movie.poster);
   const year = movie.releaseDate
     ? new Date(movie.releaseDate).getFullYear()
     : "";
+  const href = returnUrl
+    ? `/movies/${movie.id}?returnUrl=${encodeURIComponent(returnUrl)}`
+    : `/movies/${movie.id}`;
 
   return (
-    <Link href={`/movies/${movie.id}`} className={styles.cardLink}>
+    <Link href={href} className={`${styles.cardLink} block h-full`}>
       <article
-        className={styles.card}
+        className={`${styles.card} flex flex-col h-full`}
         aria-labelledby={`movie-${movie.id}-title`}
       >
-        <div className={styles.posterContainer}>
+        <div
+          className={`${styles.posterContainer} relative w-full h-auto aspect-2/3 flex-none overflow-hidden`}
+        >
           {posterUrl ? (
             <Image
               src={posterUrl}
+              priority={priority}
               alt={`${movie.title} poster`}
               fill
-              style={{ objectFit: "cover" }}
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              className="object-cover"
+              sizes="(max-width: 768px) 50vw, 25vw"
             />
           ) : (
             <PosterFallback title={movie.title} />
           )}
         </div>
 
-        <div className={styles.content}>
+        <div className={`${styles.content} flex flex-col grow`}>
           <div className={styles.headline}>
             <h3 id={`movie-${movie.id}-title`} className={styles.title}>
               {movie.title}
@@ -107,7 +121,7 @@ export function MovieCard({ movie }: { movie: MovieResult }) {
             {movie.description || "No description available."}
           </p>
 
-          <div className={styles.meta}>
+          <div className={`${styles.meta} mt-auto pt-2`}>
             <Badge muted>TMDB #{movie.id}</Badge>
           </div>
         </div>
@@ -116,31 +130,45 @@ export function MovieCard({ movie }: { movie: MovieResult }) {
   );
 }
 
-export function ShowCard({ show }: { show: ShowResult }) {
+export function ShowCard({
+  show,
+  returnUrl,
+  priority = false,
+}: {
+  show: ShowResult;
+  returnUrl?: string;
+  priority?: boolean;
+}) {
   const posterUrl = getPosterUrl(show.posterImage);
   const year = show.releaseDate ? new Date(show.releaseDate).getFullYear() : "";
+  const href = returnUrl
+    ? `/tv/${show.id}?returnUrl=${encodeURIComponent(returnUrl)}`
+    : `/tv/${show.id}`;
 
   return (
-    <Link href={`/tv/${show.id}`} className={styles.cardLink}>
+    <Link href={href} className={`${styles.cardLink} block h-full`}>
       <article
-        className={styles.card}
+        className={`${styles.card} flex flex-col h-full`}
         aria-labelledby={`show-${show.id}-title`}
       >
-        <div className={styles.posterContainer}>
+        <div
+          className={`${styles.posterContainer} relative w-full h-auto aspect-2/3 flex-none overflow-hidden`}
+        >
           {posterUrl ? (
             <Image
               src={posterUrl}
+              priority={priority}
               alt={`${show.title} poster`}
               fill
-              style={{ objectFit: "cover" }}
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              className="object-cover"
+              sizes="(max-width: 768px) 50vw, 25vw"
             />
           ) : (
             <PosterFallback title={show.title} />
           )}
         </div>
 
-        <div className={styles.content}>
+        <div className={`${styles.content} flex flex-col grow`}>
           <div className={styles.headline}>
             <h3 id={`show-${show.id}-title`} className={styles.title}>
               {show.title}
@@ -160,7 +188,7 @@ export function ShowCard({ show }: { show: ShowResult }) {
             ))}
           </div>
 
-          <div className={styles.meta}>
+          <div className={`${styles.meta} mt-auto pt-2`}>
             <Badge muted>TMDB #{show.id}</Badge>
           </div>
         </div>

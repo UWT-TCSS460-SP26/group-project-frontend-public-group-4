@@ -43,17 +43,28 @@ export default async function Home() {
 
   return (
     <div className="pt-16 px-2 sm:px-4 lg:px-6 pb-16">
-      <section className="mb-12">
-        <h2 className="text-3xl font-bold text-[var(--foreground)] mb-6">Popular Movies</h2>
+      <section className="mb-12 lg:w-11/12 lg:mx-auto">
+        <h2 className="text-3xl font-bold text-[var(--foreground)] mb-6">
+          Popular Movies
+        </h2>
         <MediaGrid
           items={movies}
-          getItemHref={(item) => `/movies/${item.id}`}
+          getItemHref={(item) =>
+            `/movies/${item.id}?returnUrl=${encodeURIComponent("/")}`
+          }
         />
       </section>
 
-      <section>
-        <h2 className="text-3xl font-bold text-[var(--foreground)] mb-6">Popular TV Shows</h2>
-        <MediaGrid items={shows} getItemHref={(item) => `/tv/${item.id}`} />
+      <section className="lg:w-11/12 lg:mx-auto">
+        <h2 className="text-3xl font-bold text-[var(--foreground)] mb-6">
+          Popular TV Shows
+        </h2>
+        <MediaGrid
+          items={shows}
+          getItemHref={(item) =>
+            `/tv/${item.id}?returnUrl=${encodeURIComponent("/")}`
+          }
+        />
       </section>
     </div>
   );

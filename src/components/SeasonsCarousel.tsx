@@ -24,11 +24,16 @@ export default function SeasonsCarousel({ seasons }: SeasonsCarouselProps) {
 
   return (
     <div className="mt-12">
-      <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--foreground)" }}>
+      <h2
+        className="text-2xl font-bold mb-4"
+        style={{ color: "var(--foreground)" }}
+      >
         Seasons
       </h2>
-      <div className="flex overflow-x-auto gap-4 pb-4 [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full scrollbar-thin"
-        style={{ scrollbarColor: "var(--surface-border) transparent" }}>
+      <div
+        className="flex overflow-x-auto gap-4 pb-4 [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full scrollbar-thin"
+        style={{ scrollbarColor: "var(--surface-border) transparent" }}
+      >
         {displaySeasons.map((season) => {
           const seasonPosterUrl = season.poster_path
             ? `https://image.tmdb.org/t/p/w185${season.poster_path}`
