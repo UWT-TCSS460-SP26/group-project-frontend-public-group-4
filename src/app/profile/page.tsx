@@ -39,6 +39,16 @@ export default function ProfilePage() {
     return () => clearTimeout(timer);
   }, [toast]);
 
+  // Keyboard shortcut: r toggles ratings/reviews tab
+  useEffect(() => {
+    function handleToggleTab() {
+      setTab((prev) => (prev === "ratings" ? "reviews" : "ratings"));
+    }
+    window.addEventListener("shortcut:toggle-profile-tab", handleToggleTab);
+    return () =>
+      window.removeEventListener("shortcut:toggle-profile-tab", handleToggleTab);
+  }, []);
+
   const fetchData = useCallback(async (token: string) => {
     setLoading(true);
     setError(false);
