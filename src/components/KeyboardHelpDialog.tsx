@@ -18,11 +18,11 @@ const SHORTCUT_GROUPS: ShortcutGroup[] = [
     title: "Global",
     shortcuts: [
       { keys: "Ctrl + K  or  /", action: "Open search overlay" },
-      { keys: "Shift + M", action: "Open search in Movies mode" },
-      { keys: "Shift + T", action: "Open search in TV Shows mode" },
+      { keys: "Alt + M", action: "Open search in Movies mode" },
+      { keys: "Alt + T", action: "Open search in TV Shows mode" },
       { keys: "?", action: "Show this help dialog" },
       { keys: "Escape", action: "Close overlay / dialog" },
-      { keys: "Ctrl + Shift + T", action: "Toggle light/dark theme" },
+      { keys: "Ctrl + Alt + T", action: "Toggle light/dark theme" },
     ],
   },
   {
@@ -122,8 +122,7 @@ export default function KeyboardHelpDialog({
                 "var(--btn-secondary-hover-bg)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor =
-                "var(--btn-secondary-bg)";
+              e.currentTarget.style.backgroundColor = "var(--btn-secondary-bg)";
             }}
           >
             Close
@@ -167,25 +166,30 @@ export default function KeyboardHelpDialog({
           </div>
         ))}
 
-        <p
-          className="text-xs mt-4"
-          style={{ color: "var(--text-secondary)" }}
-        >
-          Tip: press <kbd
+        <p className="text-xs mt-4" style={{ color: "var(--text-secondary)" }}>
+          Tip: press{" "}
+          <kbd
             className="px-1.5 py-0.5 rounded text-xs font-mono"
             style={{
               backgroundColor: "var(--tab-bar-bg)",
               color: "var(--text-secondary)",
               border: "1px solid var(--dropdown-divider)",
             }}
-          >?</kbd> again or <kbd
+          >
+            ?
+          </kbd>{" "}
+          again or{" "}
+          <kbd
             className="px-1.5 py-0.5 rounded text-xs font-mono"
             style={{
               backgroundColor: "var(--tab-bar-bg)",
               color: "var(--text-secondary)",
               border: "1px solid var(--dropdown-divider)",
             }}
-          >Escape</kbd> to close this dialog.
+          >
+            Escape
+          </kbd>{" "}
+          to close this dialog.
         </p>
       </div>
     </div>,

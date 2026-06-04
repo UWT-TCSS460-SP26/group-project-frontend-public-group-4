@@ -1,6 +1,5 @@
 import { apiGet, searchShows, getCommunityStats } from "@/lib/api";
 import { normalizeShow, normalizeDiscovery } from "@/lib/normalize";
-import styles from "./page.module.css";
 import type {
   ListResponse,
   ShowResult,
@@ -22,22 +21,29 @@ export default async function TVPage({
     const results: ShowResult[] = await searchShows(title);
 
     return (
-      <main className={styles.container}>
-        <h1 className={styles.title}>
-          Search results for &ldquo;{title}&rdquo;
-        </h1>
+      <main className="pt-6 md:pt-12 px-4 pb-12">
+        <section className="lg:w-11/12 lg:mx-auto">
+          <h1 className="text-3xl font-bold text-[var(--foreground)] mb-6">
+            Search results for &ldquo;{title}&rdquo;
+          </h1>
 
-        {results.length === 0 ? (
-          <p className={styles.emptyText}>
-            No shows found for &ldquo;{title}&rdquo;.
-          </p>
-        ) : (
-          <div className={styles.grid}>
-            {results.map((s, idx) => (
-              <ShowCard key={s.title + idx} show={s} />
-            ))}
-          </div>
-        )}
+          {results.length === 0 ? (
+            <p className="text-[var(--text-muted)]">
+              No shows found for &ldquo;{title}&rdquo;.
+            </p>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-2 sm:gap-4 md:gap-6 mt-6">
+              {results.map((s, index) => (
+                <ShowCard
+                  key={s.title + index}
+                  show={s}
+                  returnUrl={`/tv?title=${encodeURIComponent(title)}`}
+                  priority={index < 5}
+                />
+              ))}
+            </div>
+          )}
+        </section>
       </main>
     );
   }
@@ -46,7 +52,9 @@ export default async function TVPage({
   const [popularData, topRatedData, mostReviewedData] = await Promise.all([
     apiGet<ListResponse<ShowResult>>("/shows/popular"),
     apiGet<DiscoveryResponse>("/community/discovery?type=show&sort=top-rated"),
-    apiGet<DiscoveryResponse>("/community/discovery?type=show&sort=most-reviewed"),
+    apiGet<DiscoveryResponse>(
+      "/community/discovery?type=show&sort=most-reviewed",
+    ),
   ]);
 
   const rawPopular = popularData.results ?? [];
@@ -78,36 +86,45 @@ export default async function TVPage({
   const mostReviewedShows = rawMostReviewed.map(normalizeDiscovery);
 
   return (
-    <div className="pt-16 px-2 sm:px-4 lg:px-6 pb-16">
+    <div className="pt-6 md:pt-12 px-4 pb-12">
       {topRatedShows.length > 0 && (
-        <section className="mb-12">
+        <section className="mb-12 lg:w-11/12 lg:mx-auto">
           <h2 className="text-3xl font-bold text-[var(--foreground)] mb-6">
             Top Rated TV Shows
           </h2>
           <MediaGrid
             items={topRatedShows}
-            getItemHref={(item) => `/tv/${item.id}`}
+            getItemHref={(item) =>
+              `/tv/${item.id}?returnUrl=${encodeURIComponent("/tv")}`
+            }
+            priorityCount={6}
           />
         </section>
       )}
 
       {mostReviewedShows.length > 0 && (
-        <section className="mb-12">
+        <section className="mb-12 lg:w-11/12 lg:mx-auto">
           <h2 className="text-3xl font-bold text-[var(--foreground)] mb-6">
             Most Reviewed TV Shows
           </h2>
           <MediaGrid
             items={mostReviewedShows}
-            getItemHref={(item) => `/tv/${item.id}`}
+            getItemHref={(item) =>
+              `/tv/${item.id}?returnUrl=${encodeURIComponent("/tv")}`
+            }
           />
         </section>
       )}
 
-      <section>
-        <h2 className="text-3xl font-bold text-[var(--foreground)] mb-6">Popular TV Shows</h2>
+      <section className="lg:w-11/12 lg:mx-auto">
+        <h2 className="text-3xl font-bold text-[var(--foreground)] mb-6">
+          Popular TV Shows
+        </h2>
         <MediaGrid
           items={popularShows}
-          getItemHref={(item) => `/tv/${item.id}`}
+          getItemHref={(item) =>
+            `/tv/${item.id}?returnUrl=${encodeURIComponent("/tv")}`
+          }
         />
       </section>
     </div>

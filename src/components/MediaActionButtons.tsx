@@ -16,7 +16,9 @@ interface MediaActionButtonsProps {
   userRating?: { id: number; value: number } | null;
   userReview?: {
     reviewId: number;
+
     reviewContent: string;
+
     dateOfReview: string;
   } | null;
   returnUrl?: string;
@@ -106,6 +108,7 @@ export default function MediaActionButtons({
     } catch (e) {
       setToast({
         type: "error",
+
         message: "Failed to submit review. Please try again.",
       });
     } finally {
@@ -146,6 +149,7 @@ export default function MediaActionButtons({
       }
       setExistingReview({
         ...existingReview,
+
         reviewContent: reviewContent.trim(),
       });
       setEditing(false);
@@ -229,6 +233,7 @@ export default function MediaActionButtons({
               <button
                 onClick={() => {
                   setEditing(true);
+
                   setReviewContent(existingReview.reviewContent);
                 }}
                 disabled={editing || deleting}
@@ -279,7 +284,7 @@ export default function MediaActionButtons({
                 rows={3}
                 maxLength={2000}
                 disabled={reviewSubmitting}
-                className="w-full rounded p-2 text-sm resize-y border focus:outline-none transition-colors"
+                className="w-full rounded p-2 text-sm resize-y border focus:outline-none transition-colors placeholder:text-[color:var(--text-muted)]"
                 style={{
                   backgroundColor: "var(--input-bg)",
                   color: "var(--foreground)",
@@ -297,6 +302,7 @@ export default function MediaActionButtons({
                   <button
                     onClick={() => {
                       setEditing(false);
+
                       setReviewContent(existingReview.reviewContent);
                     }}
                     disabled={reviewSubmitting}
@@ -364,7 +370,7 @@ export default function MediaActionButtons({
             rows={4}
             maxLength={2000}
             disabled={reviewSubmitting}
-            className="w-full rounded p-3 text-sm resize-y border focus:outline-none transition-colors"
+            className="w-full rounded p-3 text-sm resize-y border focus:outline-none transition-colors placeholder:text-[color:var(--text-muted)]"
             style={{
               backgroundColor: "var(--input-bg)",
               color: "var(--foreground)",
@@ -427,12 +433,16 @@ export default function MediaActionButtons({
             toast.type === "success"
               ? {
                   backgroundColor: "var(--toast-success-bg)",
+
                   borderColor: "var(--toast-success-border)",
+
                   color: "var(--toast-success-text)",
                 }
               : {
                   backgroundColor: "var(--toast-error-bg)",
+
                   borderColor: "var(--toast-error-border)",
+
                   color: "var(--toast-error-text)",
                 }
           }

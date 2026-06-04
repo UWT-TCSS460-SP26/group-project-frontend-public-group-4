@@ -11,6 +11,7 @@ import {
   ApiError,
 } from "@/lib/api";
 import { deleteReview, updateReview } from "@/lib/reviews";
+import { updateRating } from "@/lib/ratings";
 import type { RatingRecord, ReviewRecord } from "@/types/community";
 import ProfileHeader from "@/components/profile/ProfileHeader";
 import TabBar from "@/components/profile/TabBar";
@@ -46,7 +47,10 @@ export default function ProfilePage() {
     }
     window.addEventListener("shortcut:toggle-profile-tab", handleToggleTab);
     return () =>
-      window.removeEventListener("shortcut:toggle-profile-tab", handleToggleTab);
+      window.removeEventListener(
+        "shortcut:toggle-profile-tab",
+        handleToggleTab,
+      );
   }, []);
 
   const fetchData = useCallback(async (token: string) => {
@@ -92,6 +96,18 @@ export default function ProfilePage() {
     } catch {
       // item stays in list; user can retry
     }
+  };
+
+  const handleUpdateRating = async (ratingId: number, newScore: number) => {
+    const result = await updateRating(ratingId, newScore);
+    if (result.error) {
+      throw new Error(result.error);
+    }
+    setRatings((prev) =>
+      prev.map((r) =>
+        r.ratingId === ratingId ? { ...r, rating: newScore } : r,
+      ),
+    );
   };
 
   const handleDeleteReview = async (reviewId: number) => {
@@ -148,7 +164,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <main className="flex-1 max-w-3xl mx-auto w-full px-4 py-10 space-y-8">
+    <main className="flex-1 max-w-3xl mx-auto w-full pt-6 md:pt-12 px-4 pb-12 space-y-8">
       <ProfileHeader name={user.name} email={user.email} image={user.image} />
 
       <TabBar active={tab} onChange={setTab} />
@@ -158,6 +174,7 @@ export default function ProfilePage() {
           ratings={ratings}
           titles={titles}
           onDelete={handleDeleteRating}
+          onUpdate={handleUpdateRating}
           loading={loading}
           error={error}
           onRetry={() => session.accessToken && fetchData(session.accessToken)}
@@ -186,7 +203,8 @@ export default function ProfilePage() {
             color: "var(--btn-secondary-text)",
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = "var(--btn-secondary-hover-bg)";
+            e.currentTarget.style.backgroundColor =
+              "var(--btn-secondary-hover-bg)";
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.backgroundColor = "var(--btn-secondary-bg)";
@@ -202,9 +220,18 @@ export default function ProfilePage() {
           role="alert"
           aria-live="assertive"
           className="fixed bottom-6 right-6 z-50 max-w-sm rounded-lg px-5 py-4 shadow-xl border transition-all duration-300"
-          style={toast.type === "success"
-            ? { backgroundColor: "var(--toast-success-bg)", borderColor: "var(--toast-success-border)", color: "var(--toast-success-text)" }
-            : { backgroundColor: "var(--toast-error-bg)", borderColor: "var(--toast-error-border)", color: "var(--toast-error-text)" }
+          style={
+            toast.type === "success"
+              ? {
+                  backgroundColor: "var(--toast-success-bg)",
+                  borderColor: "var(--toast-success-border)",
+                  color: "var(--toast-success-text)",
+                }
+              : {
+                  backgroundColor: "var(--toast-error-bg)",
+                  borderColor: "var(--toast-error-border)",
+                  color: "var(--toast-error-text)",
+                }
           }
         >
           <div className="flex items-start gap-3">
