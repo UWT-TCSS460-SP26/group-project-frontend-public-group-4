@@ -1,3 +1,6 @@
+
+There are two html pages for the profile, because Chrome gave me different lighthouse results than Firefox (the homescreen was the same).
+
 ## next.config.ts
 
  - Removed unoptimized: true from the images config

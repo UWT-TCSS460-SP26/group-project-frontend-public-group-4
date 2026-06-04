@@ -116,7 +116,7 @@ export default function ProfilePage() {
   if (status === "loading") {
     return (
       <main className="flex flex-1 items-center justify-center">
-        <p style={{ color: "var(--text-muted)" }}>Loading...</p>
+        <p style={{ color: "var(--text-primary)" }}>Loading...</p>
       </main>
     );
   }
@@ -126,7 +126,7 @@ export default function ProfilePage() {
   if (!user) {
     return (
       <main className="flex flex-1 flex-col items-center justify-center gap-6 px-4">
-        <p style={{ color: "var(--text-muted)" }}>You are not signed in.</p>
+        <p style={{ color: "var(--text-primary)" }}>You are not signed in.</p>
         <Link
           href="/sign-in"
           className="rounded-md bg-amber-400 px-6 py-2.5 font-medium text-black hover:bg-amber-300 transition-colors no-underline"
