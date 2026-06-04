@@ -58,6 +58,17 @@ export default function RatingsList({
     return () => clearTimeout(timer);
   }, [toast]);
 
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape" && editingId !== null) {
+        setEditingId(null);
+        setEditStatus("idle");
+      }
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [editingId]);
+
   const handleStarClick = async (
     ratingId: number,
     clickedScore: number,
@@ -166,9 +177,7 @@ export default function RatingsList({
                 ) ?? `TMDB #${r.tmdbIdentifier}`}
               </Link>
 
-              <div
-                className={`ml-auto flex gap-1 transition-all ${isEditing ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
-              >
+              <div className="ml-auto flex gap-1 transition-all">
                 <button
                   onClick={() => {
                     if (isEditing) {
@@ -281,6 +290,7 @@ export default function RatingsList({
                       return (
                         <button
                           key={i}
+                          autoFocus={i === r.rating}
                           type="button"
                           style={{
                             ...customStyle,

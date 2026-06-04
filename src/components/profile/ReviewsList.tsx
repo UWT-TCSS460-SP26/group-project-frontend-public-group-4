@@ -59,6 +59,17 @@ export default function ReviewsList({
     return () => clearTimeout(timer);
   }, [toast]);
 
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape" && editingId !== null) {
+        setEditingId(null);
+        setEditContent("");
+      }
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [editingId]);
+
   const handleSaveEdit = async (reviewId: number) => {
     if (!editContent.trim() || saving) return;
     setSaving(true);
@@ -184,12 +195,17 @@ export default function ReviewsList({
                 </label>
                 <textarea
                   id={`edit-review-${r.reviewId}`}
+                  autoFocus
                   value={editContent}
                   onChange={(e) => setEditContent(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.ctrlKey && e.key === "Enter") {
                       e.preventDefault();
                       handleSaveEdit(r.reviewId);
+                    }
+                    if (e.key === "Escape") {
+                      setEditingId(null);
+                      setEditContent("");
                     }
                   }}
                   rows={3}
@@ -299,7 +315,7 @@ export default function ReviewsList({
             )}
 
             {!isEditing && (
-              <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-all">
+              <div className="flex justify-end gap-1 transition-all">
                 <button
                   onClick={() => {
                     setEditingId(r.reviewId);

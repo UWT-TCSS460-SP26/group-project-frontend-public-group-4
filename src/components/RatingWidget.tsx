@@ -133,6 +133,16 @@ export default function RatingWidget({
     }
   }, [status]);
 
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape" && status === "confirm-delete") {
+        setStatus(knownRatingId ? "existing" : "idle");
+      }
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [status, knownRatingId]);
+
   const triggerToast = (newToast: ToastType, duration = 3000) => {
     setToast(newToast);
     if (newToast.type !== "loading") {
@@ -273,6 +283,7 @@ export default function RatingWidget({
                 Yes, Delete
               </button>
               <button
+                autoFocus
                 onClick={() => setStatus(knownRatingId ? "existing" : "idle")}
                 className="flex-1 rounded font-semibold transition-colors text-sm"
                 style={{
