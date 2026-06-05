@@ -3,13 +3,20 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { Movie, Tv, Search, AccountCircle } from "@mui/icons-material";
+import {
+  Movie,
+  Tv,
+  Search,
+  AccountCircle,
+  Info,
+  Close,
+} from "@mui/icons-material";
 import { useSession, signOut } from "next-auth/react";
 
 import { DarkMode, LightMode } from "@mui/icons-material";
 import { useColorMode } from "@/lib/theme";
-
-type SearchMode = "movies" | "tv";
+import { useSearchOverlay } from "@/contexts/SearchOverlayContext";
+import type { SearchMode } from "@/contexts/SearchOverlayContext";
 
 export function ThemeToggle() {
   const { mode, toggleColorMode } = useColorMode();
@@ -17,7 +24,7 @@ export function ThemeToggle() {
   return (
     <button
       onClick={toggleColorMode}
-      className="p-2 rounded-md transition-colors"
+      className="p-1.5 sm:p-2 rounded-md transition-colors"
       style={{
         color: "var(--header-text)",
         backgroundColor: "transparent",
@@ -38,8 +45,6 @@ export function ThemeToggle() {
 }
 
 export default function Header() {
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [searchMode, setSearchMode] = useState<SearchMode>("movies");
   const [query, setQuery] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -48,6 +53,8 @@ export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
   const isLoggedIn = status === "authenticated";
+  const { searchOpen, setSearchOpen, searchMode, setSearchMode } =
+    useSearchOverlay();
 
   function submitSearch() {
     const q = query.trim();
@@ -61,19 +68,17 @@ export default function Header() {
     router.push(path);
   }
 
+  function handleOpenSearch() {
+    setSearchMode(pathname.startsWith("/tv") ? "tv" : "movies");
+    setSearchOpen(true);
+  }
+
   // Focus input when search opens
   useEffect(() => {
-    if (searchOpen) searchInputRef.current?.focus();
-  }, [searchOpen]);
-
-  // Close on Escape
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") setSearchOpen(false);
-    }
     if (searchOpen) {
-      document.addEventListener("keydown", handleKeyDown);
-      return () => document.removeEventListener("keydown", handleKeyDown);
+      searchInputRef.current?.focus();
+      const params = new URLSearchParams(window.location.search);
+      setQuery(params.get("title") || "");
     }
   }, [searchOpen]);
 
@@ -93,12 +98,12 @@ export default function Header() {
 
   const headerLinkClass =
     "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors";
-  const headerIconClass = "p-2 transition-colors";
+  const headerIconClass = "p-1.5 sm:p-2 transition-colors";
 
   return (
     <>
       <header
-        className="sticky top-0 z-50 flex items-center gap-4 px-4 h-14 border-b"
+        className="sticky top-0 z-50 flex items-center gap-2 sm:gap-4 px-2 sm:px-4 h-14 border-b"
         style={{
           backgroundColor: "var(--header-bg)",
           color: "var(--header-text)",
@@ -108,7 +113,7 @@ export default function Header() {
         {/* Logo */}
         <a
           href="/"
-          className="flex items-center gap-2 font-bold text-lg tracking-tight shrink-0 mr-2 no-underline"
+          className="flex items-center gap-1 sm:gap-2 font-bold text-lg tracking-tight shrink-0 mr-1 sm:mr-2 no-underline"
           style={{ color: "var(--header-text)" }}
         >
           <span className="text-amber-400">Media</span>Rate
@@ -183,6 +188,14 @@ export default function Header() {
           >
             <Tv fontSize="small" />
           </a>
+          <a
+            href="/about"
+            className={headerIconClass}
+            style={{ color: "var(--header-text)" }}
+            aria-label="About"
+          >
+            <Info fontSize="small" />
+          </a>
         </div>
 
         {/* Spacer */}
@@ -190,7 +203,7 @@ export default function Header() {
 
         {/* Search */}
         <button
-          onClick={() => setSearchOpen(true)}
+          onClick={handleOpenSearch}
           className={headerIconClass + " rounded-md"}
           style={{ color: "var(--header-text)" }}
           onMouseEnter={(e) => {
@@ -277,7 +290,9 @@ export default function Header() {
         ) : (
           <Link
             href={`/sign-in?callbackUrl=${encodeURIComponent(pathname)}`}
-            className={headerLinkClass + " no-underline"}
+            className={
+              headerLinkClass + " shrink-0 whitespace-nowrap no-underline"
+            }
             style={{ color: "var(--header-text)" }}
             onMouseEnter={(e) => {
               e.currentTarget.style.color = "var(--header-hover-text)";
@@ -306,11 +321,11 @@ export default function Header() {
           <div className="relative flex flex-col items-center pt-12 px-6">
             <div className="w-full max-w-lg">
               <div
-                className="flex items-center gap-2 rounded-xl overflow-hidden ring-1 ring-[var(--card-border)] focus-within:ring-amber-400 transition-shadow"
+                className="flex items-center gap-1 sm:gap-2 rounded-xl overflow-hidden ring-1 ring-[var(--card-border)] focus-within:ring-amber-400 transition-shadow"
                 style={{ backgroundColor: "var(--card-bg)" }}
               >
                 <Search
-                  className="ml-4"
+                  className="ml-3 sm:ml-4 shrink-0"
                   style={{ color: "var(--text-secondary)", fontSize: 22 }}
                 />
                 <input
@@ -322,14 +337,36 @@ export default function Header() {
                     if (e.key === "Enter") submitSearch();
                   }}
                   placeholder={`Search ${searchMode === "movies" ? "movies" : "TV shows"}...`}
-                  className="flex-1 py-3.5 px-4 bg-transparent text-base outline-none"
+                  className="flex-1 min-w-0 py-3 sm:py-3.5 px-2 sm:px-4 bg-transparent text-base outline-none"
                   style={{
                     color: "var(--foreground)",
                   }}
                 />
+                {query && (
+                  <button
+                    onClick={() => {
+                      setQuery("");
+                      searchInputRef.current?.focus();
+                    }}
+                    className="p-1 rounded-md transition-colors flex shrink-0 mr-1 sm:mr-2"
+                    style={{ color: "var(--text-secondary)" }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = "var(--foreground)";
+                      e.currentTarget.style.backgroundColor =
+                        "var(--surface-bg-hover)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = "var(--text-secondary)";
+                      e.currentTarget.style.backgroundColor = "transparent";
+                    }}
+                    aria-label="Clear search"
+                  >
+                    <Close style={{ fontSize: 20 }} />
+                  </button>
+                )}
                 <button
                   onClick={submitSearch}
-                  className="bg-amber-400 px-5 py-3.5 text-sm font-semibold text-black hover:bg-amber-500 transition-colors rounded-xl ml-[-4px]"
+                  className="bg-amber-400 shrink-0 px-4 sm:px-5 py-3 sm:py-3.5 text-sm font-semibold text-black hover:bg-amber-500 transition-colors rounded-xl ml-[-4px]"
                 >
                   Search
                 </button>

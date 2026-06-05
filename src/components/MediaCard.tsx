@@ -21,7 +21,11 @@ function extractYear(dateStr: string): string {
   return dateStr ? dateStr.slice(0, 4) : "—";
 }
 
-export default function MediaCard({ item, href, priority = false }: MediaCardProps) {
+export default function MediaCard({
+  item,
+  href,
+  priority = false,
+}: MediaCardProps) {
   const card = (
     <div className="group relative overflow-hidden rounded-lg bg-[var(--card-bg)] border border-[var(--card-border)] transition-transform hover:scale-[1.03]">
       <div className="aspect-2/3 relative">
@@ -62,8 +66,9 @@ export default function MediaCard({ item, href, priority = false }: MediaCardPro
         <Image
           src={posterUrl(item.posterPath)}
           alt={item.title}
+          priority={priority}
           fill
-          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 20vw"
+          sizes="(max-width: 768px) 50vw, 20vw"
           className="object-cover"
           priority={priority}
         />

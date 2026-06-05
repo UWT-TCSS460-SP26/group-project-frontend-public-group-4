@@ -51,7 +51,7 @@ const services = [
 
 export default function AboutPage() {
   return (
-    <main className="pt-16 px-4 sm:px-8 pb-16 max-w-4xl mx-auto text-[color:var(--text-primary)]">
+    <main className="pt-6 md:pt-12 px-4 pb-12 max-w-4xl mx-auto text-[color:var(--text-primary)]">
       {/* Back link */}
       <div className="mb-8">
         <Link

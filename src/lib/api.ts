@@ -90,7 +90,7 @@ export async function postReview(
 export async function updateReview(
   accessToken: string,
   reviewId: number,
-  body: { reviewContent: string},
+  body: { reviewContent: string },
 ): Promise<{ success: boolean }> {
   const res = await fetch(`${BASE_URL}/reviews/${reviewId}`, {
     method: "PATCH",
@@ -169,7 +169,8 @@ export async function getCommunityStats(
       const res = await fetch(`${BASE_URL}${endpoint}/${id}`, {
         cache: "no-store",
       });
-      if (!res.ok) throw new ApiError(res.status, res.statusText, await res.text());
+      if (!res.ok)
+        throw new ApiError(res.status, res.statusText, await res.text());
       const data = (await res.json()) as {
         community: { averageRating: number | null; reviewCount: number };
       };

@@ -4,6 +4,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AuthSessionProvider from "@/components/auth-session-provider";
 import Header from "@/components/header";
+import { SearchOverlayProvider } from "@/contexts/SearchOverlayContext";
+import KeyboardShortcutProvider from "@/contexts/KeyboardShortcutProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,8 +41,12 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <AuthSessionProvider>
           <AppThemeProvider>
-            <Header />
-            {children}
+            <SearchOverlayProvider>
+              <KeyboardShortcutProvider>
+                <Header />
+                {children}
+              </KeyboardShortcutProvider>
+            </SearchOverlayProvider>
           </AppThemeProvider>
         </AuthSessionProvider>
       </body>

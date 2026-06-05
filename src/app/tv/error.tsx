@@ -14,8 +14,11 @@ export default function TVError({
   }, [error]);
 
   return (
-    <div className="pt-16 px-4 sm:px-8 pb-16 max-w-7xl mx-auto text-center">
-      <h2 className="text-3xl font-bold mb-4" style={{ color: "var(--foreground)" }}>
+    <div className="pt-6 md:pt-12 px-4 pb-12 max-w-7xl mx-auto text-center">
+      <h2
+        className="text-3xl font-bold mb-4"
+        style={{ color: "var(--foreground)" }}
+      >
         Couldn&apos;t load TV shows
       </h2>
       <p className="mb-6" style={{ color: "var(--text-muted)" }}>
