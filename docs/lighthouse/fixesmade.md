@@ -1,5 +1,5 @@
 
-There are two html pages for the profile, because Chrome gave me different lighthouse results than Firefox (the homescreen was the same).
+There are two html pages included, but I've made more reports than shown.
 
 ## next.config.ts
 
