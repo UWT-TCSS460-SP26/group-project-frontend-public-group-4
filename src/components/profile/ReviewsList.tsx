@@ -23,7 +23,7 @@ interface Toast {
 interface ReviewsListProps {
   reviews: ReviewRecord[];
   titles: Map<string, string>;
-  onDelete: (reviewId: number) => Promise<void>;
+  onDelete: (reviewId: number) => void;
   onUpdate: (reviewId: number, content: string) => Promise<void>;
   loading: boolean;
   error: boolean;
@@ -311,11 +311,18 @@ export default function ReviewsList({
         confirmLabel="Delete"
         cancelLabel="Cancel"
         loading={deleting !== null}
-        onConfirm={() => {
-          if (confirmDeleteId !== null) {
-            setDeleting(confirmDeleteId);
-            onDelete(confirmDeleteId);
-            setConfirmDeleteId(null);
+        onConfirm={async () => {
+          if (confirmDeleteId === null) return;
+
+          const reviewId = confirmDeleteId;
+
+          setConfirmDeleteId(null);
+          setDeleting(reviewId);
+
+          try {
+            await onDelete(reviewId);
+          } finally {
+            setDeleting(null);
           }
         }}
         onCancel={() => setConfirmDeleteId(null)}

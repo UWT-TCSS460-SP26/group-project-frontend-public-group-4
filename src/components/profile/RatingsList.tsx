@@ -18,7 +18,7 @@ interface Toast {
 interface RatingsListProps {
   ratings: RatingRecord[];
   titles: Map<string, string>;
-  onDelete: (ratingId: number) => void;
+  onDelete: (ratingId: number) => Promise<void>;
   onUpdate: (ratingId: number, newScore: number) => Promise<void>;
   loading: boolean;
   error: boolean;
@@ -426,50 +426,24 @@ export default function RatingsList({
         confirmLabel="Delete"
         cancelLabel="Cancel"
         loading={deleting !== null}
-        onConfirm={() => {
-          if (confirmDeleteId !== null) {
-            setDeleting(confirmDeleteId);
-            onDelete(confirmDeleteId);
-            setConfirmDeleteId(null);
+        onConfirm={async () => {
+          if (confirmDeleteId === null) return;
+
+          const ratingId = confirmDeleteId;
+
+          setConfirmDeleteId(null);
+          setDeleting(ratingId);
+
+          try {
+            await onDelete(ratingId);
+          } finally {
+            setDeleting(null);
           }
         }}
         onCancel={() => setConfirmDeleteId(null)}
       />
 
-      {toast && (
-        <div
-          role="alert"
-          aria-live="assertive"
-          className="fixed bottom-6 right-6 z-50 max-w-sm rounded-lg px-5 py-4 shadow-xl border transition-all duration-300"
-          style={
-            toast.type === "success"
-              ? {
-                  backgroundColor: "var(--toast-success-bg)",
-                  borderColor: "var(--toast-success-border)",
-                  color: "var(--toast-success-text)",
-                }
-              : {
-                  backgroundColor: "var(--toast-error-bg)",
-                  borderColor: "var(--toast-error-border)",
-                  color: "var(--toast-error-text)",
-                }
-          }
-        >
-          <div className="flex items-start gap-3">
-            <span className="text-lg shrink-0" aria-hidden="true">
-              {toast.type === "success" ? "\u2713" : "\u2715"}
-            </span>
-            <p className="text-sm leading-relaxed">{toast.message}</p>
-            <button
-              onClick={() => setToast(null)}
-              aria-label="Close notification"
-              className="shrink-0 opacity-60 hover:opacity-100 ml-2 transition-colors"
-            >
-              {"\u2715"}
-            </button>
-          </div>
-        </div>
-      )}
+      {toast && <Toast type={toast.type} message={toast.message} onClose={() => setToast(null)} />}
     </div>
   );
 }
