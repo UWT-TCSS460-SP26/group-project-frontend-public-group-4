@@ -7,6 +7,7 @@ import ScoreBadge from "./ScoreBadge";
 import MediaBadge from "./MediaBadge";
 import type { RatingRecord } from "@/types/community";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import Toast from "@/components/ui/Toast";
 
 const ITEMS_PER_PAGE = 25;
 
