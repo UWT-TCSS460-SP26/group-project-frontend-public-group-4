@@ -46,6 +46,13 @@ export default function KeyboardShortcutProvider({
     };
   }, []);
 
+  // Listen for external open-help triggers (e.g. footer link)
+  useEffect(() => {
+    const handler = () => setHelpOpen(true);
+    window.addEventListener("shortcut:open-help", handler);
+    return () => window.removeEventListener("shortcut:open-help", handler);
+  }, []);
+
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       // ── Escape (works even in inputs) ──
@@ -134,32 +141,6 @@ export default function KeyboardShortcutProvider({
         return;
       }
 
-      // ── r key (detail pages and profile only) ──
-      if (e.key === "r" && !e.ctrlKey && !e.metaKey && !e.altKey) {
-        const isDetailPage =
-          /^\/movies\/\d+/.test(pathname) || /^\/tv\/\d+/.test(pathname);
-        const isProfilePage = pathname === "/profile";
-
-        if (isDetailPage) {
-          e.preventDefault();
-          window.dispatchEvent(new CustomEvent("shortcut:focus-rating"));
-        } else if (isProfilePage) {
-          e.preventDefault();
-          window.dispatchEvent(new CustomEvent("shortcut:toggle-profile-tab"));
-        }
-        return;
-      }
-
-      // ── w key (detail pages only) ──
-      if (e.key === "w" && !e.ctrlKey && !e.metaKey && !e.altKey) {
-        const isDetailPage =
-          /^\/movies\/\d+/.test(pathname) || /^\/tv\/\d+/.test(pathname);
-        if (isDetailPage) {
-          e.preventDefault();
-          window.dispatchEvent(new CustomEvent("shortcut:focus-review"));
-        }
-        return;
-      }
     }
 
     document.addEventListener("keydown", handleKeyDown);

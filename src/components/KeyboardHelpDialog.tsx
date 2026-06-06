@@ -46,15 +46,12 @@ const SHORTCUT_GROUPS: ShortcutGroup[] = [
   {
     title: "Detail Pages",
     shortcuts: [
-      { keys: "r", action: "Focus rating widget" },
-      { keys: "w", action: "Focus review textarea" },
       { keys: "Ctrl + Enter", action: "Submit review" },
     ],
   },
   {
     title: "Profile Page",
     shortcuts: [
-      { keys: "r", action: "Toggle Ratings / Reviews tab" },
       { keys: "Ctrl + Enter", action: "Save edited review" },
     ],
   },

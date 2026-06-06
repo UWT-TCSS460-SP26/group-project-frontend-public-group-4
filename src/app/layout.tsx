@@ -6,6 +6,7 @@ import AuthSessionProvider from "@/components/auth-session-provider";
 import Header from "@/components/header";
 import { SearchOverlayProvider } from "@/contexts/SearchOverlayContext";
 import KeyboardShortcutProvider from "@/contexts/KeyboardShortcutProvider";
+import Footer from "@/components/footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,6 +46,7 @@ export default function RootLayout({
               <KeyboardShortcutProvider>
                 <Header />
                 {children}
+                <Footer />
               </KeyboardShortcutProvider>
             </SearchOverlayProvider>
           </AppThemeProvider>
