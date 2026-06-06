@@ -203,7 +203,7 @@ export default async function MovieDetailPage({
           <div className="flex flex-col grow min-w-0">
             {/* HEADER */}
             <div className="text-center md:text-left flex flex-col min-w-0">
-              <h1 className="text-3xl md:text-4xl font-bold mb-2">
+              <h1 className="text-3xl md:text-4xl font-bold mb-2 break-words">
                 {metadata.title}{" "}
                 {releaseYear && (
                   <span className="text-(--text-muted) font-normal">

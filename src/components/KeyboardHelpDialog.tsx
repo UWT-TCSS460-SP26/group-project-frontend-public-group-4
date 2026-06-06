@@ -46,12 +46,15 @@ const SHORTCUT_GROUPS: ShortcutGroup[] = [
   {
     title: "Detail Pages",
     shortcuts: [
+      { keys: "r", action: "Focus rating widget" },
+      { keys: "w", action: "Focus review textarea" },
       { keys: "Ctrl + Enter", action: "Submit review" },
     ],
   },
   {
     title: "Profile Page",
     shortcuts: [
+      { keys: "r", action: "Toggle Ratings / Reviews tab" },
       { keys: "Ctrl + Enter", action: "Save edited review" },
     ],
   },
@@ -78,7 +81,7 @@ export default function KeyboardHelpDialog({
   return createPortal(
     <div
       ref={dialogRef}
-      className="fixed inset-0 z-100 flex items-center justify-center"
+      className="fixed inset-0 z-[100] flex items-center justify-center"
       role="dialog"
       aria-modal="true"
       aria-labelledby="shortcuts-dialog-title"
@@ -141,14 +144,19 @@ export default function KeyboardHelpDialog({
               {group.shortcuts.map(({ keys, action }) => (
                 <div
                   key={keys + action}
-                  className="flex items-center justify-between px-3 py-2 text-sm"
+                  className="flex items-center justify-between gap-3 px-3 py-2 text-sm"
                   style={{
                     borderBottom: "1px solid var(--dropdown-divider)",
                   }}
                 >
-                  <span style={{ color: "var(--foreground)" }}>{action}</span>
+                  <span
+                    className="break-words"
+                    style={{ color: "var(--foreground)" }}
+                  >
+                    {action}
+                  </span>
                   <kbd
-                    className="px-2 py-0.5 rounded text-xs font-mono"
+                    className="px-2 py-0.5 rounded text-xs font-mono shrink-0"
                     style={{
                       backgroundColor: "var(--tab-bar-bg)",
                       color: "var(--text-secondary)",

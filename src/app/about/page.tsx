@@ -183,7 +183,7 @@ export default function AboutPage() {
                     href={service.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-(--primary-color) hover:text-(--primary-hover) underline underline-offset-2"
+                    className="text-(--primary-color) hover:text-(--primary-hover) underline underline-offset-2 break-words"
                   >
                     {service.name}
                   </a>

@@ -24,7 +24,7 @@ export function ThemeToggle() {
   return (
     <button
       onClick={toggleColorMode}
-      className="p-1.5 sm:p-2 rounded-md transition-colors"
+      className="p-1 sm:p-2 rounded-md transition-colors"
       style={{
         color: "var(--header-text)",
         backgroundColor: "transparent",
@@ -98,12 +98,12 @@ export default function Header() {
 
   const headerLinkClass =
     "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors";
-  const headerIconClass = "p-1.5 sm:p-2 transition-colors";
+  const headerIconClass = "p-1 sm:p-2 transition-colors";
 
   return (
     <>
       <header
-        className="sticky top-0 z-50 flex items-center gap-2 sm:gap-4 px-2 sm:px-4 h-14 border-b"
+        className="sticky top-0 z-50 flex items-center gap-1 sm:gap-4 px-2 sm:px-4 h-14 border-b"
         style={{
           backgroundColor: "var(--header-bg)",
           color: "var(--header-text)",
@@ -113,7 +113,7 @@ export default function Header() {
         {/* Logo */}
         <a
           href="/"
-          className="flex items-center gap-1 sm:gap-2 font-bold text-lg tracking-tight shrink-0 mr-1 sm:mr-2 no-underline"
+          className="flex items-center gap-1 sm:gap-2 font-bold text-base sm:text-lg tracking-tight shrink-0 mr-0.5 sm:mr-2 no-underline"
           style={{ color: "var(--header-text)" }}
         >
           <span className="text-(--primary-color)">Media</span>Rate
@@ -254,21 +254,9 @@ export default function Header() {
         ) : (
           <Link
             href={`/sign-in?callbackUrl=${encodeURIComponent(pathname)}`}
-            className={
-              headerLinkClass + " shrink-0 whitespace-nowrap no-underline"
-            }
-            style={{ color: "var(--header-text)" }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = "var(--header-hover-text)";
-              e.currentTarget.style.backgroundColor = "var(--header-hover-bg)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = "var(--header-text)";
-              e.currentTarget.style.backgroundColor = "transparent";
-            }}
+            className="flex items-center justify-center px-2.5 sm:px-4 py-1.5 rounded-md text-xs sm:text-sm font-semibold transition-colors shrink-0 whitespace-nowrap no-underline text-black bg-(--primary-color) hover:bg-(--primary-hover)"
             aria-label="Sign in"
           >
-            <AccountCircle fontSize="small" />
             Sign In
           </Link>
         )}
@@ -330,7 +318,8 @@ export default function Header() {
                 )}
                 <button
                   onClick={submitSearch}
-                  className="bg-(--primary-color) shrink-0 px-4 sm:px-5 py-3 sm:py-3.5 text-sm font-semibold text-(--primary-foreground) hover:bg-(--primary-hover) transition-colors rounded-xl -ml-1"                >
+                  className="bg-(--primary-color) shrink-0 px-4 sm:px-5 py-3 sm:py-3.5 text-sm font-semibold text-(--primary-foreground) hover:bg-(--primary-hover) transition-colors rounded-xl -ml-1"
+                >
                   Search
                 </button>
               </div>
