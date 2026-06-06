@@ -16,7 +16,7 @@ export default function Footer() {
       <button
         onClick={handleOpenHelp}
         className="underline underline-offset-2 hover:opacity-80 transition-opacity"
-        style={{ color: "var(--text-secondary)" }}
+        style={{ color: "var(--primary-color)" }}
       >
         Keyboard Shortcuts
       </button>
