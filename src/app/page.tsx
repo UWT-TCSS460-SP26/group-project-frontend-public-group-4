@@ -49,9 +49,8 @@ export default async function Home() {
         </h2>
         <MediaGrid
           items={movies}
-          getItemHref={(item) =>
-            `/movies/${item.id}?returnUrl=${encodeURIComponent("/")}`
-          }
+          getItemHref={(item) => `/movies/${item.id}?returnUrl=${encodeURIComponent("/")}`}
+          priorityCount={4}
         />
       </section>
 

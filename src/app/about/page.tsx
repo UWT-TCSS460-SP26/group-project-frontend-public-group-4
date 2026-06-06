@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import SectionHeading from "@/components/ui/SectionHeading";
 
 export const metadata: Metadata = {
   title: "About — MediaRate",

@@ -34,10 +34,6 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <head>
-        <link rel="preconnect" href="https://image.tmdb.org" />
-        <link rel="dns-prefetch" href="https://image.tmdb.org"/>
-      </head>
       <body className="min-h-full flex flex-col">
         <AuthSessionProvider>
           <AppThemeProvider>
