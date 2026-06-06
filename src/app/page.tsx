@@ -65,6 +65,7 @@ export default async function Home() {
           getItemHref={(item) =>
             `/tv/${item.id}?returnUrl=${encodeURIComponent("/")}`
           }
+          priorityCount={6}
         />
       </section>
     </main>

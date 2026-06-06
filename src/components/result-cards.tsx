@@ -98,7 +98,7 @@ export function MovieCard({
           {posterUrl ? (
             <Image
               src={posterUrl}
-              priority={priority}
+              preload={priority}
               alt={`${movie.title} poster`}
               fill
               className="object-cover"
@@ -157,7 +157,7 @@ export function ShowCard({
           {posterUrl ? (
             <Image
               src={posterUrl}
-              priority={priority}
+              preload={priority}
               alt={`${show.title} poster`}
               fill
               className="object-cover"

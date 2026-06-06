@@ -167,8 +167,7 @@ export default async function MovieDetailPage({
                   src={posterUrl}
                   alt={`${metadata.title} poster`}
                   className="w-full rounded-lg shadow-lg object-cover"
-                  priority
-                  loading="eager"
+                  preload
                   width={500}
                   height={750}
                   placeholder="blur"
