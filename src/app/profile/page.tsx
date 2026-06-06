@@ -18,6 +18,7 @@ import TabBar from "@/components/profile/TabBar";
 import type { Tab } from "@/components/profile/TabBar";
 import RatingsList from "@/components/profile/RatingsList";
 import ReviewsList from "@/components/profile/ReviewsList";
+import Toast from "@/components/ui/Toast";
 
 interface Toast {
   type: "success" | "error";
@@ -142,7 +143,7 @@ export default function ProfilePage() {
   if (status === "loading") {
     return (
       <main className="flex flex-1 items-center justify-center">
-        <p style={{ color: "var(--text-muted)" }}>Loading...</p>
+        <p style={{ color: "var(--text-primary)" }}>Loading...</p>
       </main>
     );
   }
@@ -152,10 +153,10 @@ export default function ProfilePage() {
   if (!user) {
     return (
       <main className="flex flex-1 flex-col items-center justify-center gap-6 px-4">
-        <p style={{ color: "var(--text-muted)" }}>You are not signed in.</p>
+        <p style={{ color: "var(--text-primary)" }}>You are not signed in.</p>
         <Link
           href="/sign-in"
-          className="rounded-md bg-amber-400 px-6 py-2.5 font-medium text-black hover:bg-amber-300 transition-colors no-underline"
+          className="rounded-md bg-(--primary-color) px-6 py-2.5 font-medium text-black hover:bg-(--primary-hover) transition-colors no-underline"
         >
           Sign In
         </Link>
@@ -197,58 +198,13 @@ export default function ProfilePage() {
       >
         <Link
           href="/"
-          className="rounded-md px-6 py-2.5 font-medium transition-colors no-underline"
-          style={{
-            backgroundColor: "var(--btn-secondary-bg)",
-            color: "var(--btn-secondary-text)",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor =
-              "var(--btn-secondary-hover-bg)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = "var(--btn-secondary-bg)";
-          }}
+          className="rounded-md px-6 py-2.5 font-medium transition-colors no-underline bg-(--btn-secondary-bg) text-(--btn-secondary-text) hover:bg-(--btn-secondary-hover-bg)"
         >
           Back to Home
         </Link>
       </div>
 
-      {/* Toast Popup */}
-      {toast && (
-        <div
-          role="alert"
-          aria-live="assertive"
-          className="fixed bottom-6 right-6 z-50 max-w-sm rounded-lg px-5 py-4 shadow-xl border transition-all duration-300"
-          style={
-            toast.type === "success"
-              ? {
-                  backgroundColor: "var(--toast-success-bg)",
-                  borderColor: "var(--toast-success-border)",
-                  color: "var(--toast-success-text)",
-                }
-              : {
-                  backgroundColor: "var(--toast-error-bg)",
-                  borderColor: "var(--toast-error-border)",
-                  color: "var(--toast-error-text)",
-                }
-          }
-        >
-          <div className="flex items-start gap-3">
-            <span className="text-lg shrink-0" aria-hidden="true">
-              {toast.type === "success" ? "\u2713" : "\u2715"}
-            </span>
-            <p className="text-sm leading-relaxed">{toast.message}</p>
-            <button
-              onClick={() => setToast(null)}
-              aria-label="Close notification"
-              className="shrink-0 opacity-60 hover:opacity-100 ml-2 transition-colors"
-            >
-              {"\u2715"}
-            </button>
-          </div>
-        </div>
-      )}
+      {toast && <Toast type={toast.type} message={toast.message} onClose={() => setToast(null)} />}
     </main>
   );
 }

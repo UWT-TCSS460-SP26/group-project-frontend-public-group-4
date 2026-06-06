@@ -1,4 +1,5 @@
 import MediaCard from "@/components/MediaCard";
+import EmptyState from "@/components/ui/EmptyState"
 
 import type { MediaItem } from "@/types/media";
 
@@ -14,11 +15,7 @@ export default function MediaGrid({
   priorityCount = 0,
 }: MediaGridProps) {
   if (items.length === 0) {
-    return (
-      <p className="text-center py-20" style={{ color: "var(--text-muted)" }}>
-        Nothing to show right now.
-      </p>
-    );
+    return ( <EmptyState /> );
   }
 
   return (

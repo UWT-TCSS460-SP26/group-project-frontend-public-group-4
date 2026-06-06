@@ -90,11 +90,11 @@ export default async function MovieDetailPage({
 
   if (error || !movie) {
     return (
-      <div className="pt-6 md:pt-12 px-4 pb-12 max-w-7xl mx-auto text-[color:var(--text-primary)]">
+      <div className="pt-6 md:pt-12 px-4 pb-12 max-w-7xl mx-auto text-(--text-primary)">
         <h1 className="text-2xl font-bold mb-4">Movie not found</h1>
         <Link
           href={backUrl}
-          className="text-[color:var(--primary-color)] hover:text-[color:var(--primary-hover)] underline-offset-2 hover:underline"
+          className="text-(--primary-color) hover:text-(--primary-hover) underline-offset-2 hover:underline"
         >
           &larr; {backText}
         </Link>
@@ -146,12 +146,12 @@ export default async function MovieDetailPage({
       {posterUrl && <BlurredBackground imageUrl={posterUrl} />}
 
       {/* Content Container */}
-      <div className="relative z-10 pt-6 md:pt-12 px-4 pb-12 max-w-7xl mx-auto w-full text-[color:var(--text-primary)] grow">
+      <div className="relative z-10 pt-6 md:pt-12 px-4 pb-12 max-w-7xl mx-auto w-full text-(--text-primary) grow">
         {/* Navigation */}
         <div className="mb-8">
           <Link
             href={backUrl}
-            className="text-[color:var(--text-muted)] hover:text-[color:var(--text-primary)] flex items-center gap-2 transition-colors w-fit"
+            className="text-(--text-muted) hover:text-(--text-primary) flex items-center gap-2 transition-colors w-fit"
           >
             <span>&larr;</span> {backText}
           </Link>
@@ -175,7 +175,7 @@ export default async function MovieDetailPage({
                   blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
                 />
               ) : (
-                <div className="w-full aspect-2/3 bg-[color:var(--secondary-bg)] rounded-lg shadow-lg border border-[color:var(--card-border)] flex items-center justify-center text-[color:var(--text-muted)]">
+                <div className="w-full aspect-2/3 bg-(--secondary-bg) rounded-lg shadow-lg border border-(--card-border) flex items-center justify-center text-(--text-muted)">
                   <ImagePlaceholderIcon className="w-24 h-24" />
                 </div>
               )}
@@ -207,19 +207,19 @@ export default async function MovieDetailPage({
               <h1 className="text-3xl md:text-4xl font-bold mb-2">
                 {metadata.title}{" "}
                 {releaseYear && (
-                  <span className="text-[color:var(--text-muted)] font-normal">
+                  <span className="text-(--text-muted) font-normal">
                     ({releaseYear})
                   </span>
                 )}
               </h1>
 
               {metadata.tagline && (
-                <p className="text-xl text-[color:var(--text-muted)] italic mb-4">
+                <p className="text-xl text-(--text-muted) italic mb-4">
                   {metadata.tagline}
                 </p>
               )}
 
-              <div className="flex flex-wrap justify-center md:justify-start gap-4 text-[color:var(--text-muted)] text-sm md:text-base mb-6 md:mb-8">
+              <div className="flex flex-wrap justify-center md:justify-start gap-4 text-(--text-muted) text-sm md:text-base mb-6 md:mb-8">
                 {formattedReleaseDate && <span>{formattedReleaseDate}</span>}
                 {metadata.runtime > 0 && <span>{metadata.runtime} min</span>}
                 {genreString && <span>{genreString}</span>}
@@ -247,21 +247,21 @@ export default async function MovieDetailPage({
             {/* DETAILS */}
             <div className="flex flex-col min-w-0">
               {/* Differently Colored Description Box */}
-              <div className="bg-[color:var(--secondary-bg)] p-5 md:p-6 rounded-lg shadow-inner mb-8 text-left">
-                <h3 className="text-lg font-semibold mb-2">Overview</h3>
-                <p className="text-[color:var(--text-primary)] leading-relaxed">
+              <div className="bg-(--secondary-bg) p-5 md:p-6 rounded-lg shadow-inner mb-8 text-left">
+                <h2 className="text-lg font-semibold mb-2">Overview</h2>
+                <p className="text-(--text-primary) leading-relaxed">
                   {metadata.overview || "No description available."}
                 </p>
               </div>
 
               {/* Important Metadata Grid (Non-Expandable) */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-y-6 gap-x-4 border-t border-[color:var(--card-border)] pt-6 text-left">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-y-6 gap-x-4 border-t border-(--card-border) pt-6 text-left">
                 {metadata.status && (
                   <div>
-                    <span className="block text-[color:var(--text-secondary)] text-xs md:text-sm mb-1">
+                    <span className="block text-(--text-secondary) text-xs md:text-sm mb-1">
                       Status
                     </span>
-                    <span className="text-[color:var(--text-primary)] font-medium text-sm md:text-base">
+                    <span className="text-(--text-primary) font-medium text-sm md:text-base">
                       {metadata.status}
                     </span>
                   </div>
@@ -269,30 +269,30 @@ export default async function MovieDetailPage({
                 {metadata.vote_average !== undefined &&
                   metadata.vote_average > 0 && (
                     <div>
-                      <span className="block text-[color:var(--text-secondary)] text-xs md:text-sm mb-1">
+                      <span className="block text-(--text-secondary) text-xs md:text-sm mb-1">
                         TMDB Rating
                       </span>
-                      <span className="text-[color:var(--text-primary)] font-medium text-sm md:text-base">
+                      <span className="text-(--text-primary) font-medium text-sm md:text-base">
                         {metadata.vote_average.toFixed(1)} / 10
                       </span>
                     </div>
                   )}
                 {metadata.budget > 0 && (
                   <div>
-                    <span className="block text-[color:var(--text-secondary)] text-xs md:text-sm mb-1">
+                    <span className="block text-(--text-secondary) text-xs md:text-sm mb-1">
                       Budget
                     </span>
-                    <span className="text-[color:var(--text-primary)] font-medium text-sm md:text-base">
+                    <span className="text-(--text-primary) font-medium text-sm md:text-base">
                       ${metadata.budget.toLocaleString()}
                     </span>
                   </div>
                 )}
                 {metadata.revenue > 0 && (
                   <div>
-                    <span className="block text-[color:var(--text-secondary)] text-xs md:text-sm mb-1">
+                    <span className="block text-(--text-secondary) text-xs md:text-sm mb-1">
                       Revenue
                     </span>
-                    <span className="text-[color:var(--text-primary)] font-medium text-sm md:text-base">
+                    <span className="text-(--text-primary) font-medium text-sm md:text-base">
                       ${metadata.revenue.toLocaleString()}
                     </span>
                   </div>
@@ -300,10 +300,10 @@ export default async function MovieDetailPage({
                 {metadata.production_companies &&
                   metadata.production_companies.length > 0 && (
                     <div className="col-span-2 sm:col-span-4">
-                      <span className="block text-[color:var(--text-secondary)] text-xs md:text-sm mb-1">
+                      <span className="block text-(--text-secondary) text-xs md:text-sm mb-1">
                         Studios
                       </span>
-                      <span className="text-[color:var(--text-primary)] font-medium text-sm md:text-base">
+                      <span className="text-(--text-primary) font-medium text-sm md:text-base">
                         {metadata.production_companies
                           .map((c) => c.name)
                           .join(", ")}

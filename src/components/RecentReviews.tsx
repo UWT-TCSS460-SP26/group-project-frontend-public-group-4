@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import EmptyState from "@/components/ui/EmptyState";
+
 interface Review {
   reviewId?: number;
   review_id?: number;
@@ -98,17 +100,7 @@ export default function RecentReviews({ reviews }: RecentReviewsProps) {
           ))}
         </div>
       ) : (
-        <div
-          className="border rounded-lg p-8 text-center"
-          style={{
-            backgroundColor: "var(--surface-bg)",
-            borderColor: "var(--surface-border)",
-          }}
-        >
-          <p className="text-sm" style={{ color: "var(--surface-text-dim)" }}>
-            No reviews yet. Be the first to share your thoughts!
-          </p>
-        </div>
+        <EmptyState message="No reviews yet. Be the first to share your thoughts!" />
       )}
     </>
   );

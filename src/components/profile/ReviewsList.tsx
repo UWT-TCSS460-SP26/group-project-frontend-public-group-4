@@ -6,6 +6,9 @@ import { RateReview, Delete, Edit, Close, Check } from "@mui/icons-material";
 import { ApiError } from "@/lib/api";
 import MediaBadge from "./MediaBadge";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import AppButton from "@/components/ui/AppButton";
+import Toast from "@/components/ui/Toast";
+import Pagination from "@/components/ui/Pagination";
 import type { ReviewRecord } from "@/types/community";
 
 const ITEMS_PER_PAGE = 25;
@@ -116,17 +119,7 @@ export default function ReviewsList({
     return (
       <div className="text-center py-8">
         <p style={{ color: "var(--text-muted)" }}>Could not load reviews.</p>
-        <button
-          onClick={onRetry}
-          className="mt-2 text-sm transition-colors"
-          style={{ color: "var(--primary-color)" }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.color = "var(--primary-hover)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.color = "var(--primary-color)";
-          }}
-        >
+        <button onClick={onRetry} className="mt-2 text-sm btn-text-primary">
           Retry
         </button>
       </div>
@@ -226,52 +219,26 @@ export default function ReviewsList({
                     {editContent.length}/2000
                   </span>
                   <div className="flex gap-2">
-                    <button
-                      onClick={() => {
-                        setEditingId(null);
-                        setEditContent("");
-                      }}
+                    <AppButton
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => { setEditingId(null); setEditContent(""); }}
                       disabled={saving}
-                      className="flex items-center gap-1 text-xs px-3 py-1.5 rounded transition-colors"
-                      style={{
-                        backgroundColor: "var(--btn-secondary-bg)",
-                        color: "var(--btn-secondary-text)",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor =
-                          "var(--btn-secondary-hover-bg)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor =
-                          "var(--btn-secondary-bg)";
-                      }}
+                      className="flex items-center gap-1"
                     >
                       <Close style={{ fontSize: 14 }} aria-hidden="true" />
                       Cancel
-                    </button>
-                    <button
+                    </AppButton>
+                    <AppButton
+                      variant="primary"
+                      size="sm"
                       onClick={() => handleSaveEdit(r.reviewId)}
                       disabled={!editContent.trim() || saving}
-                      className="flex items-center gap-1 text-xs px-3 py-1.5 rounded font-medium transition-colors"
-                      style={{
-                        backgroundColor: "var(--primary-color)",
-                        color: "var(--primary-foreground)",
-                        opacity: !editContent.trim() || saving ? 0.5 : 1,
-                      }}
-                      onMouseEnter={(e) => {
-                        if (editContent.trim() && !saving) {
-                          e.currentTarget.style.backgroundColor =
-                            "var(--primary-hover)";
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor =
-                          "var(--primary-color)";
-                      }}
+                      className="flex items-center gap-1 disabled:opacity-50"
                     >
                       <Check style={{ fontSize: 14 }} aria-hidden="true" />
                       {saving ? "Saving..." : "Save"}
-                    </button>
+                    </AppButton>
                   </div>
                 </div>
               </div>
@@ -279,7 +246,7 @@ export default function ReviewsList({
               <div>
                 <p
                   id={contentId}
-                  className="text-sm leading-relaxed whitespace-pre-wrap break-words"
+                  className="text-sm leading-relaxed whitespace-pre-wrap wrap-break-word"
                   style={{ color: "var(--surface-text)" }}
                 >
                   {isLong && !expanded
@@ -299,14 +266,7 @@ export default function ReviewsList({
                     }}
                     aria-expanded={expanded}
                     aria-controls={contentId}
-                    className="text-xs font-semibold mt-1 uppercase tracking-wider transition-colors"
-                    style={{ color: "var(--primary-color)" }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.color = "var(--primary-hover)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.color = "var(--primary-color)";
-                    }}
+                    className="text-xs font-semibold mt-3 uppercase tracking-wider btn-text-primary"
                   >
                     {expanded ? "Show less" : "Read more"}
                   </button>
@@ -317,40 +277,17 @@ export default function ReviewsList({
             {!isEditing && (
               <div className="flex justify-end gap-1 transition-all">
                 <button
-                  onClick={() => {
-                    setEditingId(r.reviewId);
-                    setEditContent(r.reviewContent);
-                  }}
-                  aria-label={`Edit review for ${titles.get(r.isMovie ? `m-${r.tmdbIdentifier}` : `s-${r.tmdbIdentifier}`) ?? `TMDB #${r.tmdbIdentifier}`}`}
-                  className="p-1.5 rounded-md transition-colors"
-                  style={{ color: "var(--text-secondary)" }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = "var(--primary-color)";
-                    e.currentTarget.style.backgroundColor =
-                      "var(--surface-bg-hover)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = "var(--text-secondary)";
-                    e.currentTarget.style.backgroundColor = "transparent";
-                  }}
+                  onClick={() => { setEditingId(r.reviewId); setEditContent(r.reviewContent); }}
+                  className="p-1.5 btn-icon btn-icon-edit"
                   title="Edit review"
+                  aria-label={`Edit review for ${titles.get(r.isMovie ? `m-${r.tmdbIdentifier}` : `s-${r.tmdbIdentifier}`) ?? `TMDB #${r.tmdbIdentifier}`}`}
                 >
                   <Edit style={{ fontSize: 18 }} aria-hidden="true" />
                 </button>
                 <button
                   onClick={() => setConfirmDeleteId(r.reviewId)}
                   disabled={deleting === r.reviewId}
-                  className="p-1.5 rounded-md transition-colors disabled:opacity-50"
-                  style={{ color: "var(--text-secondary)" }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = "var(--destructive-color)";
-                    e.currentTarget.style.backgroundColor =
-                      "var(--surface-bg-hover)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = "var(--text-secondary)";
-                    e.currentTarget.style.backgroundColor = "transparent";
-                  }}
+                  className="p-1.5 btn-icon btn-icon-delete disabled:opacity-50"
                   title="Delete review"
                   aria-label={`Delete review for ${titles.get(r.isMovie ? `m-${r.tmdbIdentifier}` : `s-${r.tmdbIdentifier}`) ?? `TMDB #${r.tmdbIdentifier}`}`}
                 >
@@ -362,139 +299,9 @@ export default function ReviewsList({
         );
       })}
 
-      {totalPages > 1 &&
-        (() => {
-          const MAX_VISIBLE = 5;
-          const half = Math.floor(MAX_VISIBLE / 2);
-          let start = Math.max(0, page - half);
-          let end = Math.min(totalPages - 1, start + MAX_VISIBLE - 1);
-          if (end - start < MAX_VISIBLE - 1) {
-            start = Math.max(0, end - MAX_VISIBLE + 1);
-          }
-          const pages = Array.from(
-            { length: end - start + 1 },
-            (_, i) => start + i,
-          );
-
-          return (
-            <div className="flex items-center justify-center gap-1 pt-4">
-              <button
-                onClick={() => setPage(0)}
-                disabled={page === 0}
-                className="px-2 py-1.5 rounded-md text-xs font-medium transition-colors disabled:cursor-not-allowed"
-                style={{
-                  backgroundColor: "var(--surface-bg)",
-                  color: "var(--surface-text)",
-                  opacity: page === 0 ? 0.4 : 1,
-                }}
-                onMouseEnter={(e) => {
-                  if (page !== 0)
-                    e.currentTarget.style.backgroundColor =
-                      "var(--surface-bg-hover)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "var(--surface-bg)";
-                }}
-              >
-                First
-              </button>
-              <button
-                onClick={() => setPage((p) => Math.max(0, p - 1))}
-                disabled={page === 0}
-                className="px-2 py-1.5 rounded-md text-sm transition-colors disabled:cursor-not-allowed"
-                style={{
-                  backgroundColor: "var(--surface-bg)",
-                  color: "var(--surface-text)",
-                  opacity: page === 0 ? 0.4 : 1,
-                }}
-                onMouseEnter={(e) => {
-                  if (page !== 0)
-                    e.currentTarget.style.backgroundColor =
-                      "var(--surface-bg-hover)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "var(--surface-bg)";
-                }}
-              >
-                Prev
-              </button>
-              {pages.map((i) => (
-                <button
-                  key={i}
-                  onClick={() => setPage(i)}
-                  className="w-8 h-8 rounded-md text-sm font-medium transition-colors"
-                  style={
-                    i === page
-                      ? {
-                          backgroundColor: "var(--primary-color)",
-                          color: "var(--primary-foreground)",
-                        }
-                      : {
-                          backgroundColor: "var(--surface-bg)",
-                          color: "var(--surface-text-muted)",
-                        }
-                  }
-                  onMouseEnter={(e) => {
-                    if (i !== page) {
-                      e.currentTarget.style.color = "var(--surface-text)";
-                      e.currentTarget.style.backgroundColor =
-                        "var(--surface-bg-hover)";
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (i !== page) {
-                      e.currentTarget.style.color = "var(--surface-text-muted)";
-                      e.currentTarget.style.backgroundColor =
-                        "var(--surface-bg)";
-                    }
-                  }}
-                >
-                  {i + 1}
-                </button>
-              ))}
-              <button
-                onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
-                disabled={page === totalPages - 1}
-                className="px-2 py-1.5 rounded-md text-sm transition-colors disabled:cursor-not-allowed"
-                style={{
-                  backgroundColor: "var(--surface-bg)",
-                  color: "var(--surface-text)",
-                  opacity: page === totalPages - 1 ? 0.4 : 1,
-                }}
-                onMouseEnter={(e) => {
-                  if (page !== totalPages - 1)
-                    e.currentTarget.style.backgroundColor =
-                      "var(--surface-bg-hover)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "var(--surface-bg)";
-                }}
-              >
-                Next
-              </button>
-              <button
-                onClick={() => setPage(totalPages - 1)}
-                disabled={page === totalPages - 1}
-                className="px-2 py-1.5 rounded-md text-xs font-medium transition-colors disabled:cursor-not-allowed"
-                style={{
-                  backgroundColor: "var(--surface-bg)",
-                  color: "var(--surface-text)",
-                  opacity: page === totalPages - 1 ? 0.4 : 1,
-                }}
-                onMouseEnter={(e) => {
-                  if (page !== totalPages - 1)
-                    e.currentTarget.style.backgroundColor =
-                      "var(--surface-bg-hover)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "var(--surface-bg)";
-                }}
-              >
-                Last
-              </button>
-            </div>
-          );
-        })()}
+      {totalPages > 1 && (
+        <Pagination page={page} totalPages={totalPages} onChange={setPage} />
+      )}
 
       {/* Toast Popup */}
       <ConfirmDialog
@@ -504,50 +311,24 @@ export default function ReviewsList({
         confirmLabel="Delete"
         cancelLabel="Cancel"
         loading={deleting !== null}
-        onConfirm={() => {
-          if (confirmDeleteId !== null) {
-            setDeleting(confirmDeleteId);
-            onDelete(confirmDeleteId);
-            setConfirmDeleteId(null);
+        onConfirm={async () => {
+          if (confirmDeleteId === null) return;
+
+          const reviewId = confirmDeleteId;
+
+          setConfirmDeleteId(null);
+          setDeleting(reviewId);
+
+          try {
+            await onDelete(reviewId);
+          } finally {
+            setDeleting(null);
           }
         }}
         onCancel={() => setConfirmDeleteId(null)}
       />
 
-      {toast && (
-        <div
-          role="alert"
-          aria-live="assertive"
-          className="fixed bottom-6 right-6 z-50 max-w-sm rounded-lg px-5 py-4 shadow-xl border transition-all duration-300"
-          style={
-            toast.type === "success"
-              ? {
-                  backgroundColor: "var(--toast-success-bg)",
-                  borderColor: "var(--toast-success-border)",
-                  color: "var(--toast-success-text)",
-                }
-              : {
-                  backgroundColor: "var(--toast-error-bg)",
-                  borderColor: "var(--toast-error-border)",
-                  color: "var(--toast-error-text)",
-                }
-          }
-        >
-          <div className="flex items-start gap-3">
-            <span className="text-lg shrink-0" aria-hidden="true">
-              {toast.type === "success" ? "\u2713" : "\u2715"}
-            </span>
-            <p className="text-sm leading-relaxed">{toast.message}</p>
-            <button
-              onClick={() => setToast(null)}
-              aria-label="Close notification"
-              className="shrink-0 opacity-60 hover:opacity-100 ml-2 transition-colors"
-            >
-              {"\u2715"}
-            </button>
-          </div>
-        </div>
-      )}
+      {toast && <Toast type={toast.type} message={toast.message} onClose={() => setToast(null)} />}
     </div>
   );
 }

@@ -81,7 +81,7 @@ export default function KeyboardHelpDialog({
   return createPortal(
     <div
       ref={dialogRef}
-      className="fixed inset-0 z-[100] flex items-center justify-center"
+      className="fixed inset-0 z-100 flex items-center justify-center"
       role="dialog"
       aria-modal="true"
       aria-labelledby="shortcuts-dialog-title"

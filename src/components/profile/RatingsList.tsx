@@ -7,6 +7,7 @@ import ScoreBadge from "./ScoreBadge";
 import MediaBadge from "./MediaBadge";
 import type { RatingRecord } from "@/types/community";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import Toast from "@/components/ui/Toast";
 
 const ITEMS_PER_PAGE = 25;
 
@@ -18,7 +19,7 @@ interface Toast {
 interface RatingsListProps {
   ratings: RatingRecord[];
   titles: Map<string, string>;
-  onDelete: (ratingId: number) => void;
+  onDelete: (ratingId: number) => Promise<void>;
   onUpdate: (ratingId: number, newScore: number) => Promise<void>;
   loading: boolean;
   error: boolean;
@@ -117,17 +118,7 @@ export default function RatingsList({
     return (
       <div className="text-center py-8">
         <p style={{ color: "var(--text-muted)" }}>Could not load ratings.</p>
-        <button
-          onClick={onRetry}
-          className="mt-2 text-sm transition-colors"
-          style={{ color: "var(--primary-color)" }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.color = "var(--primary-hover)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.color = "var(--primary-color)";
-          }}
-        >
+        <button onClick={onRetry} className="mt-2 text-sm btn-text-primary">
           Retry
         </button>
       </div>
@@ -189,17 +180,7 @@ export default function RatingsList({
                       setEditStatus("idle");
                     }
                   }}
-                  className="p-1.5 rounded-md transition-colors"
-                  style={{ color: "var(--text-secondary)" }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = "var(--primary-color)";
-                    e.currentTarget.style.backgroundColor =
-                      "var(--surface-bg-hover)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = "var(--text-secondary)";
-                    e.currentTarget.style.backgroundColor = "transparent";
-                  }}
+                  className="p-1.5 btn-icon btn-icon-edit"
                   title={isEditing ? "Close" : "Edit rating"}
                 >
                   {isEditing ? (
@@ -213,17 +194,7 @@ export default function RatingsList({
                   <button
                     onClick={() => setConfirmDeleteId(r.ratingId)}
                     disabled={deleting === r.ratingId}
-                    className="p-1.5 rounded-md transition-colors disabled:opacity-50"
-                    style={{ color: "var(--text-secondary)" }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.color = "var(--destructive-color)";
-                      e.currentTarget.style.backgroundColor =
-                        "var(--surface-bg-hover)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.color = "var(--text-secondary)";
-                      e.currentTarget.style.backgroundColor = "transparent";
-                    }}
+                    className="p-1.5 btn-icon btn-icon-delete disabled:opacity-50"
                     title="Delete rating"
                   >
                     <Delete style={{ fontSize: 18 }} />
@@ -263,7 +234,7 @@ export default function RatingsList({
                     >
                       {hoverScore || editScore}
                       <span
-                        className="text-lg font-medium ml-[1px]"
+                        className="text-lg font-medium ml-px"
                         style={{ color: "var(--text-secondary)" }}
                       >
                         /10
@@ -298,7 +269,7 @@ export default function RatingsList({
                               ? customStyle.backgroundColor
                               : "var(--rating-bar-inactive)",
                           }}
-                          className="flex-1 h-full rounded-[2px] transition-all duration-150"
+                          className="flex-1 h-full rounded-xs transition-all duration-150"
                           onMouseEnter={() => setHoverScore(i)}
                           onClick={() =>
                             handleStarClick(r.ratingId, i, r.rating)
@@ -456,50 +427,24 @@ export default function RatingsList({
         confirmLabel="Delete"
         cancelLabel="Cancel"
         loading={deleting !== null}
-        onConfirm={() => {
-          if (confirmDeleteId !== null) {
-            setDeleting(confirmDeleteId);
-            onDelete(confirmDeleteId);
-            setConfirmDeleteId(null);
+        onConfirm={async () => {
+          if (confirmDeleteId === null) return;
+
+          const ratingId = confirmDeleteId;
+
+          setConfirmDeleteId(null);
+          setDeleting(ratingId);
+
+          try {
+            await onDelete(ratingId);
+          } finally {
+            setDeleting(null);
           }
         }}
         onCancel={() => setConfirmDeleteId(null)}
       />
 
-      {toast && (
-        <div
-          role="alert"
-          aria-live="assertive"
-          className="fixed bottom-6 right-6 z-50 max-w-sm rounded-lg px-5 py-4 shadow-xl border transition-all duration-300"
-          style={
-            toast.type === "success"
-              ? {
-                  backgroundColor: "var(--toast-success-bg)",
-                  borderColor: "var(--toast-success-border)",
-                  color: "var(--toast-success-text)",
-                }
-              : {
-                  backgroundColor: "var(--toast-error-bg)",
-                  borderColor: "var(--toast-error-border)",
-                  color: "var(--toast-error-text)",
-                }
-          }
-        >
-          <div className="flex items-start gap-3">
-            <span className="text-lg shrink-0" aria-hidden="true">
-              {toast.type === "success" ? "\u2713" : "\u2715"}
-            </span>
-            <p className="text-sm leading-relaxed">{toast.message}</p>
-            <button
-              onClick={() => setToast(null)}
-              aria-label="Close notification"
-              className="shrink-0 opacity-60 hover:opacity-100 ml-2 transition-colors"
-            >
-              {"\u2715"}
-            </button>
-          </div>
-        </div>
-      )}
+      {toast && <Toast type={toast.type} message={toast.message} onClose={() => setToast(null)} />}
     </div>
   );
 }

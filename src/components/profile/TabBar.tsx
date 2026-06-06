@@ -21,30 +21,12 @@ export default function TabBar({ active, onChange }: TabBarProps) {
       style={{ backgroundColor: "var(--tab-bar-bg)" }}
     >
       {tabs.map(({ key, label, Icon }) => (
-        <button
+       <button
           key={key}
           onClick={() => onChange(key)}
-          className="flex-1 flex items-center justify-center gap-2 py-2 rounded-md text-sm font-medium transition-colors"
-          style={
-            active === key
-              ? {
-                  backgroundColor: "var(--tab-active-bg)",
-                  color: "var(--tab-active-text)",
-                }
-              : {
-                  color: "var(--tab-inactive-text)",
-                }
-          }
-          onMouseEnter={(e) => {
-            if (active !== key) {
-              e.currentTarget.style.color = "var(--tab-hover-text)";
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (active !== key) {
-              e.currentTarget.style.color = "var(--tab-inactive-text)";
-            }
-          }}
+          className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md text-sm font-medium transition-colors ${
+            active === key ? "tab-btn-active" : "tab-btn"
+          }`}
         >
           <Icon style={{ fontSize: 18 }} />
           {label}

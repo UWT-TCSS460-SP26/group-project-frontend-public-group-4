@@ -254,7 +254,7 @@ export default function RatingWidget({
         }}
       >
         {status === "confirm-delete" ? (
-          <div className="flex flex-col gap-3 h-[116px] justify-center">
+          <div className="flex flex-col gap-3 h-29 justify-center">
             <div className="flex-1 flex items-center justify-center px-2">
               <p
                 className="text-sm font-semibold text-center leading-relaxed"
@@ -263,7 +263,7 @@ export default function RatingWidget({
                 Are you sure you want to delete your rating?
               </p>
             </div>
-            <div className="flex gap-2 shrink-0 h-[40px]">
+            <div className="flex gap-2 shrink-0 h-10">
               <button
                 onClick={handleDelete}
                 className="flex-1 rounded font-semibold transition-colors text-sm"
@@ -306,12 +306,12 @@ export default function RatingWidget({
         ) : (
           <>
             {/* TOP ROW: Score Display & Delete Action */}
-            <div className="flex gap-2 h-[64px]">
+            <div className="flex gap-2 h-16">
               {knownRatingId ? (
                 <>
                   <button
                     onClick={() => setStatus("confirm-delete")}
-                    className="shrink-0 w-[64px] rounded flex items-center justify-center transition-colors"
+                    className="shrink-0 w-16 rounded flex items-center justify-center transition-colors"
                     style={{
                       backgroundColor: "transparent",
                       color: "var(--destructive-color)",
@@ -347,7 +347,7 @@ export default function RatingWidget({
                       backgroundColor: "rgba(0, 0, 0, 0.1)",
                     }}
                   >
-                    <div className="flex flex-col items-center justify-center -translate-x-[36px] md:translate-x-0 transition-transform">
+                    <div className="flex flex-col items-center justify-center -translate-x-9 md:translate-x-0 transition-transform">
                       <span
                         className="text-[10px] uppercase tracking-wider mb-0.5 font-semibold"
                         style={{ color: "var(--text-secondary)" }}
@@ -365,7 +365,7 @@ export default function RatingWidget({
                       >
                         {rating}
                         <span
-                          className="text-lg font-medium ml-[1px]"
+                          className="text-lg font-medium ml-px"
                           style={{ color: "var(--text-secondary)" }}
                         >
                           /10
@@ -398,7 +398,7 @@ export default function RatingWidget({
                   >
                     {hoverRating || rating || "?"}
                     <span
-                      className="text-lg font-medium ml-[1px]"
+                      className="text-lg font-medium ml-px"
                       style={{ color: "var(--text-secondary)" }}
                     >
                       /10
@@ -437,7 +437,7 @@ export default function RatingWidget({
                           ? customStyle.backgroundColor
                           : "var(--rating-bar-inactive)",
                       }}
-                      className="flex-1 h-full rounded-[2px] transition-all duration-150"
+                      className="flex-1 h-full rounded-xs transition-all duration-150"
                       onMouseEnter={() => handleHover(i)}
                       onClick={() => handleStarClick(i)}
                       aria-label={`Rate ${i} out of 10`}

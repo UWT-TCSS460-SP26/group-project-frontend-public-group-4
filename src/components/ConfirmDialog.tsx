@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
+import AppButton from "@/components/ui/AppButton";
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -79,7 +80,7 @@ export default function ConfirmDialog({
   return createPortal(
     <div
       ref={dialogRef}
-      className="fixed inset-0 z-[100] flex items-center justify-center"
+      className="fixed inset-0 z-100 flex items-center justify-center"
       role="dialog"
       aria-modal="true"
       aria-labelledby="confirm-dialog-title"
@@ -115,49 +116,12 @@ export default function ConfirmDialog({
           {message}
         </p>
         <div className="flex justify-end gap-3">
-          <button
-            ref={cancelBtnRef}
-            onClick={onCancel}
-            disabled={loading}
-            className="px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
-            style={{
-              backgroundColor: "var(--btn-secondary-bg)",
-              color: "var(--btn-secondary-text)",
-            }}
-            onMouseEnter={(e) => {
-              if (!loading) {
-                e.currentTarget.style.backgroundColor =
-                  "var(--btn-secondary-hover-bg)";
-              }
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "var(--btn-secondary-bg)";
-            }}
-          >
+          <AppButton ref={cancelBtnRef} variant="secondary" onClick={onCancel} disabled={loading}>
             {cancelLabel}
-          </button>
-          <button
-            ref={confirmBtnRef}
-            onClick={onConfirm}
-            disabled={loading}
-            className="px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
-            style={{
-              backgroundColor: "var(--destructive-color)",
-              color: "#ffffff",
-            }}
-            onMouseEnter={(e) => {
-              if (!loading) {
-                e.currentTarget.style.backgroundColor =
-                  "var(--destructive-hover)";
-              }
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor =
-                "var(--destructive-color)";
-            }}
-          >
+          </AppButton>
+          <AppButton variant="destructive" ref={confirmBtnRef} onClick={onConfirm} disabled={loading}>
             {loading ? "Deleting..." : confirmLabel}
-          </button>
+          </AppButton>
         </div>
       </div>
     </div>,
