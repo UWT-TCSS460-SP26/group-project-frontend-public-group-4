@@ -113,6 +113,7 @@ export default async function MoviesPage({
             getItemHref={(item) =>
               `/movies/${item.id}?returnUrl=${encodeURIComponent("/movies")}`
             }
+            priorityCount={6}
           />
         </section>
       )}
@@ -126,6 +127,7 @@ export default async function MoviesPage({
           getItemHref={(item) =>
             `/movies/${item.id}?returnUrl=${encodeURIComponent("/movies")}`
           }
+          priorityCount={6}
         />
       </section>
     </main>

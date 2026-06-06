@@ -112,6 +112,7 @@ export default async function TVPage({
             getItemHref={(item) =>
               `/tv/${item.id}?returnUrl=${encodeURIComponent("/tv")}`
             }
+            priorityCount={6}
           />
         </section>
       )}
@@ -125,6 +126,7 @@ export default async function TVPage({
           getItemHref={(item) =>
             `/tv/${item.id}?returnUrl=${encodeURIComponent("/tv")}`
           }
+          priorityCount={6}
         />
       </section>
     </main>
