@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 
-import EmptyState from "@/components/ui/EmptyState";
-
 interface Review {
   reviewId?: number;
   review_id?: number;
@@ -41,26 +39,33 @@ function ReviewCard({ review }: { review: Review; idx: number }) {
       style={{ borderColor: "var(--review-card-border)" }}
     >
       <div
-        className="px-5 py-3 flex items-center justify-between border-b"
+        className="px-4 py-3 sm:px-5 flex items-center justify-between gap-3 sm:gap-4 border-b"
         style={{
           backgroundColor: "var(--review-card-header-bg)",
           borderColor: "var(--review-card-border)",
         }}
       >
-        <span className="font-semibold" style={{ color: "var(--review-card-text)" }}>
+        <span
+          className="font-semibold truncate"
+          style={{ color: "var(--review-card-text)" }}
+        >
           {typeof review.author === "object" && review.author !== null
             ? review.author.displayName
             : review.author || review.username || `User ${userId}`}
         </span>
-        <span className="text-sm" style={{ color: "var(--review-card-text-muted)" }} suppressHydrationWarning>
+        <span
+          className="text-xs sm:text-sm shrink-0"
+          style={{ color: "var(--review-card-text-muted)" }}
+          suppressHydrationWarning
+        >
           {date ? new Date(date).toLocaleDateString() : ""}
         </span>
       </div>
-      <div
-        className="p-5"
-        style={{ backgroundColor: "var(--review-card-bg)" }}
-      >
-        <p className="text-sm leading-relaxed whitespace-pre-wrap wrap-break-word" style={{ color: "var(--review-card-text)" }}>
+      <div className="p-5" style={{ backgroundColor: "var(--review-card-bg)" }}>
+        <p
+          className="text-sm leading-relaxed whitespace-pre-wrap break-words"
+          style={{ color: "var(--review-card-text)" }}
+        >
           {displayContent}
         </p>
         {isLong && (
@@ -86,7 +91,10 @@ function ReviewCard({ review }: { review: Review; idx: number }) {
 export default function RecentReviews({ reviews }: RecentReviewsProps) {
   return (
     <>
-      <h2 className="text-2xl font-bold mb-6" style={{ color: "var(--foreground)" }}>
+      <h2
+        className="text-2xl font-bold mb-6"
+        style={{ color: "var(--foreground)" }}
+      >
         Recent Reviews
       </h2>
       {reviews && reviews.length > 0 ? (
@@ -100,7 +108,17 @@ export default function RecentReviews({ reviews }: RecentReviewsProps) {
           ))}
         </div>
       ) : (
-        <EmptyState message="No reviews yet. Be the first to share your thoughts!" />
+        <div
+          className="border rounded-lg p-8 text-center"
+          style={{
+            backgroundColor: "var(--surface-bg)",
+            borderColor: "var(--surface-border)",
+          }}
+        >
+          <p className="text-sm" style={{ color: "var(--surface-text-dim)" }}>
+            No reviews yet. Be the first to share your thoughts!
+          </p>
+        </div>
       )}
     </>
   );

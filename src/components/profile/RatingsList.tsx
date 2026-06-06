@@ -151,24 +151,33 @@ export default function RatingsList({
               borderColor: "var(--surface-border)",
             }}
           >
-            <div className="flex items-center gap-4 p-4">
-              <ScoreBadge score={r.rating} />
-              <MediaBadge isMovie={r.isMovie} />
-              <Link
-                href={
-                  r.isMovie
-                    ? `/movies/${r.tmdbIdentifier}?returnUrl=%2Fprofile`
-                    : `/tv/${r.tmdbIdentifier}?returnUrl=%2Fprofile`
-                }
-                className="text-base truncate max-w-[320px] no-underline"
-                style={{ color: "var(--surface-text)" }}
-              >
-                {titles.get(
-                  r.isMovie ? `m-${r.tmdbIdentifier}` : `s-${r.tmdbIdentifier}`,
-                ) ?? `TMDB #${r.tmdbIdentifier}`}
-              </Link>
+            <div className="grid grid-cols-[auto_1fr_auto] gap-3 p-4 sm:flex sm:items-center sm:gap-4">
+              <div className="col-start-1 row-start-1 flex items-center">
+                <ScoreBadge score={r.rating} />
+              </div>
 
-              <div className="ml-auto flex gap-1 transition-all">
+              <div className="col-start-1 col-span-3 row-start-2 flex items-start sm:items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                <div className="shrink-0 mt-0.5 sm:mt-0">
+                  <MediaBadge isMovie={r.isMovie} />
+                </div>
+                <Link
+                  href={
+                    r.isMovie
+                      ? `/movies/${r.tmdbIdentifier}?returnUrl=%2Fprofile`
+                      : `/tv/${r.tmdbIdentifier}?returnUrl=%2Fprofile`
+                  }
+                  className="text-base break-words no-underline"
+                  style={{ color: "var(--surface-text)" }}
+                >
+                  {titles.get(
+                    r.isMovie
+                      ? `m-${r.tmdbIdentifier}`
+                      : `s-${r.tmdbIdentifier}`,
+                  ) ?? `TMDB #${r.tmdbIdentifier}`}
+                </Link>
+              </div>
+
+              <div className="col-start-3 row-start-1 flex justify-end gap-1 transition-all sm:ml-auto">
                 <button
                   onClick={() => {
                     if (isEditing) {
@@ -243,7 +252,7 @@ export default function RatingsList({
                   </div>
                   {/* Rating Bar */}
                   <div
-                    className="flex-1 flex justify-between items-center gap-1 h-10"
+                    className="flex-1 flex justify-between items-center gap-0.5 sm:gap-1 h-10"
                     onMouseLeave={() => setHoverScore(0)}
                   >
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => {
@@ -444,7 +453,13 @@ export default function RatingsList({
         onCancel={() => setConfirmDeleteId(null)}
       />
 
-      {toast && <Toast type={toast.type} message={toast.message} onClose={() => setToast(null)} />}
+      {toast && (
+        <Toast
+          type={toast.type}
+          message={toast.message}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 }

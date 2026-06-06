@@ -64,7 +64,23 @@ export default function MediaActionButtons({
     return () => clearTimeout(timer);
   }, [toast]);
 
-const handleSubmitReview = async () => {
+  // Keyboard shortcut listeners
+  useEffect(() => {
+    function handleFocusRating() {
+      document.getElementById("rating-bar-1")?.focus();
+    }
+    function handleFocusReview() {
+      document.getElementById("review-textarea")?.focus();
+    }
+    window.addEventListener("shortcut:focus-rating", handleFocusRating);
+    window.addEventListener("shortcut:focus-review", handleFocusReview);
+    return () => {
+      window.removeEventListener("shortcut:focus-rating", handleFocusRating);
+      window.removeEventListener("shortcut:focus-review", handleFocusReview);
+    };
+  }, []);
+
+  const handleSubmitReview = async () => {
     if (!reviewContent.trim()) return;
     if (tmdbIdentifier == null) return;
     setReviewSubmitting(true);
@@ -268,7 +284,7 @@ const handleSubmitReview = async () => {
                 rows={3}
                 maxLength={2000}
                 disabled={reviewSubmitting}
-                className="w-full rounded p-2 text-sm resize-y border focus:outline-none transition-colors placeholder:text-(--text-muted)"
+                className="w-full rounded p-2 text-sm resize-y border focus:outline-none transition-colors placeholder:text-[color:var(--text-muted)]"
                 style={{
                   backgroundColor: "var(--input-bg)",
                   color: "var(--foreground)",
@@ -318,7 +334,7 @@ const handleSubmitReview = async () => {
             </div>
           ) : (
             <p
-              className="text-sm leading-relaxed whitespace-pre-wrap wrap-break-word"
+              className="text-sm leading-relaxed whitespace-pre-wrap break-words"
               style={{ color: "var(--review-card-text)" }}
             >
               {existingReview.reviewContent}
@@ -354,7 +370,7 @@ const handleSubmitReview = async () => {
             rows={4}
             maxLength={2000}
             disabled={reviewSubmitting}
-            className="w-full rounded p-3 text-sm resize-y border focus:outline-none transition-colors placeholder:text-(--text-muted)"
+            className="w-full rounded p-3 text-sm resize-y border focus:outline-none transition-colors placeholder:text-[color:var(--text-muted)]"
             style={{
               backgroundColor: "var(--input-bg)",
               color: "var(--foreground)",
@@ -412,7 +428,7 @@ const handleSubmitReview = async () => {
         <div
           role="alert"
           aria-live="assertive"
-          className="fixed bottom-6 right-6 z-50 max-w-sm rounded-lg px-5 py-4 shadow-xl border transition-all duration-300"
+          className="fixed bottom-4 left-4 right-4 sm:bottom-6 sm:left-auto sm:right-6 z-50 sm:w-full sm:max-w-sm rounded-lg px-5 py-4 shadow-xl border transition-all duration-300"
           style={
             toast.type === "success"
               ? {

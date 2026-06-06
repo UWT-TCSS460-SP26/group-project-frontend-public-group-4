@@ -23,7 +23,7 @@ export default async function MoviesPage({
     return (
       <main className="pt-6 md:pt-12 px-4 pb-12">
         <section className="lg:w-11/12 lg:mx-auto">
-          <h1 className="text-3xl font-bold text-foreground mb-6">
+          <h1 className="text-3xl font-bold text-foreground mb-6 break-words">
             Search results for &ldquo;{title}&rdquo;
           </h1>
 
