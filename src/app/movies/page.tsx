@@ -23,12 +23,12 @@ export default async function MoviesPage({
     return (
       <main className="pt-6 md:pt-12 px-4 pb-12">
         <section className="lg:w-11/12 lg:mx-auto">
-          <h1 className="text-3xl font-bold text-[var(--foreground)] mb-6">
+          <h1 className="text-3xl font-bold text-foreground mb-6">
             Search results for &ldquo;{title}&rdquo;
           </h1>
 
           {results.length === 0 ? (
-            <p className="text-[var(--text-muted)]">
+            <p className="text-(--text-muted)">
               No movies found for &ldquo;{title}&rdquo;.
             </p>
           ) : (
@@ -87,10 +87,10 @@ export default async function MoviesPage({
   const mostReviewedMovies = rawMostReviewed.map(normalizeDiscovery);
 
   return (
-    <div className="pt-6 md:pt-12 px-4 pb-12">
+    <main className="pt-6 md:pt-12 px-4 pb-12">
       {topRatedMovies.length > 0 && (
         <section className="mb-12 lg:w-11/12 lg:mx-auto">
-          <h2 className="text-3xl font-bold text-[var(--foreground)] mb-6">
+          <h2 className="text-3xl font-bold text-foreground mb-6">
             Top Rated Movies
           </h2>
           <MediaGrid
@@ -105,7 +105,7 @@ export default async function MoviesPage({
 
       {mostReviewedMovies.length > 0 && (
         <section className="mb-12 lg:w-11/12 lg:mx-auto">
-          <h2 className="text-3xl font-bold text-[var(--foreground)] mb-6">
+          <h2 className="text-3xl font-bold text-foreground mb-6">
             Most Reviewed Movies
           </h2>
           <MediaGrid
@@ -118,7 +118,7 @@ export default async function MoviesPage({
       )}
 
       <section className="lg:w-11/12 lg:mx-auto">
-        <h2 className="text-3xl font-bold text-[var(--foreground)] mb-6">
+        <h2 className="text-3xl font-bold text-foreground mb-6">
           Popular Movies
         </h2>
         <MediaGrid
@@ -128,6 +128,6 @@ export default async function MoviesPage({
           }
         />
       </section>
-    </div>
+    </main>
   );
 }

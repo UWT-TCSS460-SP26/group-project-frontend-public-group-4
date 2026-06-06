@@ -17,11 +17,11 @@ export default function ProfileHeader({
         <img
           src={image}
           alt={name ?? "Avatar"}
-          className="w-20 h-20 rounded-full ring-2 ring-amber-400"
+          className="w-20 h-20 rounded-full ring-2 ring-(--primary-color)"
         />
       ) : (
         <div
-          className="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-bold ring-2 ring-amber-400"
+          className="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-bold ring-2 ring-(--primary-color)"
           style={{
             backgroundColor: "var(--profile-avatar-bg)",
             color: "var(--profile-avatar-text)",

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import SectionHeading from "@/components/ui/SectionHeading";
 
 export const metadata: Metadata = {
   title: "About — MediaRate",
@@ -51,12 +52,12 @@ const services = [
 
 export default function AboutPage() {
   return (
-    <main className="pt-6 md:pt-12 px-4 pb-12 max-w-4xl mx-auto text-[color:var(--text-primary)]">
+    <main className="pt-6 md:pt-12 px-4 pb-12 max-w-4xl mx-auto text-(--text-primary)">
       {/* Back link */}
       <div className="mb-8">
         <Link
           href="/"
-          className="text-[color:var(--text-muted)] hover:text-[color:var(--text-primary)] flex items-center gap-2 transition-colors w-fit"
+          className="text-(--text-muted) hover:text-(--text-primary) flex items-center gap-2 transition-colors w-fit"
         >
           <span>&larr;</span> Back to Home
         </Link>
@@ -65,7 +66,7 @@ export default function AboutPage() {
       {/* Hero */}
       <section className="mb-12">
         <h1 className="text-4xl font-bold mb-4">
-          About <span className="text-amber-400">Media</span>Rate
+          About <span className="text-(--primary-color)">Media</span>Rate
         </h1>
         <p
           className="text-lg leading-relaxed max-w-2xl"
@@ -92,7 +93,7 @@ export default function AboutPage() {
           style={{ color: "var(--text-muted)" }}
         >
           <svg
-            className="h-5 w-5 text-amber-400"
+            className="h-5 w-5 text-(--primary-color)"
             fill="currentColor"
             viewBox="0 0 20 20"
           >
@@ -124,7 +125,7 @@ export default function AboutPage() {
           style={{ color: "var(--text-muted)" }}
         >
           <svg
-            className="h-5 w-5 text-amber-400"
+            className="h-5 w-5 text-(--primary-color))"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -183,7 +184,7 @@ export default function AboutPage() {
                     href={service.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-amber-400 hover:text-[color:var(--primary-hover)] underline underline-offset-2"
+                    className="text-(--primary-color) hover:text-(--primary-hover) underline underline-offset-2"
                   >
                     {service.name}
                   </a>

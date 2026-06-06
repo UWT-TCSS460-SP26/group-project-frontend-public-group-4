@@ -284,7 +284,7 @@ export default function MediaActionButtons({
                 rows={3}
                 maxLength={2000}
                 disabled={reviewSubmitting}
-                className="w-full rounded p-2 text-sm resize-y border focus:outline-none transition-colors placeholder:text-[color:var(--text-muted)]"
+                className="w-full rounded p-2 text-sm resize-y border focus:outline-none transition-colors placeholder:text-(--text-muted)"
                 style={{
                   backgroundColor: "var(--input-bg)",
                   color: "var(--foreground)",
@@ -334,7 +334,7 @@ export default function MediaActionButtons({
             </div>
           ) : (
             <p
-              className="text-sm leading-relaxed whitespace-pre-wrap break-words"
+              className="text-sm leading-relaxed whitespace-pre-wrap wrap-break-word"
               style={{ color: "var(--review-card-text)" }}
             >
               {existingReview.reviewContent}
@@ -370,7 +370,7 @@ export default function MediaActionButtons({
             rows={4}
             maxLength={2000}
             disabled={reviewSubmitting}
-            className="w-full rounded p-3 text-sm resize-y border focus:outline-none transition-colors placeholder:text-[color:var(--text-muted)]"
+            className="w-full rounded p-3 text-sm resize-y border focus:outline-none transition-colors placeholder:text-(--text-muted)"
             style={{
               backgroundColor: "var(--input-bg)",
               color: "var(--foreground)",

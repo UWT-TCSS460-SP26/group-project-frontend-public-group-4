@@ -117,17 +117,7 @@ export default function RatingsList({
     return (
       <div className="text-center py-8">
         <p style={{ color: "var(--text-muted)" }}>Could not load ratings.</p>
-        <button
-          onClick={onRetry}
-          className="mt-2 text-sm transition-colors"
-          style={{ color: "var(--primary-color)" }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.color = "var(--primary-hover)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.color = "var(--primary-color)";
-          }}
-        >
+        <button onClick={onRetry} className="mt-2 text-sm btn-text-primary">
           Retry
         </button>
       </div>
@@ -189,17 +179,7 @@ export default function RatingsList({
                       setEditStatus("idle");
                     }
                   }}
-                  className="p-1.5 rounded-md transition-colors"
-                  style={{ color: "var(--text-secondary)" }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = "var(--primary-color)";
-                    e.currentTarget.style.backgroundColor =
-                      "var(--surface-bg-hover)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = "var(--text-secondary)";
-                    e.currentTarget.style.backgroundColor = "transparent";
-                  }}
+                  className="p-1.5 btn-icon btn-icon-edit"
                   title={isEditing ? "Close" : "Edit rating"}
                 >
                   {isEditing ? (
@@ -213,17 +193,7 @@ export default function RatingsList({
                   <button
                     onClick={() => setConfirmDeleteId(r.ratingId)}
                     disabled={deleting === r.ratingId}
-                    className="p-1.5 rounded-md transition-colors disabled:opacity-50"
-                    style={{ color: "var(--text-secondary)" }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.color = "var(--destructive-color)";
-                      e.currentTarget.style.backgroundColor =
-                        "var(--surface-bg-hover)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.color = "var(--text-secondary)";
-                      e.currentTarget.style.backgroundColor = "transparent";
-                    }}
+                    className="p-1.5 btn-icon btn-icon-delete disabled:opacity-50"
                     title="Delete rating"
                   >
                     <Delete style={{ fontSize: 18 }} />
@@ -263,7 +233,7 @@ export default function RatingsList({
                     >
                       {hoverScore || editScore}
                       <span
-                        className="text-lg font-medium ml-[1px]"
+                        className="text-lg font-medium ml-px"
                         style={{ color: "var(--text-secondary)" }}
                       >
                         /10
@@ -298,7 +268,7 @@ export default function RatingsList({
                               ? customStyle.backgroundColor
                               : "var(--rating-bar-inactive)",
                           }}
-                          className="flex-1 h-full rounded-[2px] transition-all duration-150"
+                          className="flex-1 h-full rounded-xs transition-all duration-150"
                           onMouseEnter={() => setHoverScore(i)}
                           onClick={() =>
                             handleStarClick(r.ratingId, i, r.rating)

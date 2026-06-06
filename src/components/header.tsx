@@ -116,58 +116,22 @@ export default function Header() {
           className="flex items-center gap-1 sm:gap-2 font-bold text-lg tracking-tight shrink-0 mr-1 sm:mr-2 no-underline"
           style={{ color: "var(--header-text)" }}
         >
-          <span className="text-amber-400">Media</span>Rate
+          <span className="text-(--primary-color)">Media</span>Rate
         </a>
 
         {/* Navigation */}
         <nav className="hidden sm:flex items-center gap-1">
-          <a
-            href="/movies"
-            className={headerLinkClass}
-            style={{ color: "var(--header-text)" }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = "var(--header-hover-text)";
-              e.currentTarget.style.backgroundColor = "var(--header-hover-bg)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = "var(--header-text)";
-              e.currentTarget.style.backgroundColor = "transparent";
-            }}
-          >
+          <Link href="/movies" className={`${headerLinkClass} nav-link`}>
             <Movie fontSize="small" />
             Movies
-          </a>
-          <a
-            href="/tv"
-            className={headerLinkClass}
-            style={{ color: "var(--header-text)" }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = "var(--header-hover-text)";
-              e.currentTarget.style.backgroundColor = "var(--header-hover-bg)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = "var(--header-text)";
-              e.currentTarget.style.backgroundColor = "transparent";
-            }}
-          >
+          </Link>
+          <Link href="/tv" className={`${headerLinkClass} nav-link`}>
             <Tv fontSize="small" />
             TV Shows
-          </a>
-          <a
-            href="/about"
-            className={headerLinkClass}
-            style={{ color: "var(--header-text)" }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = "var(--header-hover-text)";
-              e.currentTarget.style.backgroundColor = "var(--header-hover-bg)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = "var(--header-text)";
-              e.currentTarget.style.backgroundColor = "transparent";
-            }}
-          >
+          </Link>
+          <Link href="/about" className={`${headerLinkClass} nav-link`}>
             About
-          </a>
+          </Link>
         </nav>
 
         {/* Mobile nav icons */}
@@ -321,7 +285,7 @@ export default function Header() {
           <div className="relative flex flex-col items-center pt-12 px-6">
             <div className="w-full max-w-lg">
               <div
-                className="flex items-center gap-1 sm:gap-2 rounded-xl overflow-hidden ring-1 ring-[var(--card-border)] focus-within:ring-amber-400 transition-shadow"
+                className="flex items-center gap-1 sm:gap-2 rounded-xl overflow-hidden ring-1 ring-(--card-border) focus-within:ring-amber-400 transition-shadow"
                 style={{ backgroundColor: "var(--card-bg)" }}
               >
                 <Search
@@ -366,8 +330,7 @@ export default function Header() {
                 )}
                 <button
                   onClick={submitSearch}
-                  className="bg-amber-400 shrink-0 px-4 sm:px-5 py-3 sm:py-3.5 text-sm font-semibold text-black hover:bg-amber-500 transition-colors rounded-xl ml-[-4px]"
-                >
+                  className="bg-(--primary-color) shrink-0 px-4 sm:px-5 py-3 sm:py-3.5 text-sm font-semibold text-(--primary-foreground) hover:bg-(--primary-hover) transition-colors rounded-xl -ml-1"                >
                   Search
                 </button>
               </div>

@@ -42,9 +42,9 @@ export default async function Home() {
   });
 
   return (
-    <div className="pt-6 md:pt-12 px-4 pb-12">
+    <main className="pt-6 md:pt-12 px-4 pb-12">
       <section className="mb-12 lg:w-11/12 lg:mx-auto">
-        <h2 className="text-3xl font-bold text-[var(--foreground)] mb-6">
+        <h2 className="text-3xl font-bold text-foreground mb-6">
           Popular Movies
         </h2>
         <MediaGrid
@@ -56,7 +56,7 @@ export default async function Home() {
       </section>
 
       <section className="lg:w-11/12 lg:mx-auto">
-        <h2 className="text-3xl font-bold text-[var(--foreground)] mb-6">
+        <h2 className="text-3xl font-bold text-foreground mb-6">
           Popular TV Shows
         </h2>
         <MediaGrid
@@ -66,6 +66,6 @@ export default async function Home() {
           }
         />
       </section>
-    </div>
+    </main>
   );
 }

@@ -4,6 +4,7 @@ import { Suspense, useCallback } from "react";
 import { useSession, signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import AppButton from "@/components/ui/AppButton";
 
 function SignInContent() {
   const { status } = useSession();
@@ -32,22 +33,16 @@ function SignInContent() {
         Sign in with your TCSS IAM account to access your profile and
         personalized features.
       </p>
-      <button
+      <AppButton
         onClick={handleSignIn}
-        className="rounded-md bg-amber-400 px-6 py-2.5 font-medium text-black hover:bg-amber-300 transition-colors"
+        variant="primary"
+        className="text-base"
       >
         Sign in with TCSS IAM
-      </button>
+      </AppButton>
       <Link
         href="/"
-        className="text-sm no-underline transition-colors"
-        style={{ color: "var(--text-muted)" }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.color = "var(--foreground)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.color = "var(--text-muted)";
-        }}
+        className="text-sm no-underline transition-colors text-(--text-muted) hover:text-foreground"
       >
         Back to home
       </Link>
