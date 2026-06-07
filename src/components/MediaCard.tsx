@@ -66,7 +66,8 @@ export default function MediaCard({
         <Image
           src={posterUrl(item.posterPath)}
           alt={item.title}
-          preload={priority}
+          fetchPriority={priority ? "high" : "auto"}
+          loading={priority ? "eager" : "lazy"}
           fill
           sizes="(max-width: 768px) 50vw, 20vw"
           className="object-cover"
